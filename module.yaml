@@ -1,1 +1,8 @@
 product: jvm/app
+
+dependencies:
+  - org.jetbrains.kotlinx:kotlinx-datetime:0.7.1
+  - org.jetbrains.kotlinx:kotlinx-io-core:0.8.2
+
+test-dependencies:
+  - org.junit.jupiter:junit-jupiter:6.1.0-M1

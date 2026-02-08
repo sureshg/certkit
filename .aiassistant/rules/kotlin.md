@@ -14,8 +14,8 @@ apply: always
 - Docs: [amper.org/dev](https://amper.org/dev/)
 
 ### Versions & Dependencies
-- **Kotlin**: Latest (check `libs.versions.toml`)
-- **Java Target**: 25 (`--enable-preview` when needed)
+- **Kotlin**: latest (check `libs.versions.toml`)
+- **Java target**: 25 (`--enable-preview` when needed)
 - **Platform**: Kotlin Multiplatform by default (JVM, Native, JS, Wasm)
 - Always check `libs.versions.toml` for existing references before adding dependencies
 - Prefer Kotlin/Java stdlib and latest idioms before third-party libraries
@@ -29,7 +29,7 @@ apply: always
 - `kotlinx-io` — I/O and byte buffers
 - `ktor-client` — HTTP (`ktor-client-java` engine for JVM-only)
 - `kotlin-logging` — logging (`io.github.oshai:kotlin-logging`)
-- **JVM-only**: prefer JDK APIs (`java.net.http.HttpClient`, `java.security`, `javax.crypto`) when multiplatform portability is not needed
+- **JVM-only**: prefer JDK APIs (`java.net.http.HttpClient`, `java.security`, `javax.crypto`) when multiplatform portability isn't needed
 
 ## 2. Language & Style
 
@@ -49,7 +49,7 @@ apply: always
 
 ### Null Safety
 - Leverage null safety fully — avoid `!!` except in tests
-- Use `?.let {}`, `?:`, safe calls idiomatically
+- Use `?.let {}`, `?:`, and safe calls idiomatically
 - Prefer non-nullable types; make nullability explicit
 - `Nothing` return type for functions that always throw
 
@@ -61,7 +61,7 @@ apply: always
 
 ### File Organization
 - Don't create excessive files — consolidate related code
-- Remove unnecessary abstractions, interfaces, wrappers
+- Remove unnecessary abstractions, interfaces, and wrappers
 - One file can contain multiple related classes/functions
 - Minimal file count with clear organization
 
@@ -69,7 +69,7 @@ apply: always
 
 ### Coroutines & Virtual Threads
 - Use structured concurrency: `coroutineScope`, `supervisorScope`
-- **JVM-only**: use `newVirtualThreadPerTaskExecutor` based dispatcher — virtual threads can block freely, avoiding unnecessary dispatcher switching
+- **JVM-only**: use a `newVirtualThreadPerTaskExecutor`-based dispatcher — virtual threads can block freely, avoiding unnecessary dispatcher switching
 - Use `suspend` functions when the operation is naturally async or needs cancellation support; for simple blocking JVM calls on virtual threads, direct calls are fine
 - Prefer `Flow` over callbacks or reactive streams
 - Use `Mutex` and `Channel` from kotlinx-coroutines, not Java locks
@@ -85,7 +85,7 @@ apply: always
 ## 5. Code Conversion (Java → Kotlin)
 
 ### Approach
-- **Never file-by-file** — consolidate into clean, idiomatic Kotlin removing unnecessary abstractions
+- **Never file-by-file** — consolidate into clean, idiomatic Kotlin, removing unnecessary abstractions
 - Don't follow old Java/J2EE patterns — simplify aggressively
 - **Zero bugs, zero functionality changes** — exactly equivalent
 - **No performance regressions** — improve where possible
@@ -101,7 +101,7 @@ apply: always
 
 ## 6. Testing
 
-- Port **all tests** with same coverage and standards
+- Port **all tests** with the same coverage and standards
 - `kotlin.test` for multiplatform, JUnit 5+ for JVM-only
 - `kotlinx-coroutines-test` for coroutine testing (`runTest`, `TestDispatcher`)
 - `mockk` only when truly necessary — prefer fakes and test doubles
