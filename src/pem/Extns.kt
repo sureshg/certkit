@@ -9,9 +9,9 @@ import kotlin.io.encoding.Base64
 
 /** Encodes a byte array as a PEM block with the given [type] header/footer. */
 fun ByteArray.encodePem(type: PemType): String = buildString {
-    appendLine("-----BEGIN ${type.marker}-----")
-    appendLine(Base64.encode(this@encodePem).chunked(64).joinToString("\n"))
-    appendLine("-----END ${type.marker}-----")
+  appendLine("-----BEGIN ${type.marker}-----")
+  appendLine(Base64.encode(this@encodePem).chunked(64).joinToString("\n"))
+  appendLine("-----END ${type.marker}-----")
 }
 
 /** PEM-encoded representation of this public key. */

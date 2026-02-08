@@ -67,6 +67,7 @@ object Pem {
       """-+BEGIN\s+(?:(.*)\s+)?PUBLIC\s+KEY[^-]*-+(?:\s|\r|\n)+([a-z0-9+/=\r\n]+)-+END\s+.*PUBLIC\s+KEY[^-]*-+"""
           .toRegex(RegexOption.IGNORE_CASE)
 
+  // Test data must be exactly 20 bytes for DSA
   private val TEST_SIGNATURE_DATA = "01234567890123456789".encodeToByteArray()
   private val SUPPORTED_KEY_TYPES = setOf("RSA", "EC", "DSA")
 
@@ -77,7 +78,7 @@ object Pem {
   private val DER_NULL = byteArrayOf(5, 0)
   private val certFactory = CertificateFactory.getInstance("X.509")
 
-  /** Returns `true` if the file contains PEM-encoded certificates, keys, or private keys. */
+  /** Returns `true` if the data contains PEM-encoded certificates, keys, or private keys. */
   fun isPem(path: Path): Boolean = isPem(path.readText(Charsets.US_ASCII))
 
   /** Returns `true` if the string contains PEM-encoded certificates, keys, or private keys. */
@@ -123,8 +124,13 @@ object Pem {
 
     val matchIndex = chain.indexOfFirst { matches(key, it) }
     require(matchIndex >= 0) { "Private key does not match the public key of any certificate" }
+    // Certificate for private key must be at index zero
     val certs = chain.toMutableList()
-    if (matchIndex != 0) certs[0] = certs.set(matchIndex, certs[0])
+    if (matchIndex != 0) {
+      val matched = certs[matchIndex]
+      certs[matchIndex] = certs[0]
+      certs[0] = matched
+    }
 
     val password = keyPassword?.takeIf { storeKeyWithPassword }?.toCharArray() ?: charArrayOf()
     return KeyStore.getInstance("JKS").apply {

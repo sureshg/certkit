@@ -15,11 +15,12 @@ import kotlin.time.Instant
 
 /** Returns the subject common name (CN) from the certificate's distinguished name. */
 val X509Certificate.commonName: String
-    get() = LdapName(subjectX500Principal.name)
-        .rdns
-        .filter { it.type.equals("CN", ignoreCase = true) }
-        .map { it.value.toString() }
-        .single()
+  get() =
+      LdapName(subjectX500Principal.name)
+          .rdns
+          .filter { it.type.equals("CN", ignoreCase = true) }
+          .map { it.value.toString() }
+          .single()
 
 /**
  * Returns the subject alternative names (RFC822/email, DNS, and IP address types).
@@ -27,38 +28,39 @@ val X509Certificate.commonName: String
  * SAN type OIDs: 1 = RFC822/email, 2 = DNS, 7 = IP address.
  */
 val X509Certificate.subjectAltNames: List<String>
-    get() = subjectAlternativeNames
-        .orEmpty()
-        .filter { it.size == 2 }
-        .mapNotNull {
-            when (it[0].toString().toInt()) {
-                1, 2, 7 -> it[1].toString()
-                else -> null
-            }
+  get() =
+      subjectAlternativeNames.orEmpty().filter { it.size == 2 }.mapNotNull {
+        when (it[0].toString().toInt()) {
+          1, 2, 7 -> it[1].toString()
+          else -> null
         }
+      }
 
 /** Returns `true` if this certificate is signed by the given [ca] certificate. */
 fun X509Certificate.signedBy(ca: X509Certificate): Boolean =
     issuerX500Principal == ca.subjectX500Principal && runCatching { verify(ca.publicKey) }.isSuccess
 
 /** Returns `true` if this certificate is self-signed. */
-val X509Certificate.selfSigned: Boolean get() = signedBy(this)
+val X509Certificate.selfSigned: Boolean
+  get() = signedBy(this)
 
 /** Returns `true` if this certificate is a CA (keyCertSign key usage bit set). */
-val X509Certificate.isCA: Boolean get() = keyUsage?.get(5) == true
+val X509Certificate.isCA: Boolean
+  get() = keyUsage?.get(5) == true
 
 /** Returns `true` if this certificate is an intermediate CA (CA but not self-signed). */
-val X509Certificate.isIntermediateCA: Boolean get() = isCA && !selfSigned
+val X509Certificate.isIntermediateCA: Boolean
+  get() = isCA && !selfSigned
 
 /** Returns the certificate expiry date/time in UTC. */
 val X509Certificate.expiryDateUTC
-    get() = Instant.fromEpochMilliseconds(notAfter.time).toLocalDateTime(TimeZone.UTC)
+  get() = Instant.fromEpochMilliseconds(notAfter.time).toLocalDateTime(TimeZone.UTC)
 
 /** Returns `true` if this certificate chain is signed by one of the given [root] CA certificates. */
 fun List<X509Certificate>.isSignedByRoot(root: List<X509Certificate>): Boolean {
-    check(isNotEmpty()) { "Cert chain is empty" }
-    val trustAnchors = root.map { TrustAnchor(it, null) }.toSet()
-    val params = PKIXParameters(trustAnchors).apply { isRevocationEnabled = false }
-    val certPath = CertificateFactory.getInstance("X.509").generateCertPath(this)
-    return runCatching { CertPathValidator.getInstance("PKIX").validate(certPath, params) }.isSuccess
+  check(isNotEmpty()) { "Cert chain is empty" }
+  val trustAnchors = root.map { TrustAnchor(it, null) }.toSet()
+  val params = PKIXParameters(trustAnchors).apply { isRevocationEnabled = false }
+  val certPath = CertificateFactory.getInstance("X.509").generateCertPath(this)
+  return runCatching { CertPathValidator.getInstance("PKIX").validate(certPath, params) }.isSuccess
 }

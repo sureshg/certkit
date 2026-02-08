@@ -7,8 +7,8 @@ import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
 /**
- * Trust store utilities for discovering available KeyStore types and accessing JDK's default
- * cacerts trust managers. Switchable via `-Djavax.net.ssl.trustStoreType=xxx`.
+ * Trust store utilities for discovering available KeyStore types and accessing JDK's default cacerts
+ * trust managers. Switchable via `-Djavax.net.ssl.trustStoreType=xxx`.
  */
 object TrustStore {
 
@@ -78,9 +78,7 @@ enum class TLSProp(val prop: String, val desc: String, val system: Boolean = tru
   TLSDisabledAlgos("jdk.tls.disabledAlgorithms", "Disabled/restricted algorithms", false);
 
   /** Sets this property value via system property or security property based on [system] flag. */
-  fun set(value: String) =
-      when (system) {
-        true -> System.setProperty(prop, value)
-        else -> Security.setProperty(prop, value)
-      }
+  fun set(value: String) {
+    if (system) System.setProperty(prop, value) else Security.setProperty(prop, value)
+  }
 }

@@ -19,14 +19,14 @@ import kotlinx.io.readByteArray
  */
 object Der {
 
-  const val SEQUENCE_TAG = 0x30
-  const val BOOLEAN_TAG = 0x01
-  const val INTEGER_TAG = 0x02
-  const val BIT_STRING_TAG = 0x03
-  const val OCTET_STRING_TAG = 0x04
-  const val NULL_TAG = 0x05
-  const val OBJECT_IDENTIFIER_TAG = 0x06
-  const val UTC_TIME_TAG = 0x17
+  private const val SEQUENCE_TAG = 0x30
+  private const val BOOLEAN_TAG = 0x01
+  private const val INTEGER_TAG = 0x02
+  private const val BIT_STRING_TAG = 0x03
+  private const val OCTET_STRING_TAG = 0x04
+  private const val NULL_TAG = 0x05
+  private const val OBJECT_IDENTIFIER_TAG = 0x06
+  private const val UTC_TIME_TAG = 0x17
 
   /** ASN.1 UTC time format: yyMMddHHmmssZ (2-digit year per X.680) */
   private val UTC_TIME_FORMAT =
@@ -101,7 +101,7 @@ object Der {
   /** Encodes a DER NULL. */
   fun derNull(): ByteArray = byteArrayOf(NULL_TAG.toByte(), 0x00)
 
-  /** Encodes a primitive DER tag (0–31) with the given body. */
+  /** Encodes a primitive DER tag (0-31) with the given body. */
   fun tag(tag: Int, body: ByteArray): ByteArray {
     require(tag in 0..31) { "Invalid tag: $tag" }
     return writeTag(tag, body)
@@ -150,8 +150,8 @@ object Der {
   /**
    * Decodes a DER length at the given offset, returning (length, bytesConsumed).
    *
-   * Short form: single byte < 128. Long form: first byte = 0x80 | numBytes, followed by numBytes of
-   * big-endian length.
+   * Short form: single byte < 128. Long form: first byte = 0x80 | numBytes, followed by numBytes
+   * of big-endian length.
    */
   private fun decodeLengthAt(buffer: ByteArray, offset: Int): Pair<Int, Int> {
     val firstByte = buffer[offset].toInt() and 0xFF
@@ -168,7 +168,6 @@ object Der {
     return length to (1 + numBytes)
   }
 
-  /** Writes a TLV (tag-length-value) triple to a Buffer and returns the byte array. */
   private fun writeTag(tag: Int, body: ByteArray): ByteArray {
     require(tag in 0..255) { "Invalid tag: $tag" }
     return Buffer()
@@ -180,7 +179,6 @@ object Der {
         .readByteArray()
   }
 
-  /** Writes a constructed TLV with concatenated values. */
   private fun constructed(tag: Int, values: Array<out ByteArray>): ByteArray {
     val totalLength = values.sumOf { it.size }
     return Buffer()
