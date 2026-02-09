@@ -22,7 +22,7 @@ class CsrTest {
 
   @Test
   fun `find unknown algorithm throws`() {
-    assertThrows<IllegalArgumentException> { Csr.findSignatureAlgorithm("NoSuchAlgorithm") }
+    assertThrows<IllegalArgumentException> { val _ = Csr.findSignatureAlgorithm("NoSuchAlgorithm") }
   }
 
   @Test

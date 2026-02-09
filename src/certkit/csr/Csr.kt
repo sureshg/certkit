@@ -8,7 +8,25 @@ import javax.security.auth.x500.X500Principal
 private val VERSION_0 = byteArrayOf(2, 1, 0)
 private val EMPTY_ATTRIBUTES = byteArrayOf(0xA0.toByte(), 0)
 
-/** PKCS#10 CSR factory and signature algorithm discovery. */
+/**
+ * PKCS#10 Certificate Signing Request (CSR) factory.
+ *
+ * ASN.1 structure ([RFC 2986](https://datatracker.ietf.org/doc/html/rfc2986)):
+ * ```
+ * CertificationRequest ::= SEQUENCE {
+ *   certificationRequestInfo  CertificationRequestInfo,
+ *   signatureAlgorithm        AlgorithmIdentifier,
+ *   signature                 BIT STRING
+ * }
+ *
+ * CertificationRequestInfo ::= SEQUENCE {
+ *   version       INTEGER (v1=0),
+ *   subject       Name,
+ *   subjectPKInfo SubjectPublicKeyInfo,
+ *   attributes    [0] Attributes (empty)
+ * }
+ * ```
+ */
 object Csr {
 
   private const val SIGNATURE_OID_PREFIX = "Alg.Alias.Signature.OID."
@@ -62,11 +80,7 @@ object Csr {
   ): CertificationRequest = CertificationRequest(info, algorithmId, signature.copyOf())
 }
 
-/**
- * Signature algorithm identifier resolved from JCA security providers.
- *
- * Equality is based on [oid] only, matching the original Java semantics.
- */
+/** Signature algorithm identifier (name + OID) resolved from JCA security providers. */
 class SignatureAlgorithmId(val name: String, val oid: String) {
   val encoded: ByteArray = Der.oid(oid)
 
@@ -78,7 +92,7 @@ class SignatureAlgorithmId(val name: String, val oid: String) {
   override fun toString() = "SignatureAlgorithmId(name=$name, oid=$oid)"
 }
 
-/** PKCS#10 certification request info (subject + public key). */
+/** PKCS#10 request info: subject name + public key, DER-encoded per RFC 2986 §4.1. */
 data class CertificationRequestInfo(val subject: X500Principal, val publicKey: PublicKey) {
 
   val encoded: ByteArray =
@@ -94,11 +108,7 @@ data class CertificationRequestInfo(val subject: X500Principal, val publicKey: P
           .sign()
 }
 
-/**
- * PKCS#10 certification request (CSR).
- *
- * Not a `data class` because [signature] is a `ByteArray` (needs `contentEquals`).
- */
+/** PKCS#10 certification request: info + algorithm + signature, DER-encoded per RFC 2986. */
 class CertificationRequest(
     val info: CertificationRequestInfo,
     val algorithmId: SignatureAlgorithmId,

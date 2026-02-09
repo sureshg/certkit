@@ -1,3 +1,9 @@
+repositories:
+  - id: mavenLocal
+    url: mavenLocal
+    resolve: false
+    publish: true
+
 product:
   type: lib
   platforms: [ jvm ]

@@ -115,18 +115,18 @@ class PemTest {
 
   @Test
   fun `loadPrivateKey fails on missing key`() {
-    assertThrows<IllegalStateException> { Pem.loadPrivateKey("no key here") }
+    assertThrows<IllegalStateException> { val _ = Pem.loadPrivateKey("no key here") }
   }
 
   @Test
   fun `loadPublicKey fails on missing key`() {
-    assertThrows<IllegalStateException> { Pem.loadPublicKey("no key here") }
+    assertThrows<IllegalStateException> { val _ = Pem.loadPublicKey("no key here") }
   }
 
   @Test
   fun `encrypted key without password fails`() {
     val pem = resourcePath("rsa.client.pkcs8.key.encrypted")
-    assertThrows<IllegalStateException> { Pem.loadPrivateKey(pem, null) }
+    assertThrows<IllegalStateException> { val _ = Pem.loadPrivateKey(pem, null) }
   }
 
   private fun testLoadKeyStore(

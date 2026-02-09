@@ -42,9 +42,18 @@ fun X509Certificate.signedBy(ca: X509Certificate): Boolean =
 val X509Certificate.selfSigned: Boolean
   get() = signedBy(this)
 
-/** Returns `true` if this certificate is a CA (keyCertSign key usage bit set). */
+/**
+ * Returns `true` if this certificate is a CA.
+ *
+ * Checks two sources (either is sufficient):
+ * - **Basic Constraints** extension (`2.5.29.19`): `basicConstraints >= 0` means `cA: TRUE`.
+ *   Returns `-1` for end-entity certs, or the path-length constraint (≥ 0) for CA certs.
+ * - **Key Usage** extension (`2.5.29.15`): bit 5 = `keyCertSign`.
+ *
+ * Self-signed certs often include only Basic Constraints without Key Usage.
+ */
 val X509Certificate.isCA: Boolean
-  get() = keyUsage?.get(5) == true
+  get() = basicConstraints >= 0 || keyUsage?.get(5) == true
 
 /** Returns `true` if this certificate is an intermediate CA (CA but not self-signed). */
 val X509Certificate.isIntermediateCA: Boolean

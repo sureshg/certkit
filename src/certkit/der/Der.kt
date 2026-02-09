@@ -11,9 +11,24 @@ import java.math.BigInteger
 import kotlin.time.Instant
 
 /**
- * ASN.1 DER encoder/decoder for PEM processing and certificate signing requests.
+ * ASN.1 DER (Distinguished Encoding Rules) encoder/decoder — the binary format
+ * used inside X.509 certificates, CSRs, and keys.
  *
- * Based on [airlift/security](https://github.com/airlift/airlift/tree/master/security) DerUtils.
+ * Every DER element is a **Tag-Length-Value** (TLV) triplet:
+ * ```
+ *  ┌─────┐ ┌────────┐ ┌───────────────┐
+ *  │ Tag │ │ Length │ │    Value …    │
+ *  └─────┘ └────────┘ └───────────────┘
+ * ```
+ *
+ * **How length is encoded:**
+ * - **≤ 127** → single byte:  `writeLength(5) → [0x05]`
+ * - **≥ 128** → first byte = `0x80 + N` (N = number of following length bytes):
+ *   `writeLength(256) → [0x82, 0x01, 0x00]`  (0x82 means "2 bytes follow")
+ *
+ * **How OIDs are encoded** (e.g. `"1.2.840.113549"`):
+ * - First two arcs merged: `arc0 * 40 + arc1` → single byte
+ * - Each remaining arc → base-128 varint (high bit = "more bytes follow")
  */
 object Der {
 
@@ -38,10 +53,10 @@ object Der {
         char('Z')
       }
 
-  /** Encodes a DER SEQUENCE from the given encoded values. */
+  /** Encodes a DER SEQUENCE (tag `0x30`) wrapping the concatenated [values]. */
   fun sequence(vararg values: ByteArray): ByteArray = constructed(SEQUENCE_TAG, values)
 
-  /** Encodes a DER BIT STRING with the given pad bits and value. */
+  /** Encodes a DER BIT STRING (tag `0x03`): `03 len padBits value...`. */
   fun bitString(padBits: Int, value: ByteArray): ByteArray {
     require(padBits in 0..7) { "Invalid pad bits: $padBits" }
     return Buffer()
@@ -54,22 +69,22 @@ object Der {
         .readByteArray()
   }
 
-  /** Encodes a DER BOOLEAN TRUE value. */
+  /** Encodes a DER BOOLEAN TRUE: `[01 01 FF]`. */
   fun booleanTrue(): ByteArray = byteArrayOf(BOOLEAN_TAG.toByte(), 0x01, 0xFF.toByte())
 
-  /** Encodes a DER INTEGER from a Long. */
+  /** Encodes a DER INTEGER (tag `0x02`) from a Long. */
   fun integer(value: Long): ByteArray = integer(BigInteger.valueOf(value))
 
-  /** Encodes a DER INTEGER from a BigInteger. */
+  /** Encodes a DER INTEGER (tag `0x02`) from a BigInteger (two's complement, minimal bytes). */
   fun integer(value: BigInteger): ByteArray = tag(INTEGER_TAG, value.toByteArray())
 
-  /** Encodes a DER OCTET STRING. */
+  /** Encodes a DER OCTET STRING (tag `0x04`). */
   fun octetString(value: ByteArray): ByteArray = tag(OCTET_STRING_TAG, value)
 
-  /** Encodes a DER UTC TIME from a raw string. */
+  /** Encodes a DER UTC TIME (tag `0x17`) from a raw `yyMMddHHmmssZ` string. */
   fun utcTime(value: String): ByteArray = tag(UTC_TIME_TAG, value.encodeToByteArray())
 
-  /** Encodes a DER UTC TIME from an [Instant]. */
+  /** Encodes a DER UTC TIME (tag `0x17`) from an [Instant], formatted as `yyMMddHHmmssZ`. */
   fun utcTime(value: Instant): ByteArray =
       tag(
           UTC_TIME_TAG,
@@ -96,7 +111,7 @@ object Der {
         .readByteArray()
   }
 
-  /** Encodes a DER NULL. */
+  /** Encodes a DER NULL: `[05 00]`. */
   fun derNull(): ByteArray = byteArrayOf(NULL_TAG.toByte(), 0x00)
 
   /** Encodes a primitive DER tag (0-31) with the given body. */
@@ -117,7 +132,7 @@ object Der {
     return constructed(tag or 0xA0, values)
   }
 
-  /** Decodes a DER SEQUENCE into its constituent elements. */
+  /** Decodes a DER SEQUENCE into its constituent TLV elements (each returned as raw bytes). */
   fun decodeSequence(data: ByteArray): List<ByteArray> {
     require(data[0].toInt() == SEQUENCE_TAG) { "Expected sequence tag" }
     val (dataLength, headerSize) = decodeLengthAt(data, 1)
@@ -136,7 +151,7 @@ object Der {
     }
   }
 
-  /** Decodes a context-specific optional element (tag class 0xA0). */
+  /** Unwraps a context-specific optional element (`[A0+n] [len] [inner]`) and returns the inner bytes. */
   fun decodeOptionalElement(element: ByteArray): ByteArray {
     require(element[0].toInt() and 0xE0 == 0xA0) { "Expected optional sequence element tag" }
     val (len, lenSize) = decodeLengthAt(element, 1)
@@ -189,10 +204,13 @@ object Der {
   }
 
   /**
-   * Writes a DER length encoding directly to this Buffer.
+   * Writes a DER length encoding to this buffer.
    *
-   * Short form (< 128): single byte. Long form: lead byte with high bit set + number of length
-   * bytes, then big-endian length.
+   * ```
+   * writeLength(5)   → [0x05]                 (short form)
+   * writeLength(200) → [0x81, 0xC8]           (1 length byte)
+   * writeLength(256) → [0x82, 0x01, 0x00]     (2 length bytes)
+   * ```
    */
   private fun Buffer.writeLength(length: Int) {
     if (length < 128) {
@@ -207,7 +225,14 @@ object Der {
     }
   }
 
-  /** Writes an OID component as a big-endian base-128 varint to this Buffer. */
+  /**
+   * Writes an OID arc as a base-128 varint. High bit = more bytes follow.
+   *
+   * ```
+   * writeOidVarint(113549) → [0x86, 0xF7, 0x0D]  (3 bytes, base-128)
+   * writeOidVarint(2)      → [0x02]               (single byte)
+   * ```
+   */
   private fun Buffer.writeOidVarint(number: Int) {
     if (number < 128) {
       writeByte(number.toByte())

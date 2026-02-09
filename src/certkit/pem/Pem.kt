@@ -39,8 +39,6 @@ enum class PemType(val marker: String) {
 
 /**
  * Reads and loads PEM-encoded certificates, private keys, public keys, and key/trust stores.
- *
- * Based on [airlift/security](https://github.com/airlift/airlift/tree/master/security) PemReader.
  */
 object Pem {
 

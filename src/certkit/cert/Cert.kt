@@ -14,7 +14,29 @@ import javax.security.auth.x500.X500Principal
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
-/** Self-signed X.509 certificate builder (EC keys only). */
+/**
+ * Self-signed X.509 certificate builder (EC keys, SHA256withECDSA).
+ *
+ * Constructs a DER-encoded X.509v3 certificate ([RFC 5280](https://datatracker.ietf.org/doc/html/rfc5280)):
+ * ```
+ * Certificate ::= SEQUENCE {
+ *   tbsCertificate     SEQUENCE {
+ *     version          [0] INTEGER (v3=2),
+ *     serialNumber     INTEGER,
+ *     signature        AlgorithmIdentifier (SHA256withECDSA),
+ *     issuer           Name,
+ *     validity         SEQUENCE { notBefore UTCTime, notAfter UTCTime },
+ *     subject          Name,
+ *     subjectPublicKey SubjectPublicKeyInfo,
+ *     extensions       [3] SEQUENCE {
+ *       subjectKeyId, authorityKeyId, basicConstraints, subjectAltName
+ *     }
+ *   },
+ *   signatureAlgorithm AlgorithmIdentifier,
+ *   signatureValue     BIT STRING
+ * }
+ * ```
+ */
 object Cert {
 
   private val SHA256_ECDSA_OID = Der.oid("1.2.840.10045.4.3.2")
@@ -23,7 +45,7 @@ object Cert {
   private val BASIC_CONSTRAINTS_OID = Der.oid("2.5.29.19")
   private val SUBJECT_ALT_NAME_OID = Der.oid("2.5.29.17")
 
-  /** Builds a self-signed X.509 certificate using the given EC [keyPair] and subject details. */
+  /** Builds a self-signed X.509v3 certificate. The [keyPair] must be EC (P-256/P-384/P-521). */
   fun buildSelfSigned(
       keyPair: KeyPair,
       serialNumber: Long = 0,
@@ -92,7 +114,7 @@ object Cert {
         as X509Certificate
   }
 
-  /** Convenience overload accepting [LocalDate] for notBefore/notAfter. */
+  /** Convenience overload: [notBefore] = start of day UTC, [notAfter] = 23:59:59 UTC. */
   fun buildSelfSigned(
       keyPair: KeyPair,
       serialNumber: Long = 0,
