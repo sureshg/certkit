@@ -1,8 +1,6 @@
 package certkit.csr
 
 import certkit.der.Der
-import certkit.pem.PemType
-import certkit.pem.encodePem
 import java.security.*
 import javax.security.auth.x500.X500Principal
 
@@ -108,8 +106,6 @@ class CertificationRequest(
 ) {
   val encoded: ByteArray =
       Der.sequence(info.encoded, Der.sequence(algorithmId.encoded), Der.bitString(0, signature))
-
-  val pemEncoded: String = encoded.encodePem(PemType.X509_REQ)
 
   override fun equals(other: Any?) =
       this === other || (other is CertificationRequest && encoded.contentEquals(other.encoded))

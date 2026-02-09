@@ -1,7 +1,6 @@
-@file:OptIn(kotlin.io.encoding.ExperimentalEncodingApi::class)
-
 package certkit.pem
 
+import certkit.csr.CertificationRequest
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.cert.X509Certificate
@@ -25,3 +24,7 @@ val PrivateKey.pem: String
 /** PEM-encoded representation of this X.509 certificate. */
 val X509Certificate.pem: String
   get() = encoded.encodePem(PemType.X509)
+
+/** PEM-encoded representation of this PKCS#10 certification request. */
+val CertificationRequest.pem: String
+  get() = encoded.encodePem(PemType.X509_REQ)

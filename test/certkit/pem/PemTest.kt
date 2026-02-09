@@ -129,8 +129,6 @@ class PemTest {
     assertThrows<IllegalStateException> { Pem.loadPrivateKey(pem, null) }
   }
 
-  // --- Helpers ---
-
   private fun testLoadKeyStore(
       certFile: String,
       keyFile: String,
@@ -139,10 +137,7 @@ class PemTest {
   ) {
     val keyStore = Pem.loadKeyStore(resourcePath(certFile), resourcePath(keyFile), keyPassword)
     assertCertificateChain(keyStore, expectedName)
-    assertNotNull(keyStore.getCertificate("key"))
-
     val key = keyStore.getKey("key", charArrayOf()) as PrivateKey
-    assertNotNull(key)
     assertEquals(key, Pem.loadPrivateKey(key.pem))
   }
 
@@ -150,7 +145,6 @@ class PemTest {
     val path = resourcePath(keyFile)
     assertTrue(Pem.isPem(path))
     val publicKey = Pem.loadPublicKey(path)
-    assertNotNull(publicKey)
     assertEquals(publicKey, Pem.readCertificateChain(resourcePath(certFile)).single().publicKey)
     assertEquals(publicKey, Pem.loadPublicKey(publicKey.pem))
   }

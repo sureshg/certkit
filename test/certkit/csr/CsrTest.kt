@@ -1,5 +1,6 @@
 package certkit.csr
 
+import certkit.pem.pem
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -28,8 +29,7 @@ class CsrTest {
   fun `create CSR with RSA key`() {
     val keyPair = generateRSAKeyPair()
     val csr = Csr.create("CN=test", "SHA256withRSA", keyPair)
-    assertNotNull(csr.encoded)
-    assertTrue(csr.pemEncoded.contains("BEGIN CERTIFICATE REQUEST"))
+    assertTrue(csr.pem.contains("BEGIN CERTIFICATE REQUEST"))
     assertEquals("CN=test", csr.info.subject.name)
   }
 
@@ -37,8 +37,7 @@ class CsrTest {
   fun `create CSR with EC key`() {
     val keyPair = generateECKeyPair()
     val csr = Csr.create("CN=ec-test", "SHA256withECDSA", keyPair)
-    assertNotNull(csr.encoded)
-    assertTrue(csr.pemEncoded.contains("BEGIN CERTIFICATE REQUEST"))
+    assertTrue(csr.pem.contains("BEGIN CERTIFICATE REQUEST"))
   }
 
   @Test

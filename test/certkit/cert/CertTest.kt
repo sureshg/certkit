@@ -29,7 +29,6 @@ class CertTest {
             sanIpAddresses = listOf(InetAddress.getLoopbackAddress()),
         )
 
-    assertNotNull(certificate)
     assertTrue(certificate.selfSigned)
     assertTrue(certificate.isCA)
 
@@ -94,9 +93,7 @@ class CertTest {
 
     assertTrue(certificate.selfSigned)
     assertEquals("Test User", certificate.commonName)
-    assertNotNull(certificate.pem)
     assertTrue(certificate.pem.contains("BEGIN CERTIFICATE"))
-    assertNotNull(certificate.expiryDateUTC)
     assertTrue(certificate.isCA)
     assertFalse(certificate.isIntermediateCA) // self-signed CA is not intermediate
   }

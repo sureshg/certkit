@@ -1,5 +1,3 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
-
 package certkit.der
 
 import kotlinx.datetime.LocalDateTime

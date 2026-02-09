@@ -1,5 +1,3 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
-
 package certkit.cert
 
 import kotlinx.datetime.TimeZone
