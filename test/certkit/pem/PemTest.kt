@@ -1,13 +1,13 @@
 package certkit.pem
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.nio.file.Path
 import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
 import javax.naming.ldap.LdapName
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class PemTest {
 
@@ -115,18 +115,24 @@ class PemTest {
 
   @Test
   fun `loadPrivateKey fails on missing key`() {
-    assertThrows<IllegalStateException> { val _ = Pem.loadPrivateKey("no key here") }
+    assertThrows<IllegalStateException> {
+      val _ = Pem.loadPrivateKey("no key here")
+    }
   }
 
   @Test
   fun `loadPublicKey fails on missing key`() {
-    assertThrows<IllegalStateException> { val _ = Pem.loadPublicKey("no key here") }
+    assertThrows<IllegalStateException> {
+      val _ = Pem.loadPublicKey("no key here")
+    }
   }
 
   @Test
   fun `encrypted key without password fails`() {
     val pem = resourcePath("rsa.client.pkcs8.key.encrypted")
-    assertThrows<IllegalStateException> { val _ = Pem.loadPrivateKey(pem, null) }
+    assertThrows<IllegalStateException> {
+      val _ = Pem.loadPrivateKey(pem, null)
+    }
   }
 
   private fun testLoadKeyStore(

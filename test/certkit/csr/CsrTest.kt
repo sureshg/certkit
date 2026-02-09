@@ -1,14 +1,14 @@
 package certkit.csr
 
 import certkit.pem.pem
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.Signature
 import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class CsrTest {
 
@@ -22,7 +22,9 @@ class CsrTest {
 
   @Test
   fun `find unknown algorithm throws`() {
-    assertThrows<IllegalArgumentException> { val _ = Csr.findSignatureAlgorithm("NoSuchAlgorithm") }
+    assertThrows<IllegalArgumentException> {
+      val _ = Csr.findSignatureAlgorithm("NoSuchAlgorithm")
+    }
   }
 
   @Test

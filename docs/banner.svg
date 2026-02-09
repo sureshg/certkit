@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 240">
+  <defs>
+    <!-- Deep space base -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#080c18"/>
+      <stop offset="35%" style="stop-color:#0c1225"/>
+      <stop offset="65%" style="stop-color:#101830"/>
+      <stop offset="100%" style="stop-color:#0a0e1c"/>
+    </linearGradient>
+    <!-- Large teal/cyan nebula cloud (center-right, prominent like banner-3.png) -->
+    <radialGradient id="nebulaTeal" cx="62%" cy="45%" r="30%">
+      <stop offset="0%" style="stop-color:#5eead4;stop-opacity:0.22"/>
+      <stop offset="20%" style="stop-color:#2dd4bf;stop-opacity:0.16"/>
+      <stop offset="45%" style="stop-color:#0d9488;stop-opacity:0.10"/>
+      <stop offset="70%" style="stop-color:#134e4a;stop-opacity:0.05"/>
+      <stop offset="100%" style="stop-color:#0c1225;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Secondary teal wisp (upper right) -->
+    <radialGradient id="nebulaTeal2" cx="78%" cy="28%" r="22%">
+      <stop offset="0%" style="stop-color:#99f6e4;stop-opacity:0.14"/>
+      <stop offset="40%" style="stop-color:#5eead4;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#0c1225;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Purple/violet nebula cloud (left side) -->
+    <radialGradient id="nebulaPurple" cx="25%" cy="60%" r="28%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.10"/>
+      <stop offset="35%" style="stop-color:#4c1d95;stop-opacity:0.07"/>
+      <stop offset="70%" style="stop-color:#2e1065;stop-opacity:0.04"/>
+      <stop offset="100%" style="stop-color:#0c1225;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Blue nebula haze (lower right) -->
+    <radialGradient id="nebulaBlue" cx="82%" cy="72%" r="25%">
+      <stop offset="0%" style="stop-color:#1e40af;stop-opacity:0.10"/>
+      <stop offset="50%" style="stop-color:#1e3a5f;stop-opacity:0.06"/>
+      <stop offset="100%" style="stop-color:#0c1225;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Warm dust cloud (bottom center) -->
+    <radialGradient id="nebulaDust" cx="50%" cy="85%" r="30%">
+      <stop offset="0%" style="stop-color:#312e81;stop-opacity:0.08"/>
+      <stop offset="60%" style="stop-color:#1e1b4b;stop-opacity:0.04"/>
+      <stop offset="100%" style="stop-color:#0c1225;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Bright nebula core glow -->
+    <radialGradient id="coreGlow" cx="65%" cy="42%" r="12%">
+      <stop offset="0%" style="stop-color:#ccfbf1;stop-opacity:0.16"/>
+      <stop offset="40%" style="stop-color:#5eead4;stop-opacity:0.08"/>
+      <stop offset="100%" style="stop-color:#0d9488;stop-opacity:0"/>
+    </radialGradient>
+    <!-- Faint galaxy arm streak -->
+    <linearGradient id="streak" x1="40%" y1="55%" x2="85%" y2="30%">
+      <stop offset="0%" style="stop-color:#2dd4bf;stop-opacity:0"/>
+      <stop offset="25%" style="stop-color:#5eead4;stop-opacity:0.04"/>
+      <stop offset="50%" style="stop-color:#ccfbf1;stop-opacity:0.06"/>
+      <stop offset="75%" style="stop-color:#99f6e4;stop-opacity:0.03"/>
+      <stop offset="100%" style="stop-color:#2dd4bf;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="50%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#a78bfa"/>
+    </linearGradient>
+    <filter id="starglow"><feGaussianBlur stdDeviation="1.5"/></filter>
+    <filter id="softglow"><feGaussianBlur stdDeviation="4"/></filter>
+    <filter id="cloudblur"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+
+  <!-- Background layers -->
+  <rect width="960" height="240" rx="16" fill="url(#bg)"/>
+  <rect width="960" height="240" rx="16" fill="url(#nebulaPurple)"/>
+  <rect width="960" height="240" rx="16" fill="url(#nebulaTeal)"/>
+  <rect width="960" height="240" rx="16" fill="url(#nebulaTeal2)"/>
+  <rect width="960" height="240" rx="16" fill="url(#nebulaBlue)"/>
+  <rect width="960" height="240" rx="16" fill="url(#nebulaDust)"/>
+  <rect width="960" height="240" rx="16" fill="url(#coreGlow)"/>
+
+  <!-- Nebula cloud wisps (soft blurred shapes, matching banner-3.png) -->
+  <g filter="url(#cloudblur)">
+    <ellipse cx="600" cy="100" rx="200" ry="65" fill="#0d9488" opacity="0.18"/>
+    <ellipse cx="700" cy="75" rx="150" ry="50" fill="#5eead4" opacity="0.10"/>
+    <ellipse cx="520" cy="125" rx="130" ry="45" fill="#2dd4bf" opacity="0.08"/>
+    <ellipse cx="780" cy="55" rx="110" ry="50" fill="#99f6e4" opacity="0.06"/>
+    <ellipse cx="650" cy="110" rx="100" ry="40" fill="#ccfbf1" opacity="0.05"/>
+    <ellipse cx="850" cy="90" rx="90" ry="50" fill="#5eead4" opacity="0.05"/>
+    <ellipse cx="200" cy="140" rx="130" ry="60" fill="#4c1d95" opacity="0.08"/>
+    <ellipse cx="100" cy="100" rx="90" ry="50" fill="#312e81" opacity="0.06"/>
+    <ellipse cx="850" cy="170" rx="100" ry="40" fill="#1e3a8a" opacity="0.07"/>
+    <ellipse cx="480" cy="160" rx="80" ry="35" fill="#134e4a" opacity="0.06"/>
+  </g>
+
+  <!-- Galaxy arm / light streak -->
+  <ellipse cx="620" cy="110" rx="250" ry="14" fill="url(#streak)" transform="rotate(-10, 620, 110)" opacity="0.8"/>
+
+  <!-- Dense star field — bright stars -->
+  <g fill="#e2e8f0">
+    <circle cx="42" cy="18" r="0.9" opacity="0.75"/>
+    <circle cx="98" cy="42" r="0.7" opacity="0.6"/>
+    <circle cx="145" cy="12" r="0.8" opacity="0.65"/>
+    <circle cx="210" cy="30" r="0.6" opacity="0.5"/>
+    <circle cx="268" cy="22" r="1.0" opacity="0.7"/>
+    <circle cx="330" cy="38" r="0.7" opacity="0.55"/>
+    <circle cx="390" cy="15" r="0.6" opacity="0.5"/>
+    <circle cx="455" cy="32" r="0.8" opacity="0.6"/>
+    <circle cx="510" cy="20" r="0.7" opacity="0.55"/>
+    <circle cx="580" cy="35" r="0.9" opacity="0.65"/>
+    <circle cx="635" cy="12" r="0.7" opacity="0.55"/>
+    <circle cx="700" cy="28" r="0.8" opacity="0.6"/>
+    <circle cx="755" cy="18" r="0.9" opacity="0.7"/>
+    <circle cx="820" cy="35" r="0.7" opacity="0.55"/>
+    <circle cx="870" cy="22" r="0.8" opacity="0.6"/>
+    <circle cx="930" cy="14" r="0.6" opacity="0.5"/>
+    <circle cx="55" cy="215" r="0.8" opacity="0.6"/>
+    <circle cx="130" cy="225" r="0.6" opacity="0.45"/>
+    <circle cx="220" cy="218" r="0.7" opacity="0.55"/>
+    <circle cx="310" cy="222" r="0.8" opacity="0.5"/>
+    <circle cx="400" cy="215" r="0.6" opacity="0.45"/>
+    <circle cx="485" cy="228" r="0.9" opacity="0.6"/>
+    <circle cx="570" cy="220" r="0.5" opacity="0.4"/>
+    <circle cx="650" cy="215" r="0.7" opacity="0.5"/>
+    <circle cx="730" cy="225" r="0.8" opacity="0.55"/>
+    <circle cx="810" cy="218" r="0.6" opacity="0.45"/>
+    <circle cx="890" cy="222" r="0.7" opacity="0.5"/>
+    <circle cx="940" cy="210" r="0.5" opacity="0.4"/>
+  </g>
+
+  <!-- Medium stars -->
+  <g fill="#cbd5e1">
+    <circle cx="30" cy="80" r="0.5" opacity="0.32"/>
+    <circle cx="75" cy="130" r="0.4" opacity="0.25"/>
+    <circle cx="115" cy="95" r="0.5" opacity="0.3"/>
+    <circle cx="170" cy="155" r="0.4" opacity="0.22"/>
+    <circle cx="235" cy="110" r="0.5" opacity="0.28"/>
+    <circle cx="290" cy="75" r="0.4" opacity="0.25"/>
+    <circle cx="350" cy="145" r="0.5" opacity="0.3"/>
+    <circle cx="410" cy="90" r="0.4" opacity="0.22"/>
+    <circle cx="470" cy="160" r="0.5" opacity="0.28"/>
+    <circle cx="530" cy="80" r="0.4" opacity="0.25"/>
+    <circle cx="590" cy="150" r="0.5" opacity="0.3"/>
+    <circle cx="650" cy="95" r="0.4" opacity="0.22"/>
+    <circle cx="710" cy="140" r="0.5" opacity="0.28"/>
+    <circle cx="770" cy="85" r="0.4" opacity="0.25"/>
+    <circle cx="830" cy="155" r="0.5" opacity="0.3"/>
+    <circle cx="890" cy="100" r="0.4" opacity="0.22"/>
+    <circle cx="940" cy="150" r="0.3" opacity="0.2"/>
+    <circle cx="20" cy="175" r="0.4" opacity="0.22"/>
+    <circle cx="160" cy="185" r="0.3" opacity="0.2"/>
+    <circle cx="440" cy="195" r="0.4" opacity="0.22"/>
+    <circle cx="680" cy="185" r="0.3" opacity="0.2"/>
+    <circle cx="920" cy="175" r="0.4" opacity="0.22"/>
+  </g>
+
+  <!-- Faint distant stars -->
+  <g fill="#94a3b8">
+    <circle cx="18" cy="50" r="0.3" opacity="0.16"/>
+    <circle cx="65" cy="165" r="0.25" opacity="0.12"/>
+    <circle cx="140" cy="65" r="0.3" opacity="0.15"/>
+    <circle cx="195" cy="175" r="0.25" opacity="0.12"/>
+    <circle cx="260" cy="145" r="0.3" opacity="0.14"/>
+    <circle cx="325" cy="60" r="0.25" opacity="0.12"/>
+    <circle cx="380" cy="175" r="0.3" opacity="0.15"/>
+    <circle cx="445" cy="55" r="0.25" opacity="0.12"/>
+    <circle cx="505" cy="140" r="0.3" opacity="0.14"/>
+    <circle cx="560" cy="60" r="0.25" opacity="0.12"/>
+    <circle cx="620" cy="175" r="0.3" opacity="0.15"/>
+    <circle cx="675" cy="55" r="0.25" opacity="0.12"/>
+    <circle cx="740" cy="170" r="0.3" opacity="0.14"/>
+    <circle cx="800" cy="60" r="0.25" opacity="0.12"/>
+    <circle cx="860" cy="175" r="0.3" opacity="0.15"/>
+    <circle cx="925" cy="55" r="0.25" opacity="0.12"/>
+  </g>
+
+  <!-- Star glows (halos on brighter stars) -->
+  <g filter="url(#starglow)">
+    <circle cx="268" cy="22" r="3" fill="#e2e8f0" opacity="0.14"/>
+    <circle cx="755" cy="18" r="3" fill="#e2e8f0" opacity="0.12"/>
+    <circle cx="580" cy="35" r="2.5" fill="#e2e8f0" opacity="0.10"/>
+    <circle cx="485" cy="228" r="2.5" fill="#e2e8f0" opacity="0.08"/>
+    <circle cx="42" cy="18" r="2.5" fill="#e2e8f0" opacity="0.10"/>
+  </g>
+
+  <!-- Nebula core bright spot -->
+  <g filter="url(#softglow)">
+    <circle cx="620" cy="100" r="10" fill="#5eead4" opacity="0.06"/>
+    <circle cx="620" cy="100" r="4" fill="#ccfbf1" opacity="0.08"/>
+  </g>
+
+  <!-- Shield/lock icon -->
+  <g transform="translate(72, 56)">
+    <path d="M40,8 L68,20 L68,56 Q68,80 40,96 Q12,80 12,56 L12,20 Z"
+          fill="none" stroke="url(#glow)" stroke-width="2.5" opacity="0.9"/>
+    <rect x="28" y="52" width="24" height="20" rx="4" fill="none" stroke="#a78bfa" stroke-width="1.8" opacity="0.7"/>
+    <path d="M32,52 V44 A8,8 0 0 1 48,44 V52" fill="none" stroke="#a78bfa" stroke-width="1.8" opacity="0.7"/>
+    <circle cx="40" cy="60" r="3" fill="#a78bfa" opacity="0.6"/>
+    <rect x="39" y="62" width="2" height="5" rx="1" fill="#a78bfa" opacity="0.6"/>
+    <path d="M30,30 L37,37 L52,22" fill="none" stroke="#4ade80" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+  </g>
+
+  <!-- Title -->
+  <text x="180" y="108" font-family="'SF Pro Display','Inter',system-ui,-apple-system,sans-serif" font-size="56" font-weight="700" fill="#f8fafc" letter-spacing="-2">certkit</text>
+  <!-- Subtitle -->
+  <text x="182" y="140" font-family="'SF Pro Text','Inter',system-ui,-apple-system,sans-serif" font-size="16.5" fill="#94a3b8" letter-spacing="0.3">Lightweight X.509 certificate toolkit for Kotlin / JVM</text>
+
+  <!-- Feature pills -->
+  <g font-family="'SF Mono','JetBrains Mono','Fira Code',monospace" font-size="11" font-weight="500">
+    <rect x="182" y="156" width="46" height="24" rx="12" fill="#6366f1" opacity="0.12" stroke="#6366f1" stroke-width="0.5" stroke-opacity="0.2"/>
+    <text x="205" y="172" fill="#a5b4fc" text-anchor="middle">DER</text>
+    <rect x="238" y="156" width="46" height="24" rx="12" fill="#8b5cf6" opacity="0.12" stroke="#8b5cf6" stroke-width="0.5" stroke-opacity="0.2"/>
+    <text x="261" y="172" fill="#c4b5fd" text-anchor="middle">PEM</text>
+    <rect x="294" y="156" width="46" height="24" rx="12" fill="#06b6d4" opacity="0.12" stroke="#06b6d4" stroke-width="0.5" stroke-opacity="0.2"/>
+    <text x="317" y="172" fill="#67e8f9" text-anchor="middle">CSR</text>
+    <rect x="350" y="156" width="56" height="24" rx="12" fill="#3b82f6" opacity="0.12" stroke="#3b82f6" stroke-width="0.5" stroke-opacity="0.2"/>
+    <text x="378" y="172" fill="#93c5fd" text-anchor="middle">X.509</text>
+    <rect x="416" y="156" width="42" height="24" rx="12" fill="#4ade80" opacity="0.10" stroke="#4ade80" stroke-width="0.5" stroke-opacity="0.2"/>
+    <text x="437" y="172" fill="#86efac" text-anchor="middle">TLS</text>
+  </g>
+</svg>
