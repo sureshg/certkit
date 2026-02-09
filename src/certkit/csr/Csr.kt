@@ -1,7 +1,8 @@
-package dev.suresh.certkit.csr
+package certkit.csr
 
-import dev.suresh.certkit.der.Der
-import dev.suresh.certkit.pem.*
+import certkit.der.Der
+import certkit.pem.PemType
+import certkit.pem.encodePem
 import java.security.*
 import javax.security.auth.x500.X500Principal
 

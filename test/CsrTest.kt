@@ -1,11 +1,13 @@
-package dev.suresh.certkit.csr
+package certkit.csr
 
-import java.security.*
-import java.security.spec.*
-import javax.security.auth.x500.X500Principal
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.Signature
+import java.security.spec.ECGenParameterSpec
+import javax.security.auth.x500.X500Principal
 
 class CsrTest {
 

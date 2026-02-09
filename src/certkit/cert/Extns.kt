@@ -1,17 +1,12 @@
 @file:OptIn(kotlin.time.ExperimentalTime::class)
 
-package dev.suresh.certkit.cert
+package certkit.cert
 
-import java.security.cert.CertPathValidator
-import java.security.cert.CertificateFactory
-import java.security.cert.PKIXParameters
-import java.security.cert.TrustAnchor
-import java.security.cert.X509Certificate
-import javax.naming.ldap.LdapName
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import java.security.cert.*
+import javax.naming.ldap.LdapName
 import kotlin.time.Instant
-
 
 /** Returns the subject common name (CN) from the certificate's distinguished name. */
 val X509Certificate.commonName: String
@@ -29,12 +24,17 @@ val X509Certificate.commonName: String
  */
 val X509Certificate.subjectAltNames: List<String>
   get() =
-      subjectAlternativeNames.orEmpty().filter { it.size == 2 }.mapNotNull {
-        when (it[0].toString().toInt()) {
-          1, 2, 7 -> it[1].toString()
-          else -> null
-        }
-      }
+      subjectAlternativeNames
+          .orEmpty()
+          .filter { it.size == 2 }
+          .mapNotNull {
+            when (it[0].toString().toInt()) {
+              1,
+              2,
+              7 -> it[1].toString()
+              else -> null
+            }
+          }
 
 /** Returns `true` if this certificate is signed by the given [ca] certificate. */
 fun X509Certificate.signedBy(ca: X509Certificate): Boolean =
@@ -56,7 +56,9 @@ val X509Certificate.isIntermediateCA: Boolean
 val X509Certificate.expiryDateUTC
   get() = Instant.fromEpochMilliseconds(notAfter.time).toLocalDateTime(TimeZone.UTC)
 
-/** Returns `true` if this certificate chain is signed by one of the given [root] CA certificates. */
+/**
+ * Returns `true` if this certificate chain is signed by one of the given [root] CA certificates.
+ */
 fun List<X509Certificate>.isSignedByRoot(root: List<X509Certificate>): Boolean {
   check(isNotEmpty()) { "Cert chain is empty" }
   val trustAnchors = root.map { TrustAnchor(it, null) }.toSet()

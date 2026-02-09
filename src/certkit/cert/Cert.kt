@@ -1,8 +1,9 @@
 @file:OptIn(kotlin.time.ExperimentalTime::class)
 
-package dev.suresh.certkit.cert
+package certkit.cert
 
-import dev.suresh.certkit.der.Der
+import certkit.der.Der
+import kotlinx.datetime.*
 import java.net.InetAddress
 import java.security.KeyPair
 import java.security.MessageDigest
@@ -12,11 +13,6 @@ import java.security.cert.X509Certificate
 import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
 import javax.security.auth.x500.X500Principal
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.plus
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -67,19 +63,22 @@ object Cert {
             Der.contextSequence(
                 3,
                 Der.sequence(
-                    Der.sequence(
-                        SUBJECT_KEY_ID_OID, Der.octetString(Der.octetString(pubKeyHash))),
+                    Der.sequence(SUBJECT_KEY_ID_OID, Der.octetString(Der.octetString(pubKeyHash))),
                     Der.sequence(
                         AUTHORITY_KEY_ID_OID,
-                        Der.octetString(Der.sequence(Der.contextTag(0, pubKeyHash)))),
+                        Der.octetString(Der.sequence(Der.contextTag(0, pubKeyHash))),
+                    ),
                     Der.sequence(
                         BASIC_CONSTRAINTS_OID,
                         Der.booleanTrue(),
-                        Der.octetString(Der.sequence(Der.booleanTrue()))),
+                        Der.octetString(Der.sequence(Der.booleanTrue())),
+                    ),
                     Der.sequence(
                         SUBJECT_ALT_NAME_OID,
-                        Der.octetString(Der.sequence(*sans.toTypedArray()))),
-                )),
+                        Der.octetString(Der.sequence(*sans.toTypedArray())),
+                    ),
+                ),
+            ),
         )
 
     val sig =
@@ -91,8 +90,8 @@ object Cert {
             .sign()
 
     val encoded = Der.sequence(rawCert, sigAlg, Der.bitString(0, sig))
-    return CertificateFactory.getInstance("X.509")
-        .generateCertificate(encoded.inputStream()) as X509Certificate
+    return CertificateFactory.getInstance("X.509").generateCertificate(encoded.inputStream())
+        as X509Certificate
   }
 
   /** Convenience overload accepting [LocalDate] for notBefore/notAfter. */

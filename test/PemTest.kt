@@ -1,14 +1,21 @@
-package dev.suresh.certkit.pem
+package certkit.pem
 
-import java.nio.file.Path
-import java.security.*
-import java.security.cert.*
-import javax.naming.ldap.LdapName
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.nio.file.Path
+import java.security.KeyStore
+import java.security.PrivateKey
+import java.security.cert.X509Certificate
+import javax.naming.ldap.LdapName
 
 class PemTest {
+
+  companion object {
+    private const val CA_NAME = "OU=RootCA,O=Airlift,L=Palo Alto,ST=CA,C=US"
+    private const val CLIENT_NAME = "CN=Test User,OU=Server,O=Airlift,L=Palo Alto,ST=CA,C=US"
+    private const val KEY_PASSWORD = "airlift"
+  }
 
   @Test
   fun `load key store - PKCS8 unencrypted`() {
@@ -55,12 +62,9 @@ class PemTest {
 
   @Test
   fun `load key store - PKCS1 PEM`() {
-    testLoadKeyStore(
-        "rsa.client.pkcs8.pem.encrypted", "rsa.client.pkcs1.pem", null, CLIENT_NAME)
-    testLoadKeyStore(
-        "dsa.client.pkcs8.pem.encrypted", "dsa.client.pkcs1.pem", null, CLIENT_NAME)
-    testLoadKeyStore(
-        "ec.client.pkcs8.pem.encrypted", "ec.client.pkcs1.pem", null, CLIENT_NAME)
+    testLoadKeyStore("rsa.client.pkcs8.pem.encrypted", "rsa.client.pkcs1.pem", null, CLIENT_NAME)
+    testLoadKeyStore("dsa.client.pkcs8.pem.encrypted", "dsa.client.pkcs1.pem", null, CLIENT_NAME)
+    testLoadKeyStore("ec.client.pkcs8.pem.encrypted", "ec.client.pkcs1.pem", null, CLIENT_NAME)
   }
 
   @Test
@@ -170,7 +174,3 @@ class PemTest {
     return Path.of(url.toURI())
   }
 }
-
-private const val CA_NAME = "OU=RootCA,O=Airlift,L=Palo Alto,ST=CA,C=US"
-private const val CLIENT_NAME = "CN=Test User,OU=Server,O=Airlift,L=Palo Alto,ST=CA,C=US"
-private const val KEY_PASSWORD = "airlift"

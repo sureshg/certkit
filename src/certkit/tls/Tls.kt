@@ -1,4 +1,4 @@
-package dev.suresh.certkit.tls
+package certkit.tls
 
 import java.net.InetAddress
 import java.net.InetSocketAddress
@@ -14,38 +14,35 @@ fun scanCertificates(
     host: String,
     port: Int = 443,
     sni: String? = null,
-    timeout: Duration = 2.seconds,
+    timeout: Duration = 5.seconds,
 ): List<X509Certificate> {
   val trustManager = CaptureTrustManager()
-  val sslContext =
-      SSLContext.getInstance("TLS").apply { init(null, arrayOf(trustManager), null) }
+  val sslContext = SSLContext.getInstance("TLS").apply { init(null, arrayOf(trustManager), null) }
   val socket = sslContext.socketFactory.createSocket() as SSLSocket
   return socket.use { sock ->
-    if (sni != null) {
-      sock.sslParameters =
-          sock.sslParameters.apply { serverNames = listOf(SNIHostName(sni)) }
+    if (!sni.isNullOrBlank()) {
+      sock.sslParameters = sock.sslParameters.apply { serverNames = listOf(SNIHostName(sni)) }
     }
     sock.soTimeout = timeout.inWholeMilliseconds.toInt()
-    runCatching {
+    val _ = runCatching {
       sock.connect(InetSocketAddress(host, port), timeout.inWholeMilliseconds.toInt())
       sock.startHandshake()
     }
-    trustManager.chain
+    trustManager.certChain
   }
 }
 
 /** Trust manager that captures the certificate chain presented during TLS handshake. */
 class CaptureTrustManager : X509TrustManager {
-  private val _chain = mutableListOf<X509Certificate>()
-  val chain: List<X509Certificate>
-    get() = _chain
+  val certChain: List<X509Certificate>
+    field = mutableListOf<X509Certificate>()
 
   override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
-    _chain.addAll(chain)
+    certChain.addAll(chain)
   }
 
   override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-    _chain.addAll(chain)
+    certChain.addAll(chain)
   }
 
   override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()

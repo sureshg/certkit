@@ -1,9 +1,7 @@
 @file:OptIn(kotlin.time.ExperimentalTime::class)
 
-package dev.suresh.certkit.der
+package certkit.der
 
-import java.math.BigInteger
-import kotlin.time.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -11,6 +9,8 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
+import java.math.BigInteger
+import kotlin.time.Instant
 
 /**
  * ASN.1 DER encoder/decoder for PEM processing and certificate signing requests.
@@ -150,8 +150,8 @@ object Der {
   /**
    * Decodes a DER length at the given offset, returning (length, bytesConsumed).
    *
-   * Short form: single byte < 128. Long form: first byte = 0x80 | numBytes, followed by numBytes
-   * of big-endian length.
+   * Short form: single byte < 128. Long form: first byte = 0x80 | numBytes, followed by numBytes of
+   * big-endian length.
    */
   private fun decodeLengthAt(buffer: ByteArray, offset: Int): Pair<Int, Int> {
     val firstByte = buffer[offset].toInt() and 0xFF

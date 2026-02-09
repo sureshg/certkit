@@ -1,6 +1,6 @@
-package dev.suresh.certkit.cert
+package certkit.cert
 
-import dev.suresh.certkit.pem.pem
+import certkit.pem.pem
 import java.math.BigInteger
 import java.net.InetAddress
 import java.security.*

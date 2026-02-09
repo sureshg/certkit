@@ -1,8 +1,55 @@
-product: jvm/app
+product:
+  type: lib
+  platforms: [ jvm ]
+
+settings:
+  publishing:
+    enabled: true
+    group: dev.suresh.certkit
+    version: 1.0.0-SNAPSHOT
+
+  jvm:
+    release: 21
+    storeParameterNames: true
+    test:
+      junitPlatformVersion: 6.1.0-M1
+
+  kotlin:
+    version: 2.3.10
+    languageVersion: 2.3
+    apiVersion: 2.3
+    progressiveMode: true
+    allWarningsAsErrors: false
+    suppressWarnings: false
+    powerAssert: enabled
+    verbose: false
+    freeCompilerArgs:
+      - -Wextra
+      - -Xcontext-parameters
+      - -Xexpect-actual-classes
+      - -Xreport-all-warnings
+      - -Xreturn-value-checker=full
+      - -Xcontext-sensitive-resolution
+      - -Xannotation-default-target=param-property
+      - -Xexplicit-backing-fields
+      - -Xconsistent-data-class-copy-visibility
+      - -Xno-param-assertions
+      - -Xno-call-assertions
+      - -Xno-receiver-assertions
+      - -Xwhen-expressions=indy
+    optIns:
+      - kotlin.ExperimentalStdlibApi
+      - kotlin.ExperimentalUnsignedTypes
+      - kotlin.contracts.ExperimentalContracts
+      - kotlin.io.encoding.ExperimentalEncodingApi
+      - kotlin.time.ExperimentalTime
+      - kotlin.uuid.ExperimentalUuidApi
+      - kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 dependencies:
-  - org.jetbrains.kotlinx:kotlinx-datetime:0.7.1
-  - org.jetbrains.kotlinx:kotlinx-io-core:0.8.2
+  - $libs.kotlinx.datetime
+  - $libs.kotlinx.io.core
 
 test-dependencies:
-  - org.junit.jupiter:junit-jupiter:6.1.0-M1
+  - bom: $libs.junit.bom
+  - $libs.junit.jupiter

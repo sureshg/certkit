@@ -1,6 +1,6 @@
 [versions]
-java                           = "27"
-kotlin                         = "2.3.20-Beta2"
+java                           = "21"
+kotlin                         = "2.3.10"
 kotlin-ksp                     = "2.3.5"
 kotlin-jvmtarget               = "21"
 kotlin-dsl-jvmtarget           = "21"
@@ -33,7 +33,7 @@ kotlinx-metadata               = "0.9.0"
 kotlinx-schema                 = "0.3.0"
 kotlinx-reflect-lite           = "1.2.0-RC"
 kotlin-lincheck                = "3.4"
-kotlin-wrappers                = "2026.2.4"
+kotlin-wrappers                = "2026.2.6"
 kotlin-redacted                = "1.15.1"
 kotlin-serviceloader           = "0.0.22"
 kotlinx-multik                 = "0.2.3"
@@ -47,9 +47,9 @@ postgresql                     = "42.7.9"
 embedded-postgres              = "2.2.0"
 embedded-postgres-bom          = "18.1.0"
 evas                           = "1.4.0"
-kopy                           = "0.21.0+2.3.0"
+kopy                           = "0.22.0+2.3.10"
 poko                           = "0.21.1"
-mappie                         = "2.3.0-2.3.1"
+mappie                         = "2.3.10-2.3.1"
 akkurate                       = "0.11.0"
 kaml                           = "0.104.0"
 snakeyaml-engine-kmp           = "4.0.1"
@@ -863,15 +863,3 @@ includegit                           = { id = "me.champeau.gradle.includegit"   
 reproducible-builds                  = { id = "org.gradlex.reproducible-builds"                                , version.ref = "reproducible-builds" }
 autonomousapps-depanalysis           = { id = "com.autonomousapps.dependency-analysis"                         , version.ref = "autonomousapps-depanalysis" }
 autonomousapps-bestpractices         = { id = "com.autonomousapps.plugin-best-practices-plugin"                , version.ref = "autonomousapps-bestpractices" }
-
-# Common build and settings plugins
-project-root                         = { id = "dev.suresh.plugin.root"                                         , version.ref = "bc-plugins" }
-project-common                       = { id = "dev.suresh.plugin.common"                                       , version.ref = "bc-plugins" }
-project-graalvm                      = { id = "dev.suresh.plugin.graalvm"                                      , version.ref = "bc-plugins" }
-project-kotlin-jvm                   = { id = "dev.suresh.plugin.kotlin.jvm"                                   , version.ref = "bc-plugins" }
-project-kotlin-mpp                   = { id = "dev.suresh.plugin.kotlin.mpp"                                   , version.ref = "bc-plugins" }
-project-kotlin-docs                  = { id = "dev.suresh.plugin.kotlin.docs"                                  , version.ref = "bc-plugins" }
-project-kotlin-benchmark             = { id = "dev.suresh.plugin.kotlin.benchmark"                             , version.ref = "bc-plugins" }
-project-publishing                   = { id = "dev.suresh.plugin.publishing"                                   , version.ref = "bc-plugins" }
-settings-repos                       = { id = "dev.suresh.plugin.repos"                                        , version.ref = "bc-plugins" }
-settings-catalog                     = { id = "dev.suresh.plugin.catalog"                                      , version.ref = "bc-plugins" }

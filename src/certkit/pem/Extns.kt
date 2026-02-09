@@ -1,6 +1,6 @@
 @file:OptIn(kotlin.io.encoding.ExperimentalEncodingApi::class)
 
-package dev.suresh.certkit.pem
+package certkit.pem
 
 import java.security.PrivateKey
 import java.security.PublicKey
@@ -15,10 +15,13 @@ fun ByteArray.encodePem(type: PemType): String = buildString {
 }
 
 /** PEM-encoded representation of this public key. */
-val PublicKey.pem: String get() = encoded.encodePem(PemType.PUBLIC)
+val PublicKey.pem: String
+  get() = encoded.encodePem(PemType.PUBLIC)
 
 /** PEM-encoded representation of this private key (PKCS#8). */
-val PrivateKey.pem: String get() = encoded.encodePem(PemType.PKCS8INF)
+val PrivateKey.pem: String
+  get() = encoded.encodePem(PemType.PKCS8INF)
 
 /** PEM-encoded representation of this X.509 certificate. */
-val X509Certificate.pem: String get() = encoded.encodePem(PemType.X509)
+val X509Certificate.pem: String
+  get() = encoded.encodePem(PemType.X509)
