@@ -17,8 +17,15 @@ settings:
   jvm:
     release: 21
     storeParameterNames: true
+
+    jdk:
+      version: 25
+      distributions: [ zulu, temurin ]
+
     test:
       junitPlatformVersion: 6.1.0-M1
+      freeJvmArgs:
+        - --enable-native-access=ALL-UNNAMED
 
   kotlin:
     version: 2.3.10
