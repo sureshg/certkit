@@ -62,18 +62,22 @@ println(cert.pem)
 ### Create a CSR
 
 ```kotlin
-val csr = Csr.create("CN=app.example.com,O=Acme", "SHA256withECDSA", keyPair)
-println(csr.pemEncoded)
+val keyPair = KeyPairGenerator.getInstance("RSA")
+    .apply { initialize(2048) }
+    .generateKeyPair()
+
+val csr = Csr.create("CN=app.example.com,O=Acme", "SHA256withRSA", keyPair)
+println(csr.pem)
 ```
 
 ### Load PEM Keys & Certificates
 
 ```kotlin
-val privateKey = Pem.loadPrivateKey(Path.of("server.key"), keyPassword = "secret")
-val publicKey = Pem.loadPublicKey(Path.of("server.pub"))
-val certs = Pem.readCertificateChain(Path.of("chain.crt"))
-val keyStore = Pem.loadKeyStore(Path.of("server.crt"), Path.of("server.key"))
-val trustStore = Pem.loadTrustStore(Path.of("ca.crt"))
+val privateKey = Pem.loadPrivateKey(Path("server.key"), keyPassword = "secret")
+val publicKey = Pem.loadPublicKey(Path("server.pub"))
+val certs = Pem.readCertificateChain(Path("chain.crt"))
+val keyStore = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
+val trustStore = Pem.loadTrustStore(Path("ca.crt"))
 ```
 
 ### Scan TLS Certificates
