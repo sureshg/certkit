@@ -1,8 +1,6 @@
 package certkit.pem
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.*
 import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
@@ -100,14 +98,14 @@ class PemTest {
 
   @Test
   fun `loadPrivateKey throws on missing key`() {
-    assertThrows<IllegalStateException> {
+    assertFailsWith<IllegalStateException> {
       val _ = Pem.loadPrivateKey("no key here")
     }
   }
 
   @Test
   fun `loadPrivateKey throws on encrypted key without password`() {
-    assertThrows<IllegalStateException> {
+    assertFailsWith<IllegalStateException> {
       val _ = Pem.loadPrivateKey(resourcePath("rsa.client.pkcs8.key.encrypted"), null)
     }
   }
@@ -129,7 +127,7 @@ class PemTest {
 
   @Test
   fun `loadPublicKey throws on missing key`() {
-    assertThrows<IllegalStateException> {
+    assertFailsWith<IllegalStateException> {
       val _ = Pem.loadPublicKey("no key here")
     }
   }

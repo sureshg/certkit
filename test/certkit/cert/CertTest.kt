@@ -1,25 +1,22 @@
 package certkit.cert
 
-import certkit.pem.Pem
-import certkit.pem.pem
-import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+import certkit.pem.*
+import certkit.tls.trustManagers
 import java.math.BigInteger
 import java.net.InetAddress
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.spec.ECGenParameterSpec
-import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.X509TrustManager
 import javax.security.auth.x500.X500Principal
+import kotlin.test.*
+import kotlinx.datetime.LocalDate
 
 class CertTest {
 
   @Test
   fun `buildSelfSigned produces a valid self-signed CA certificate`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = genECKeyPair()
     val subject = X500Principal("CN=Test,O=Test Org")
     val cert =
         Cert.buildSelfSigned(
@@ -40,7 +37,7 @@ class CertTest {
 
   @Test
   fun `buildSelfSigned sets certificate fields correctly`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = genECKeyPair()
     val issuer = X500Principal("CN=issuer,O=Airlift")
     val subject = X500Principal("CN=subject,O=Airlift")
     val cert =
@@ -63,7 +60,7 @@ class CertTest {
 
   @Test
   fun `buildSelfSigned includes extensions`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = genECKeyPair()
     val subject = X500Principal("CN=Test User,O=Test Org")
     val cert =
         Cert.buildSelfSigned(
@@ -81,7 +78,7 @@ class CertTest {
 
   @Test
   fun `buildSelfSigned certificate is trusted in a trust store`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = genECKeyPair()
     val subject = X500Principal("CN=Trust Test")
     val cert =
         Cert.buildSelfSigned(
@@ -97,18 +94,12 @@ class CertTest {
           load(null, null)
           setCertificateEntry("test", cert)
         }
-    val tmf =
-        TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
-          init(keyStore)
-        }
-    tmf.trustManagers.filterIsInstance<X509TrustManager>().forEach {
-      it.checkServerTrusted(arrayOf(cert), "EC")
-    }
+    keyStore.trustManagers.forEach { it.checkServerTrusted(arrayOf(cert), "EC") }
   }
 
   @Test
   fun `certificate PEM round-trip`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = genECKeyPair()
     val subject = X500Principal("CN=RoundTrip")
     val cert =
         Cert.buildSelfSigned(
@@ -125,13 +116,13 @@ class CertTest {
 
   @Test
   fun `key pair PEM encoding`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = genECKeyPair()
 
     assertTrue(keyPair.public.pem.startsWith("-----BEGIN PUBLIC KEY-----"))
     assertTrue(keyPair.private.pem.startsWith("-----BEGIN PRIVATE KEY-----"))
   }
 
-  private fun generateECKeyPair(): KeyPair =
+  private fun genECKeyPair(): KeyPair =
       KeyPairGenerator.getInstance("EC")
           .apply { initialize(ECGenParameterSpec("secp256r1")) }
           .generateKeyPair()

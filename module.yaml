@@ -59,10 +59,17 @@ settings:
       - kotlin.uuid.ExperimentalUuidApi
       - kotlin.concurrent.atomics.ExperimentalAtomicApi
 
+test-settings:
+  kotlin:
+    powerAssert:
+      enabled: true
+      functions:
+        - kotlin.assert
+        - kotlin.require
+        - kotlin.test.assertTrue
+        - kotlin.test.assertEquals
+        - kotlin.test.assertNull
+
 dependencies:
   - $libs.kotlinx.datetime
   - $libs.kotlinx.io.core
-
-test-dependencies:
-  - bom: $libs.junit.bom
-  - $libs.junit.jupiter

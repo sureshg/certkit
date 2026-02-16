@@ -1,9 +1,7 @@
 package certkit.csr
 
 import certkit.pem.pem
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import kotlin.test.*
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.Signature
@@ -40,7 +38,7 @@ class CsrTest {
 
   @Test
   fun `create with unknown algorithm throws`() {
-    assertThrows<IllegalStateException> {
+    assertFailsWith<IllegalStateException> {
       val _ = Csr.create("CN=test", "NoSuchAlgorithm", generateRSAKeyPair())
     }
   }

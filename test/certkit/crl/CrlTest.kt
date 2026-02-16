@@ -2,13 +2,12 @@ package certkit.crl
 
 import certkit.cert.Cert
 import certkit.pem.pem
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 import java.security.KeyPairGenerator
 import java.security.cert.X509CRL
 import java.security.cert.X509Certificate
 import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
+import kotlin.test.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 
@@ -16,9 +15,9 @@ class CrlTest {
 
   companion object {
     private val now = Clock.System.now()
-    private val caKey = ecKeyPair()
-    private val leafKey = ecKeyPair()
-    private val otherKey = ecKeyPair()
+    private val caKey = genECKeyPair()
+    private val leafKey = genECKeyPair()
+    private val otherKey = genECKeyPair()
     private val CA = X500Principal("CN=Test CA")
 
     private val caCert: X509Certificate =
@@ -58,7 +57,7 @@ class CrlTest {
             revokedSerials = listOf(2L),
         )
 
-    private fun ecKeyPair() =
+    private fun genECKeyPair() =
         KeyPairGenerator.getInstance("EC")
             .apply { initialize(ECGenParameterSpec("secp256r1")) }
             .generateKeyPair()
