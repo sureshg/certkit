@@ -2,6 +2,9 @@ package certkit.cert
 
 import certkit.pem.Pem
 import certkit.pem.pem
+import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.net.InetAddress
 import java.security.KeyPair
@@ -11,9 +14,6 @@ import java.security.spec.ECGenParameterSpec
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 import javax.security.auth.x500.X500Principal
-import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 
 class CertTest {
 

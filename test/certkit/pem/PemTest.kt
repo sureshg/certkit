@@ -1,13 +1,13 @@
 package certkit.pem
 
-import kotlin.io.path.toPath
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
 import javax.naming.ldap.LdapName
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import kotlin.io.path.toPath
 
 class PemTest {
 
@@ -100,7 +100,9 @@ class PemTest {
 
   @Test
   fun `loadPrivateKey throws on missing key`() {
-    assertThrows<IllegalStateException> { val _ = Pem.loadPrivateKey("no key here") }
+    assertThrows<IllegalStateException> {
+      val _ = Pem.loadPrivateKey("no key here")
+    }
   }
 
   @Test
@@ -127,7 +129,9 @@ class PemTest {
 
   @Test
   fun `loadPublicKey throws on missing key`() {
-    assertThrows<IllegalStateException> { val _ = Pem.loadPublicKey("no key here") }
+    assertThrows<IllegalStateException> {
+      val _ = Pem.loadPublicKey("no key here")
+    }
   }
 
   private fun testLoadKeyStore(
@@ -161,5 +165,6 @@ class PemTest {
   }
 
   private fun resourcePath(name: String) =
-      this::class.java.classLoader.getResource(name)?.toURI()?.toPath() ?: error("Resource not found: $name")
+      this::class.java.classLoader.getResource(name)?.toURI()?.toPath()
+          ?: error("Resource not found: $name")
 }

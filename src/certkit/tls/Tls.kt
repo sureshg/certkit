@@ -5,7 +5,10 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.security.Security
 import java.security.cert.X509Certificate
-import javax.net.ssl.*
+import javax.net.ssl.SNIHostName
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 

@@ -37,9 +37,7 @@ enum class PemType(val marker: String) {
   EC_PRIVATE_KEY("EC PRIVATE KEY"),
 }
 
-/**
- * Reads and loads PEM-encoded certificates, private keys, public keys, and key/trust stores.
- */
+/** Reads and loads PEM-encoded certificates, private keys, public keys, and key/trust stores. */
 object Pem {
 
   private val CERT_PATTERN =
@@ -63,6 +61,7 @@ object Pem {
   private val DSA_KEY_OID = Der.oid("1.2.840.10040.4.1")
   private val EC_KEY_OID = Der.oid("1.2.840.10045.2.1")
   private val DER_NULL = byteArrayOf(5, 0)
+
   private val certFactory = CertificateFactory.getInstance("X.509")
 
   /** Returns `true` if the data contains PEM-encoded certificates, keys, or private keys. */

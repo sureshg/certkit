@@ -6,7 +6,6 @@ import java.security.Security
 import java.security.cert.X509Certificate
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
-import kotlin.collections.addAll
 
 /** Platform-specific trust store types. */
 sealed class TrustStoreType(val name: String) {
@@ -60,3 +59,11 @@ fun systemTrustStore(type: TrustStoreType): KeyStore =
       is TrustStoreType.Directory -> KeyStore.getInstance(type.name).apply { load { null } }
       else -> KeyStore.getInstance(type.name).apply { load(null, null) }
     }
+
+/** Returns [X509TrustManager]s initialized from this [KeyStore]. */
+val KeyStore.trustManagers: List<X509TrustManager>
+  get() =
+      TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).let { tm ->
+        tm.init(this)
+        tm.trustManagers.filterIsInstance<X509TrustManager>()
+      }

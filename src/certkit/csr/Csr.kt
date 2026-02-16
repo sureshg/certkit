@@ -1,10 +1,14 @@
 package certkit.csr
 
-import java.security.*
+import java.security.KeyPair
+import java.security.PrivateKey
+import java.security.Security
+import java.security.Signature
 import javax.security.auth.x500.X500Principal
 
 /**
- * PKCS#10 Certificate Signing Request factory, per [RFC 2986](https://datatracker.ietf.org/doc/html/rfc2986).
+ * PKCS#10 Certificate Signing Request factory, per
+ * [RFC 2986](https://datatracker.ietf.org/doc/html/rfc2986).
  *
  * ```
  * CertificationRequest ::= SEQUENCE {
@@ -40,8 +44,8 @@ object Csr {
       sans: List<San> = emptyList(),
   ): CsrRequest {
     val info = CsrInfo(X500Principal(x500Name), keyPair.public, sans)
-    val algorithm = signatureAlgorithms[algorithmName]
-        ?: error("Unknown signature algorithm '$algorithmName'")
+    val algorithm =
+        signatureAlgorithms[algorithmName] ?: error("Unknown signature algorithm '$algorithmName'")
     return CsrRequest(info, algorithm, sign(info, algorithm, keyPair.private))
   }
 

@@ -11,8 +11,8 @@ import java.math.BigInteger
 import kotlin.time.Instant
 
 /**
- * ASN.1 DER (Distinguished Encoding Rules) encoder/decoder — the binary format
- * used inside X.509 certificates, CSRs, and keys.
+ * ASN.1 DER (Distinguished Encoding Rules) encoder/decoder — the binary format used inside X.509
+ * certificates, CSRs, and keys.
  *
  * Every DER element is a **Tag-Length-Value** (TLV) triplet:
  * ```
@@ -22,9 +22,9 @@ import kotlin.time.Instant
  * ```
  *
  * **How length is encoded:**
- * - **≤ 127** → single byte:  `writeLength(5) → [0x05]`
- * - **≥ 128** → first byte = `0x80 + N` (N = number of following length bytes):
- *   `writeLength(256) → [0x82, 0x01, 0x00]`  (0x82 means "2 bytes follow")
+ * - **≤ 127** → single byte: `writeLength(5) → [0x05]`
+ * - **≥ 128** → first byte = `0x80 + N` (N = number of following length bytes): `writeLength(256) →
+ *   [0x82, 0x01, 0x00]` (0x82 means "2 bytes follow")
  *
  * **How OIDs are encoded** (e.g. `"1.2.840.113549"`):
  * - First two arcs merged: `arc0 * 40 + arc1` → single byte
@@ -155,7 +155,10 @@ object Der {
     }
   }
 
-  /** Unwraps a context-specific optional element (`[A0+n] [len] [inner]`) and returns the inner bytes. */
+  /**
+   * Unwraps a context-specific optional element (`[A0+n] [len] [inner]`) and returns the inner
+   * bytes.
+   */
   fun decodeOptionalElement(element: ByteArray): ByteArray {
     require(element[0].toInt() and 0xE0 == 0xA0) { "Expected optional sequence element tag" }
     val (len, lenSize) = decodeLengthAt(element, 1)

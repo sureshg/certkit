@@ -17,7 +17,8 @@ import kotlin.time.Instant
 /**
  * Self-signed X.509 certificate builder (EC keys, SHA256withECDSA).
  *
- * Constructs a DER-encoded X.509v3 certificate ([RFC 5280](https://datatracker.ietf.org/doc/html/rfc5280)):
+ * Constructs a DER-encoded X.509v3 certificate ([RFC
+ * 5280](https://datatracker.ietf.org/doc/html/rfc5280)):
  * ```
  * Certificate ::= SEQUENCE {
  *   tbsCertificate     SEQUENCE {
@@ -44,6 +45,8 @@ object Cert {
   private val AUTHORITY_KEY_ID_OID = Der.oid("2.5.29.35")
   private val BASIC_CONSTRAINTS_OID = Der.oid("2.5.29.19")
   private val SUBJECT_ALT_NAME_OID = Der.oid("2.5.29.17")
+
+  private val certFactory = CertificateFactory.getInstance("X.509")
 
   /** Builds a self-signed X.509v3 certificate. The [keyPair] must be EC (P-256/P-384/P-521). */
   fun buildSelfSigned(
@@ -110,8 +113,7 @@ object Cert {
             .sign()
 
     val encoded = Der.sequence(rawCert, sigAlg, Der.bitString(0, sig))
-    return CertificateFactory.getInstance("X.509").generateCertificate(encoded.inputStream())
-        as X509Certificate
+    return certFactory.generateCertificate(encoded.inputStream()) as X509Certificate
   }
 
   /** Convenience overload: [notBefore] = start of day UTC, [notAfter] = 23:59:59 UTC. */

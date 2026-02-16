@@ -3,6 +3,7 @@ package certkit.pem
 import certkit.csr.CsrRequest
 import java.security.PrivateKey
 import java.security.PublicKey
+import java.security.cert.X509CRL
 import java.security.cert.X509Certificate
 import kotlin.io.encoding.Base64
 
@@ -24,6 +25,10 @@ val PrivateKey.pem: String
 /** PEM-encoded representation of this X.509 certificate. */
 val X509Certificate.pem: String
   get() = encoded.encodePem(PemType.X509)
+
+/** PEM-encoded representation of this X.509 CRL. */
+val X509CRL.pem: String
+  get() = encoded.encodePem(PemType.X509_CRL)
 
 /** PEM-encoded representation of this PKCS#10 certification request. */
 val CsrRequest.pem: String
