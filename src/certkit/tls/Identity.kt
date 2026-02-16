@@ -17,6 +17,21 @@ fun KeyStore.keyManagers(passwd: CharArray? = null): List<X509KeyManager> =
       km.keyManagers.filterIsInstance<X509KeyManager>()
     }
 
+/**
+ * Converts this keystore to PKCS12 format (the default since JDK 9), or returns it as-is if already
+ * PKCS12.
+ */
+fun KeyStore.toPkcs12(keyPassword: CharArray? = null): KeyStore =
+    if (type.equals("pkcs12", ignoreCase = true)) this
+    else {
+      val p12 = newKeyStore("pkcs12")
+      aliases().toList().forEach { alias ->
+        val protParam = if (isKeyEntry(alias)) KeyStore.PasswordProtection(keyPassword) else null
+        p12.setEntry(alias, getEntry(alias, protParam), protParam)
+      }
+      p12
+    }
+
 /** Key manager that always selects a specific alias for client authentication. */
 class AliasKeyManager(
     private val delegate: X509KeyManager,
