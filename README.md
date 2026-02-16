@@ -6,18 +6,17 @@
 [![OpenJDK Version][java_img]][java_url]
 [![Build-Amper][amper_img]][amper_url]
 
-Lightweight X.509 certificate toolkit for Kotlin/JVM. Build self-signed certs, CSRs, and work with PEM/DER encoding
-using JDK standard libs.
+Lightweight X.509 certificate toolkit for Kotlin/JVM. Build self-signed certs, CSRs, CRLs, and work with PEM/DER
+encoding, all using JDK standard libraries.
 
 ## Features
 
 - **Self-signed certificates** — X.509v3 with SAN, Basic Constraints, key identifiers (EC keys)
-- **CSR creation** — PKCS#10 Certificate Signing Requests with auto-discovered signature algorithms
+- **CSR creation** — PKCS#10 Certificate Signing Requests with SAN support
+- **CRL support** — parse, build, and check certificate revocation lists; extract CRL Distribution Points
 - **PEM read/write** — load and encode certificates, private keys, public keys
 - **Private key formats** — PKCS#8 unencrypted, PKCS#8 PBE-encrypted, PKCS#1 (RSA, DSA, EC)
-- **KeyStore loading** — build JKS key/trust stores from PEM files
 - **TLS scanning** — connect to any host and capture the certificate chain
-- **Trust store discovery** — JDK cacerts, macOS Keychain, Windows-ROOT
 - **No BouncyCastle, no Guava** — all crypto is pure JDK `java.security.*` and `javax.crypto.*`
 
 ## Supported Types
@@ -25,10 +24,13 @@ using JDK standard libs.
 - **Private keys** — PKCS#8, PKCS#8 encrypted, PKCS#1 (RSA, DSA, EC)
 - **Public keys** — X.509/SPKI, PKCS#1 RSA
 - **Certificates** — X.509v3 (PEM & DER)
+- **CRLs** — X.509 CRL (PEM & DER)
 - **Key algorithms** — RSA, EC (secp256r1, secp384r1, …), DSA
 - **Cert builder** — EC keys (SHA256withECDSA)
 
 ## 🚀 Quick Start
+
+> **Requires JDK 21+**
 
 Add the dependency:
 
@@ -66,8 +68,31 @@ val keyPair = KeyPairGenerator.getInstance("RSA")
     .apply { initialize(2048) }
     .generateKeyPair()
 
-val csr = Csr.create("CN=app.example.com,O=Acme", "SHA256withRSA", keyPair)
-println(csr.pem)
+val csr = Csr.create(
+    x500Name = "CN=app.example.com,O=Acme",
+    algorithmName = "SHA256withRSA",
+    keyPair = keyPair,
+    sans = listOf(San.Dns("app.example.com"), San.Ip("10.0.0.1")),
+)
+println(csr.encoded)
+```
+
+### Build & Check a CRL
+
+```kotlin
+val crl = Crl.build(
+    keyPair = caKeyPair,
+    issuer = X500Principal("CN=My CA,O=Acme"),
+    thisUpdate = Clock.System.now(),
+    nextUpdate = Clock.System.now() + 30.days,
+    revokedSerials = listOf(42L, 99L),
+)
+
+// Check if a certificate is revoked
+val revoked = cert.isRevokedBy(crl)
+
+// Extract CRL Distribution Points from a certificate
+val urls = Crl.distributionPoints(cert)
 ```
 
 ### Load PEM Keys & Certificates
@@ -93,6 +118,8 @@ chain.forEach { println("${it.commonName} — expires ${it.expiryDateUTC}") }
 println(keyPair.public.pem)     // -----BEGIN PUBLIC KEY-----
 println(keyPair.private.pem)    // -----BEGIN PRIVATE KEY-----
 println(certificate.pem)        // -----BEGIN CERTIFICATE-----
+println(csr.pem)                // -----BEGIN CERTIFICATE REQUEST-----
+println(crl.pem)                // -----BEGIN X509 CRL-----
 ```
 
 ## 🔧 Build & Test
