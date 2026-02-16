@@ -17,8 +17,6 @@ import org.junit.jupiter.api.Test
 
 class CertTest {
 
-  // -- buildSelfSigned --------------------------------------------------------------------------
-
   @Test
   fun `buildSelfSigned produces a valid self-signed CA certificate`() {
     val keyPair = generateECKeyPair()
@@ -63,8 +61,6 @@ class CertTest {
     assertEquals("2025-12-31T23:59:59Z", cert.notAfter.toInstant().toString())
   }
 
-  // -- certificate extensions -------------------------------------------------------------------
-
   @Test
   fun `buildSelfSigned includes extensions`() {
     val keyPair = generateECKeyPair()
@@ -82,8 +78,6 @@ class CertTest {
     assertEquals("Test User", cert.commonName)
     assertTrue(cert.isCA)
   }
-
-  // -- trust store integration ------------------------------------------------------------------
 
   @Test
   fun `buildSelfSigned certificate is trusted in a trust store`() {
@@ -103,16 +97,14 @@ class CertTest {
           load(null, null)
           setCertificateEntry("test", cert)
         }
-    val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-    tmf.init(keyStore)
-    for (tm in tmf.trustManagers) {
-      if (tm is X509TrustManager) {
-        tm.checkServerTrusted(arrayOf(cert), "EC")
-      }
+    val tmf =
+        TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
+          init(keyStore)
+        }
+    tmf.trustManagers.filterIsInstance<X509TrustManager>().forEach {
+      it.checkServerTrusted(arrayOf(cert), "EC")
     }
   }
-
-  // -- PEM encoding -----------------------------------------------------------------------------
 
   @Test
   fun `certificate PEM round-trip`() {
@@ -138,8 +130,6 @@ class CertTest {
     assertTrue(keyPair.public.pem.startsWith("-----BEGIN PUBLIC KEY-----"))
     assertTrue(keyPair.private.pem.startsWith("-----BEGIN PRIVATE KEY-----"))
   }
-
-  // -- helpers -----------------------------------------------------------------------------------
 
   private fun generateECKeyPair(): KeyPair =
       KeyPairGenerator.getInstance("EC")

@@ -1,6 +1,6 @@
 package certkit.pem
 
-import java.nio.file.Path
+import kotlin.io.path.toPath
 import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
@@ -17,8 +17,6 @@ class PemTest {
     private const val KEY_PASSWORD = "airlift"
   }
 
-  // -- isPem ------------------------------------------------------------------------------------
-
   @Test
   fun `isPem detects certificates, keys, and rejects non-PEM`() {
     assertTrue(Pem.isPem(resourcePath("rsa.client.crt")))
@@ -27,16 +25,12 @@ class PemTest {
     assertFalse(Pem.isPem("not a pem string"))
   }
 
-  // -- loadTrustStore ---------------------------------------------------------------------------
-
   @Test
   fun `loadTrustStore loads RSA, EC, and DSA CA certificates`() {
     assertCertificateChain(Pem.loadTrustStore(resourcePath("rsa.ca.crt")), CA_NAME)
     assertCertificateChain(Pem.loadTrustStore(resourcePath("ec.ca.crt")), CA_NAME)
     assertCertificateChain(Pem.loadTrustStore(resourcePath("dsa.ca.crt")), CA_NAME)
   }
-
-  // -- loadKeyStore -----------------------------------------------------------------------------
 
   @Test
   fun `loadKeyStore with PKCS8 unencrypted keys`() {
@@ -88,8 +82,6 @@ class PemTest {
     testLoadKeyStore("ec.client.pkcs8.pem.encrypted", "ec.client.pkcs1.pem", null, CLIENT_NAME)
   }
 
-  // -- loadPrivateKey ---------------------------------------------------------------------------
-
   @Test
   fun `loadPrivateKey PKCS1 and PKCS8 produce same key`() {
     assertEquals(
@@ -108,9 +100,7 @@ class PemTest {
 
   @Test
   fun `loadPrivateKey throws on missing key`() {
-    assertThrows<IllegalStateException> {
-      val _ = Pem.loadPrivateKey("no key here")
-    }
+    assertThrows<IllegalStateException> { val _ = Pem.loadPrivateKey("no key here") }
   }
 
   @Test
@@ -119,8 +109,6 @@ class PemTest {
       val _ = Pem.loadPrivateKey(resourcePath("rsa.client.pkcs8.key.encrypted"), null)
     }
   }
-
-  // -- loadPublicKey ----------------------------------------------------------------------------
 
   @Test
   fun `loadPublicKey matches certificate public key`() {
@@ -139,12 +127,8 @@ class PemTest {
 
   @Test
   fun `loadPublicKey throws on missing key`() {
-    assertThrows<IllegalStateException> {
-      val _ = Pem.loadPublicKey("no key here")
-    }
+    assertThrows<IllegalStateException> { val _ = Pem.loadPublicKey("no key here") }
   }
-
-  // -- helpers -----------------------------------------------------------------------------------
 
   private fun testLoadKeyStore(
       certFile: String,
@@ -176,10 +160,6 @@ class PemTest {
     assertEquals(expectedName, LdapName(cert.subjectX500Principal.name).toString())
   }
 
-  private fun resourcePath(name: String): Path {
-    val url =
-        this::class.java.classLoader.getResource(name)
-            ?: throw IllegalArgumentException("Resource not found: $name")
-    return Path.of(url.toURI())
-  }
+  private fun resourcePath(name: String) =
+      this::class.java.classLoader.getResource(name)?.toURI()?.toPath() ?: error("Resource not found: $name")
 }

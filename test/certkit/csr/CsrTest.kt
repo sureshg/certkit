@@ -12,16 +12,12 @@ import org.junit.jupiter.api.assertThrows
 
 class CsrTest {
 
-  // -- Csr.signatureAlgorithms -------------------------------------------------------------------
-
   @Test
   fun `signatureAlgorithms discovers RSA and EC from JCA providers`() {
     assertTrue(Csr.signatureAlgorithms.isNotEmpty())
     assertNotNull(Csr.signatureAlgorithms["SHA256withRSA"])
     assertNotNull(Csr.signatureAlgorithms["SHA256withECDSA"])
   }
-
-  // -- Csr.create --------------------------------------------------------------------------------
 
   @Test
   fun `create with RSA key produces verifiable CSR`() {
@@ -48,8 +44,6 @@ class CsrTest {
       val _ = Csr.create("CN=test", "NoSuchAlgorithm", generateRSAKeyPair())
     }
   }
-
-  // -- Csr.create with SANs ---------------------------------------------------------------------
 
   @Test
   fun `create with DNS SANs`() {
@@ -80,8 +74,6 @@ class CsrTest {
     verifySignature(csr, keyPair)
   }
 
-  // -- CsrInfo ----------------------------------------------------------------------------------
-
   @Test
   fun `CsrInfo equality and hashCode`() {
     val keyPair = generateRSAKeyPair()
@@ -93,8 +85,6 @@ class CsrTest {
     assertEquals(info1.hashCode(), info2.hashCode())
   }
 
-  // -- SignatureAlgo -----------------------------------------------------------------------------
-
   @Test
   fun `SignatureAlgo equality is by OID`() {
     val alg1 = SignatureAlgo("SHA256withRSA", "1.2.840.113549.1.1.11")
@@ -105,8 +95,6 @@ class CsrTest {
     assertEquals(alg1.hashCode(), alg2.hashCode())
     assertNotEquals(alg1, alg3)
   }
-
-  // -- helpers -----------------------------------------------------------------------------------
 
   private fun verifySignature(csr: CsrRequest, keyPair: KeyPair) {
     val verifier = Signature.getInstance(csr.algorithm.name)

@@ -3,7 +3,7 @@ package certkit.tls
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.security.Principal
+import java.security.Security
 import java.security.cert.X509Certificate
 import javax.net.ssl.*
 import kotlin.time.Duration
@@ -30,34 +30,6 @@ fun scanCertificates(
     }
     trustManager.certChain
   }
-}
-
-/** Trust manager that captures the certificate chain presented during TLS handshake. */
-class CaptureTrustManager : X509TrustManager {
-  val certChain: List<X509Certificate>
-    field = mutableListOf<X509Certificate>()
-
-  override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
-    certChain.addAll(chain)
-  }
-
-  override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
-    certChain.addAll(chain)
-  }
-
-  override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
-}
-
-/** Key manager that always selects a specific alias for client authentication. */
-class AliasKeyManager(
-    private val delegate: X509KeyManager,
-    private val aliasName: String,
-) : X509KeyManager by delegate {
-  override fun chooseClientAlias(
-      keyType: Array<String>,
-      issuers: Array<Principal>,
-      socket: Socket,
-  ): String = aliasName
 }
 
 /** SSLSocketFactory wrapper that disables SNI and hostname verification on created sockets. */
@@ -97,5 +69,44 @@ class ScanSSLFactory(private val delegate: SSLSocketFactory) : SSLSocketFactory(
           serverNames = emptyList()
           endpointIdentificationAlgorithm = null
         }
+  }
+}
+
+/** JSSE system and security properties for TLS configuration. */
+enum class TLSProp(val key: String, val desc: String, val system: Boolean = true) {
+  // KeyStore
+  KeyStore("javax.net.ssl.keyStore", "Default keystore"),
+  KeyStoreType("javax.net.ssl.keyStoreType", "Default keystore type"),
+  KeyStorePassword("javax.net.ssl.keyStorePassword", "Default keystore password"),
+  KeyStoreProvider("javax.net.ssl.keyStoreProvider", "Default keystore provider"),
+
+  // TrustStore
+  TrustStore("javax.net.ssl.trustStore", "Default truststore"),
+  TrustStoreType("javax.net.ssl.trustStoreType", "Default truststore type"),
+  TrustStorePassword("javax.net.ssl.trustStorePassword", "Default truststore password"),
+  TrustStoreProvider("javax.net.ssl.trustStoreProvider", "Default truststore provider"),
+
+  // Protocols & Ciphers
+  HttpsProtocols("https.protocols", "Default HTTPS handshaking protocols"),
+  HttpsCipherSuites("https.cipherSuites", "Default cipher suites"),
+  TLSProtocols("jdk.tls.client.protocols", "Default enabled TLS protocols"),
+
+  // Security Restrictions (non-system)
+  CertPathDisabledAlgos(
+      "jdk.certpath.disabledAlgorithms",
+      "Disabled cert verification algorithms",
+      false,
+  ),
+  TLSDisabledAlgos("jdk.tls.disabledAlgorithms", "Disabled/restricted algorithms", false),
+
+  // Proxy
+  ProxyHost("https.proxyHost", "Default HTTPS proxy host"),
+  ProxyPort("https.proxyPort", "Default HTTPS proxy port"),
+
+  // Debug
+  Debug("javax.net.debug", "Debugging SSL/TLS connections");
+
+  fun set(value: String) {
+    if (system) System.setProperty(key, value) else Security.setProperty(key, value)
   }
 }
