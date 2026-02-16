@@ -1,23 +1,29 @@
 package certkit.cert
 
+import certkit.pem.Pem
 import certkit.pem.pem
 import java.math.BigInteger
 import java.net.InetAddress
-import java.security.*
-import java.security.spec.*
-import javax.net.ssl.*
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.KeyStore
+import java.security.spec.ECGenParameterSpec
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 import javax.security.auth.x500.X500Principal
-import kotlinx.datetime.*
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class CertTest {
 
+  // -- buildSelfSigned --------------------------------------------------------------------------
+
   @Test
-  fun `build self-signed certificate`() {
+  fun `buildSelfSigned produces a valid self-signed CA certificate`() {
     val keyPair = generateECKeyPair()
     val subject = X500Principal("CN=Test,O=Test Org")
-    val certificate =
+    val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
             serialNumber = 1,
@@ -29,30 +35,17 @@ class CertTest {
             sanIpAddresses = listOf(InetAddress.getLoopbackAddress()),
         )
 
-    assertTrue(certificate.selfSigned)
-    assertTrue(certificate.isCA)
-
-    // Verify the certificate is trusted when added to a trust store
-    val keyStore =
-        KeyStore.getInstance(KeyStore.getDefaultType()).apply {
-          load(null, null)
-          setCertificateEntry("test", certificate)
-        }
-    val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
-    tmf.init(keyStore)
-    for (tm in tmf.trustManagers) {
-      if (tm is X509TrustManager) {
-        tm.checkServerTrusted(arrayOf(certificate), "EC")
-      }
-    }
+    assertTrue(cert.selfSigned)
+    assertTrue(cert.isCA)
+    assertFalse(cert.isIntermediateCA)
   }
 
   @Test
-  fun `certificate fields are correct`() {
+  fun `buildSelfSigned sets certificate fields correctly`() {
     val keyPair = generateECKeyPair()
     val issuer = X500Principal("CN=issuer,O=Airlift")
     val subject = X500Principal("CN=subject,O=Airlift")
-    val certificate =
+    val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
             serialNumber = 12345,
@@ -62,28 +55,23 @@ class CertTest {
             notAfter = LocalDate(2025, 12, 31),
         )
 
-    assertEquals(BigInteger.valueOf(12345), certificate.serialNumber)
-    assertEquals(issuer, certificate.issuerX500Principal)
-    assertEquals(subject, certificate.subjectX500Principal)
-    assertEquals(keyPair.public, certificate.publicKey)
-
-    // Verify notBefore = 2024-01-01T00:00:00Z
-    val notBeforeInstant = certificate.notBefore.toInstant()
-    assertEquals("2024-01-01T00:00:00Z", notBeforeInstant.toString())
-
-    // Verify notAfter = 2025-12-31T23:59:59Z
-    val notAfterInstant = certificate.notAfter.toInstant()
-    assertEquals("2025-12-31T23:59:59Z", notAfterInstant.toString())
+    assertEquals(BigInteger.valueOf(12345), cert.serialNumber)
+    assertEquals(issuer, cert.issuerX500Principal)
+    assertEquals(subject, cert.subjectX500Principal)
+    assertEquals(keyPair.public, cert.publicKey)
+    assertEquals("2024-01-01T00:00:00Z", cert.notBefore.toInstant().toString())
+    assertEquals("2025-12-31T23:59:59Z", cert.notAfter.toInstant().toString())
   }
 
+  // -- certificate extensions -------------------------------------------------------------------
+
   @Test
-  fun `certificate extensions`() {
+  fun `buildSelfSigned includes extensions`() {
     val keyPair = generateECKeyPair()
     val subject = X500Principal("CN=Test User,O=Test Org")
-    val certificate =
+    val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
-            serialNumber = 42,
             issuer = subject,
             subject = subject,
             notBefore = LocalDate(2024, 1, 1),
@@ -91,18 +79,17 @@ class CertTest {
             sanDnsNames = listOf("example.com"),
         )
 
-    assertTrue(certificate.selfSigned)
-    assertEquals("Test User", certificate.commonName)
-    assertTrue(certificate.pem.contains("BEGIN CERTIFICATE"))
-    assertTrue(certificate.isCA)
-    assertFalse(certificate.isIntermediateCA) // self-signed CA is not intermediate
+    assertEquals("Test User", cert.commonName)
+    assertTrue(cert.isCA)
   }
 
+  // -- trust store integration ------------------------------------------------------------------
+
   @Test
-  fun `PEM round-trip`() {
+  fun `buildSelfSigned certificate is trusted in a trust store`() {
     val keyPair = generateECKeyPair()
-    val subject = X500Principal("CN=RoundTrip")
-    val certificate =
+    val subject = X500Principal("CN=Trust Test")
+    val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
             issuer = subject,
@@ -111,16 +98,48 @@ class CertTest {
             notAfter = LocalDate(2025, 12, 31),
         )
 
-    val pemString = certificate.pem
-    assertTrue(pemString.startsWith("-----BEGIN CERTIFICATE-----"))
-    assertTrue(pemString.trimEnd().endsWith("-----END CERTIFICATE-----"))
-
-    val publicKeyPem = keyPair.public.pem
-    assertTrue(publicKeyPem.startsWith("-----BEGIN PUBLIC KEY-----"))
-
-    val privateKeyPem = keyPair.private.pem
-    assertTrue(privateKeyPem.startsWith("-----BEGIN PRIVATE KEY-----"))
+    val keyStore =
+        KeyStore.getInstance(KeyStore.getDefaultType()).apply {
+          load(null, null)
+          setCertificateEntry("test", cert)
+        }
+    val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+    tmf.init(keyStore)
+    for (tm in tmf.trustManagers) {
+      if (tm is X509TrustManager) {
+        tm.checkServerTrusted(arrayOf(cert), "EC")
+      }
+    }
   }
+
+  // -- PEM encoding -----------------------------------------------------------------------------
+
+  @Test
+  fun `certificate PEM round-trip`() {
+    val keyPair = generateECKeyPair()
+    val subject = X500Principal("CN=RoundTrip")
+    val cert =
+        Cert.buildSelfSigned(
+            keyPair = keyPair,
+            issuer = subject,
+            subject = subject,
+            notBefore = LocalDate(2024, 1, 1),
+            notAfter = LocalDate(2025, 12, 31),
+        )
+
+    val parsed = Pem.readCertificateChain(cert.pem).single()
+    assertEquals(cert, parsed)
+  }
+
+  @Test
+  fun `key pair PEM encoding`() {
+    val keyPair = generateECKeyPair()
+
+    assertTrue(keyPair.public.pem.startsWith("-----BEGIN PUBLIC KEY-----"))
+    assertTrue(keyPair.private.pem.startsWith("-----BEGIN PRIVATE KEY-----"))
+  }
+
+  // -- helpers -----------------------------------------------------------------------------------
 
   private fun generateECKeyPair(): KeyPair =
       KeyPairGenerator.getInstance("EC")

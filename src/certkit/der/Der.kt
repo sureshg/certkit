@@ -33,6 +33,7 @@ import kotlin.time.Instant
 object Der {
 
   private const val SEQUENCE_TAG = 0x30
+  private const val SET_TAG = 0x31
   private const val BOOLEAN_TAG = 0x01
   private const val INTEGER_TAG = 0x02
   private const val BIT_STRING_TAG = 0x03
@@ -55,6 +56,9 @@ object Der {
 
   /** Encodes a DER SEQUENCE (tag `0x30`) wrapping the concatenated [values]. */
   fun sequence(vararg values: ByteArray): ByteArray = constructed(SEQUENCE_TAG, values)
+
+  /** Encodes a DER SET (tag `0x31`) wrapping the concatenated [values]. */
+  fun set(vararg values: ByteArray): ByteArray = constructed(SET_TAG, values)
 
   /** Encodes a DER BIT STRING (tag `0x03`): `03 len padBits value...`. */
   fun bitString(padBits: Int, value: ByteArray): ByteArray {

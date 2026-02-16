@@ -1,6 +1,6 @@
 package certkit.pem
 
-import certkit.csr.CertificationRequest
+import certkit.csr.CsrRequest
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.cert.X509Certificate
@@ -26,5 +26,5 @@ val X509Certificate.pem: String
   get() = encoded.encodePem(PemType.X509)
 
 /** PEM-encoded representation of this PKCS#10 certification request. */
-val CertificationRequest.pem: String
+val CsrRequest.pem: String
   get() = encoded.encodePem(PemType.X509_REQ)

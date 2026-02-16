@@ -12,90 +12,107 @@ import org.junit.jupiter.api.assertThrows
 
 class CsrTest {
 
+  // -- Csr.signatureAlgorithms -------------------------------------------------------------------
+
   @Test
-  fun `signature algorithm identifiers are available`() {
-    val algorithms = Csr.allSignatureAlgorithms()
-    assertTrue(algorithms.isNotEmpty())
-    assertNotNull(algorithms["SHA256withRSA"])
-    assertNotNull(algorithms["SHA256withECDSA"])
+  fun `signatureAlgorithms discovers RSA and EC from JCA providers`() {
+    assertTrue(Csr.signatureAlgorithms.isNotEmpty())
+    assertNotNull(Csr.signatureAlgorithms["SHA256withRSA"])
+    assertNotNull(Csr.signatureAlgorithms["SHA256withECDSA"])
+  }
+
+  // -- Csr.create --------------------------------------------------------------------------------
+
+  @Test
+  fun `create with RSA key produces verifiable CSR`() {
+    val keyPair = generateRSAKeyPair()
+    val csr = Csr.create("CN=test", "SHA256withRSA", keyPair)
+
+    assertEquals("CN=test", csr.info.subject.name)
+    assertTrue(csr.pem.contains("BEGIN CERTIFICATE REQUEST"))
+    verifySignature(csr, keyPair)
   }
 
   @Test
-  fun `find unknown algorithm throws`() {
-    assertThrows<IllegalArgumentException> {
-      val _ = Csr.findSignatureAlgorithm("NoSuchAlgorithm")
+  fun `create with EC key produces verifiable CSR`() {
+    val keyPair = generateECKeyPair()
+    val csr = Csr.create("CN=test", "SHA256withECDSA", keyPair)
+
+    assertEquals("CN=test", csr.info.subject.name)
+    verifySignature(csr, keyPair)
+  }
+
+  @Test
+  fun `create with unknown algorithm throws`() {
+    assertThrows<IllegalStateException> {
+      val _ = Csr.create("CN=test", "NoSuchAlgorithm", generateRSAKeyPair())
     }
   }
 
+  // -- Csr.create with SANs ---------------------------------------------------------------------
+
   @Test
-  fun `create CSR with RSA key`() {
+  fun `create with DNS SANs`() {
+    val keyPair = generateECKeyPair()
+    val sans = listOf(San.Dns("example.com"), San.Dns("*.example.com"))
+    val csr = Csr.create("CN=example.com", "SHA256withECDSA", keyPair, sans)
+
+    assertEquals(sans, csr.info.sans)
+    verifySignature(csr, keyPair)
+  }
+
+  @Test
+  fun `create with mixed SANs`() {
     val keyPair = generateRSAKeyPair()
-    val csr = Csr.create("CN=test", "SHA256withRSA", keyPair)
-    assertTrue(csr.pem.contains("BEGIN CERTIFICATE REQUEST"))
-    assertEquals("CN=test", csr.info.subject.name)
+    val sans = listOf(San.Dns("example.com"), San.Ip("10.0.0.1"), San.Email("admin@example.com"))
+    val csr = Csr.create("CN=example.com", "SHA256withRSA", keyPair, sans)
+
+    assertEquals(sans, csr.info.sans)
+    verifySignature(csr, keyPair)
   }
 
   @Test
-  fun `create CSR with EC key`() {
+  fun `create with IPv6 SAN`() {
     val keyPair = generateECKeyPair()
-    val csr = Csr.create("CN=ec-test", "SHA256withECDSA", keyPair)
-    assertTrue(csr.pem.contains("BEGIN CERTIFICATE REQUEST"))
+    val csr = Csr.create("CN=test", "SHA256withECDSA", keyPair, listOf(San.Ip("::1")))
+
+    assertEquals(listOf(San.Ip("::1")), csr.info.sans)
+    verifySignature(csr, keyPair)
   }
 
-  @Test
-  fun `CSR signature is verifiable`() {
-    val keyPair = generateECKeyPair()
-    val info = CertificationRequestInfo(X500Principal("C=country"), keyPair.public)
-    val algorithmId = Csr.findSignatureAlgorithm("SHA256withECDSA")
-    val sig = info.sign(algorithmId, keyPair.private)
-
-    // Verify the signature is valid using raw JCA
-    val verifier = Signature.getInstance(algorithmId.name)
-    verifier.initVerify(keyPair.public)
-    verifier.update(info.encoded)
-    assertTrue(verifier.verify(sig))
-  }
+  // -- CsrInfo ----------------------------------------------------------------------------------
 
   @Test
-  fun `CertificationRequestInfo encoding is stable`() {
-    val keyPair = generateECKeyPair()
-    val subject = X500Principal("C=country")
-    val info1 = CertificationRequestInfo(subject, keyPair.public)
-    val info2 = CertificationRequestInfo(subject, keyPair.public)
-    assertArrayEquals(info1.encoded, info2.encoded)
-  }
-
-  @Test
-  fun `CSR equality`() {
-    val keyPair = generateECKeyPair()
-    val info = CertificationRequestInfo(X500Principal("CN=test"), keyPair.public)
-    val algorithmId = Csr.findSignatureAlgorithm("SHA256withECDSA")
-    val signature = info.sign(algorithmId, keyPair.private)
-
-    val csr1 = Csr.create(info, algorithmId, signature)
-    val csr2 = Csr.create(info, algorithmId, signature)
-    assertEquals(csr1, csr2)
-    assertEquals(csr1.hashCode(), csr2.hashCode())
-  }
-
-  @Test
-  fun `CertificationRequestInfo equality`() {
+  fun `CsrInfo equality and hashCode`() {
     val keyPair = generateRSAKeyPair()
     val subject = X500Principal("CN=test")
-    val info1 = CertificationRequestInfo(subject, keyPair.public)
-    val info2 = CertificationRequestInfo(subject, keyPair.public)
+    val info1 = CsrInfo(subject, keyPair.public)
+    val info2 = CsrInfo(subject, keyPair.public)
+
     assertEquals(info1, info2)
     assertEquals(info1.hashCode(), info2.hashCode())
   }
 
+  // -- SignatureAlgo -----------------------------------------------------------------------------
+
   @Test
-  fun `SignatureAlgorithmId equality by OID`() {
-    val alg1 = SignatureAlgorithmId("SHA256withRSA", "1.2.840.113549.1.1.11")
-    val alg2 = SignatureAlgorithmId("SHA256withRSA", "1.2.840.113549.1.1.11")
-    val alg3 = SignatureAlgorithmId("SHA256withECDSA", "1.2.840.10045.4.3.2")
+  fun `SignatureAlgo equality is by OID`() {
+    val alg1 = SignatureAlgo("SHA256withRSA", "1.2.840.113549.1.1.11")
+    val alg2 = SignatureAlgo("SHA256withRSA", "1.2.840.113549.1.1.11")
+    val alg3 = SignatureAlgo("SHA256withECDSA", "1.2.840.10045.4.3.2")
+
     assertEquals(alg1, alg2)
     assertEquals(alg1.hashCode(), alg2.hashCode())
     assertNotEquals(alg1, alg3)
+  }
+
+  // -- helpers -----------------------------------------------------------------------------------
+
+  private fun verifySignature(csr: CsrRequest, keyPair: KeyPair) {
+    val verifier = Signature.getInstance(csr.algorithm.name)
+    verifier.initVerify(keyPair.public)
+    verifier.update(csr.info.encoded)
+    assertTrue(verifier.verify(csr.signature))
   }
 
   private fun generateECKeyPair(): KeyPair =

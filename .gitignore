@@ -1,7 +1,7 @@
 # Mac OSX
 .DS_Store
 
-# IntelliJ IDEA
+# JetBrains
 .idea/
 *.iml
 out/
@@ -20,6 +20,11 @@ jre/
 # Amper
 build/
 
-# Gradle
-.gradle/
-local.properties
+# AI Agents & Tools
+.junie/
+.claude/settings.local.json
+.claude/statsig/
+.claude/todos/
+CLAUDE.local.md
+.codex/
+.cursor/

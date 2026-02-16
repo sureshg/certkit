@@ -17,22 +17,43 @@ class PemTest {
     private const val KEY_PASSWORD = "airlift"
   }
 
+  // -- isPem ------------------------------------------------------------------------------------
+
   @Test
-  fun `load key store - PKCS8 unencrypted`() {
+  fun `isPem detects certificates, keys, and rejects non-PEM`() {
+    assertTrue(Pem.isPem(resourcePath("rsa.client.crt")))
+    assertTrue(Pem.isPem(resourcePath("rsa.client.pkcs8.key")))
+    assertTrue(Pem.isPem(resourcePath("rsa.client.pkcs8.pub")))
+    assertFalse(Pem.isPem("not a pem string"))
+  }
+
+  // -- loadTrustStore ---------------------------------------------------------------------------
+
+  @Test
+  fun `loadTrustStore loads RSA, EC, and DSA CA certificates`() {
+    assertCertificateChain(Pem.loadTrustStore(resourcePath("rsa.ca.crt")), CA_NAME)
+    assertCertificateChain(Pem.loadTrustStore(resourcePath("ec.ca.crt")), CA_NAME)
+    assertCertificateChain(Pem.loadTrustStore(resourcePath("dsa.ca.crt")), CA_NAME)
+  }
+
+  // -- loadKeyStore -----------------------------------------------------------------------------
+
+  @Test
+  fun `loadKeyStore with PKCS8 unencrypted keys`() {
     testLoadKeyStore("rsa.client.crt", "rsa.client.pkcs8.key", null, CLIENT_NAME)
     testLoadKeyStore("ec.client.crt", "ec.client.pkcs8.key", null, CLIENT_NAME)
     testLoadKeyStore("dsa.client.crt", "dsa.client.pkcs8.key", null, CLIENT_NAME)
   }
 
   @Test
-  fun `load key store - PKCS8 encrypted`() {
+  fun `loadKeyStore with PKCS8 encrypted keys`() {
     testLoadKeyStore("rsa.client.crt", "rsa.client.pkcs8.key.encrypted", KEY_PASSWORD, CLIENT_NAME)
     testLoadKeyStore("ec.client.crt", "ec.client.pkcs8.key.encrypted", KEY_PASSWORD, CLIENT_NAME)
     testLoadKeyStore("dsa.client.crt", "dsa.client.pkcs8.key.encrypted", KEY_PASSWORD, CLIENT_NAME)
   }
 
   @Test
-  fun `load key store - PEM encrypted`() {
+  fun `loadKeyStore with PKCS8 PEM encrypted`() {
     testLoadKeyStore(
         "rsa.client.pkcs8.pem.encrypted",
         "rsa.client.pkcs8.pem.encrypted",
@@ -54,36 +75,23 @@ class PemTest {
   }
 
   @Test
-  fun `load key store - PKCS1 unencrypted`() {
+  fun `loadKeyStore with PKCS1 unencrypted keys`() {
     testLoadKeyStore("rsa.client.crt", "rsa.client.pkcs1.key", null, CLIENT_NAME)
     testLoadKeyStore("ec.client.crt", "ec.client.pkcs1.key", null, CLIENT_NAME)
     testLoadKeyStore("dsa.client.crt", "dsa.client.pkcs1.key", null, CLIENT_NAME)
   }
 
   @Test
-  fun `load key store - PKCS1 PEM`() {
+  fun `loadKeyStore with PKCS1 PEM keys`() {
     testLoadKeyStore("rsa.client.pkcs8.pem.encrypted", "rsa.client.pkcs1.pem", null, CLIENT_NAME)
     testLoadKeyStore("dsa.client.pkcs8.pem.encrypted", "dsa.client.pkcs1.pem", null, CLIENT_NAME)
     testLoadKeyStore("ec.client.pkcs8.pem.encrypted", "ec.client.pkcs1.pem", null, CLIENT_NAME)
   }
 
-  @Test
-  fun `load trust store`() {
-    assertCertificateChain(Pem.loadTrustStore(resourcePath("rsa.ca.crt")), CA_NAME)
-    assertCertificateChain(Pem.loadTrustStore(resourcePath("ec.ca.crt")), CA_NAME)
-    assertCertificateChain(Pem.loadTrustStore(resourcePath("dsa.ca.crt")), CA_NAME)
-  }
+  // -- loadPrivateKey ---------------------------------------------------------------------------
 
   @Test
-  fun `load public key`() {
-    testLoadPublicKey("rsa.client.crt", "rsa.client.pkcs8.pub")
-    testLoadPublicKey("rsa.client.crt", "rsa.client.pkcs1.pub")
-    testLoadPublicKey("ec.client.crt", "ec.client.pkcs8.pub")
-    testLoadPublicKey("dsa.client.crt", "dsa.client.pkcs8.pub")
-  }
-
-  @Test
-  fun `PKCS1 and PKCS8 private keys produce same key`() {
+  fun `loadPrivateKey PKCS1 and PKCS8 produce same key`() {
     assertEquals(
         Pem.loadPrivateKey(resourcePath("rsa.client.pkcs8.key")),
         Pem.loadPrivateKey(resourcePath("rsa.client.pkcs1.key")),
@@ -99,41 +107,44 @@ class PemTest {
   }
 
   @Test
-  fun `RSA public key PKCS1 and PKCS8 produce same key`() {
-    val pkcs8Key = Pem.loadPublicKey(resourcePath("rsa.client.pkcs8.pub"))
-    val pkcs1Key = Pem.loadPublicKey(resourcePath("rsa.client.pkcs1.pub"))
-    assertEquals(pkcs8Key, pkcs1Key)
-  }
-
-  @Test
-  fun `isPem detects PEM data`() {
-    assertTrue(Pem.isPem(resourcePath("rsa.client.crt")))
-    assertTrue(Pem.isPem(resourcePath("rsa.client.pkcs8.key")))
-    assertTrue(Pem.isPem(resourcePath("rsa.client.pkcs8.pub")))
-    assertFalse(Pem.isPem("not a pem string"))
-  }
-
-  @Test
-  fun `loadPrivateKey fails on missing key`() {
+  fun `loadPrivateKey throws on missing key`() {
     assertThrows<IllegalStateException> {
       val _ = Pem.loadPrivateKey("no key here")
     }
   }
 
   @Test
-  fun `loadPublicKey fails on missing key`() {
+  fun `loadPrivateKey throws on encrypted key without password`() {
+    assertThrows<IllegalStateException> {
+      val _ = Pem.loadPrivateKey(resourcePath("rsa.client.pkcs8.key.encrypted"), null)
+    }
+  }
+
+  // -- loadPublicKey ----------------------------------------------------------------------------
+
+  @Test
+  fun `loadPublicKey matches certificate public key`() {
+    testLoadPublicKey("rsa.client.crt", "rsa.client.pkcs8.pub")
+    testLoadPublicKey("ec.client.crt", "ec.client.pkcs8.pub")
+    testLoadPublicKey("dsa.client.crt", "dsa.client.pkcs8.pub")
+  }
+
+  @Test
+  fun `loadPublicKey RSA PKCS1 and PKCS8 produce same key`() {
+    assertEquals(
+        Pem.loadPublicKey(resourcePath("rsa.client.pkcs8.pub")),
+        Pem.loadPublicKey(resourcePath("rsa.client.pkcs1.pub")),
+    )
+  }
+
+  @Test
+  fun `loadPublicKey throws on missing key`() {
     assertThrows<IllegalStateException> {
       val _ = Pem.loadPublicKey("no key here")
     }
   }
 
-  @Test
-  fun `encrypted key without password fails`() {
-    val pem = resourcePath("rsa.client.pkcs8.key.encrypted")
-    assertThrows<IllegalStateException> {
-      val _ = Pem.loadPrivateKey(pem, null)
-    }
-  }
+  // -- helpers -----------------------------------------------------------------------------------
 
   private fun testLoadKeyStore(
       certFile: String,
@@ -148,9 +159,7 @@ class PemTest {
   }
 
   private fun testLoadPublicKey(certFile: String, keyFile: String) {
-    val path = resourcePath(keyFile)
-    assertTrue(Pem.isPem(path))
-    val publicKey = Pem.loadPublicKey(path)
+    val publicKey = Pem.loadPublicKey(resourcePath(keyFile))
     assertEquals(publicKey, Pem.readCertificateChain(resourcePath(certFile)).single().publicKey)
     assertEquals(publicKey, Pem.loadPublicKey(publicKey.pem))
   }
