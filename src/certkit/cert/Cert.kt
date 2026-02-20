@@ -2,7 +2,6 @@ package certkit.cert
 
 import certkit.der.Der
 import kotlinx.datetime.*
-import java.net.InetAddress
 import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.Signature
@@ -56,8 +55,7 @@ object Cert {
       subject: X500Principal,
       notBefore: Instant,
       notAfter: Instant,
-      sanDnsNames: List<String> = emptyList(),
-      sanIpAddresses: List<InetAddress> = emptyList(),
+      sans: List<San> = emptyList(),
   ): X509Certificate {
     val pub = keyPair.public
     val priv = keyPair.private
@@ -67,10 +65,7 @@ object Cert {
     require(notBefore <= notAfter) { "notAfter is before notBefore" }
 
     val pubKeyHash = hashPublicKey(pub)
-    val sans = buildList {
-      sanDnsNames.forEach { add(Der.contextTag(2, it.encodeToByteArray())) }
-      sanIpAddresses.forEach { add(Der.contextTag(7, it.address)) }
-    }
+    val sanEntries = sans.map { it.toDer() }
 
     val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.derNull())
 
@@ -98,7 +93,7 @@ object Cert {
                     ),
                     Der.sequence(
                         SUBJECT_ALT_NAME_OID,
-                        Der.octetString(Der.sequence(*sans.toTypedArray())),
+                        Der.octetString(Der.sequence(*sanEntries.toTypedArray())),
                     ),
                 ),
             ),
@@ -124,8 +119,7 @@ object Cert {
       subject: X500Principal,
       notBefore: LocalDate,
       notAfter: LocalDate,
-      sanDnsNames: List<String> = emptyList(),
-      sanIpAddresses: List<InetAddress> = emptyList(),
+      sans: List<San> = emptyList(),
   ): X509Certificate =
       buildSelfSigned(
           keyPair = keyPair,
@@ -134,8 +128,7 @@ object Cert {
           subject = subject,
           notBefore = notBefore.atStartOfDayIn(TimeZone.UTC),
           notAfter = notAfter.plus(1, DateTimeUnit.DAY).atStartOfDayIn(TimeZone.UTC) - 1.seconds,
-          sanDnsNames = sanDnsNames,
-          sanIpAddresses = sanIpAddresses,
+          sans = sans,
       )
 
   private fun hashPublicKey(key: ECPublicKey): ByteArray {

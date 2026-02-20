@@ -1,12 +1,13 @@
 package certkit.csr
 
+import certkit.cert.San
 import certkit.pem.pem
-import kotlin.test.*
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.Signature
 import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
+import kotlin.test.*
 
 class CsrTest {
 

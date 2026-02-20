@@ -1,11 +1,11 @@
 package certkit.pem
 
-import kotlin.test.*
 import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
 import javax.naming.ldap.LdapName
 import kotlin.io.path.toPath
+import kotlin.test.*
 
 class PemTest {
 

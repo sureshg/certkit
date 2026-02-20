@@ -1,7 +1,7 @@
 package certkit.csr
 
+import certkit.cert.San
 import certkit.der.Der
-import java.net.InetAddress
 import java.security.PublicKey
 import javax.security.auth.x500.X500Principal
 
@@ -33,15 +33,6 @@ class SignatureAlgo(val name: String, val oid: String) {
   override fun hashCode() = oid.hashCode()
 
   override fun toString() = "SignatureAlgo(name=$name, oid=$oid)"
-}
-
-/** Subject Alternative Name entry for CSR extension requests. */
-sealed interface San {
-  data class Dns(val name: String) : San
-
-  data class Ip(val address: String) : San
-
-  data class Email(val address: String) : San
 }
 
 /** PKCS#10 CSR info: subject name + public key + optional SANs, DER-encoded per RFC 2986 §4.1. */
@@ -78,14 +69,7 @@ data class CsrInfo(
       when {
         sans.isEmpty() -> EMPTY_ATTRIBUTES
         else -> {
-          val sanEntries =
-              sans.map { san ->
-                when (san) {
-                  is San.Dns -> Der.contextTag(2, san.name.encodeToByteArray())
-                  is San.Email -> Der.contextTag(1, san.address.encodeToByteArray())
-                  is San.Ip -> Der.contextTag(7, InetAddress.getByName(san.address).address)
-                }
-              }
+          val sanEntries = sans.map { it.toDer() }
           val sanExtension =
               Der.sequence(
                   Der.oid(SUBJECT_ALT_NAME_OID),

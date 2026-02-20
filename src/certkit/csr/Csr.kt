@@ -1,5 +1,6 @@
 package certkit.csr
 
+import certkit.cert.San
 import java.security.KeyPair
 import java.security.PrivateKey
 import java.security.Security

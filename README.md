@@ -54,8 +54,7 @@ val cert = Cert.buildSelfSigned(
     subject = X500Principal("CN=My CA,O=Acme"),
     notBefore = LocalDate(2025, 1, 1),
     notAfter = LocalDate(2026, 12, 31),
-    sanDnsNames = listOf("localhost", "*.local"),
-    sanIpAddresses = listOf(InetAddress.getLoopbackAddress()),
+    sans = listOf(San.Dns("localhost"), San.Dns("*.local"), San.Ip("127.0.0.1")),
 )
 
 println(cert.pem)

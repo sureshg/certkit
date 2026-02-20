@@ -1,16 +1,19 @@
 package certkit.cert
 
-import certkit.pem.*
+import certkit.pem.Pem
+import certkit.pem.pem
 import certkit.tls.trustManagers
+import kotlinx.datetime.LocalDate
 import java.math.BigInteger
-import java.net.InetAddress
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
-import kotlin.test.*
-import kotlinx.datetime.LocalDate
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class CertTest {
 
@@ -26,8 +29,7 @@ class CertTest {
             subject = subject,
             notBefore = LocalDate(2024, 1, 1),
             notAfter = LocalDate(2025, 12, 31),
-            sanDnsNames = listOf("localhost"),
-            sanIpAddresses = listOf(InetAddress.getLoopbackAddress()),
+            sans = listOf(San.Dns("localhost"), San.Ip("127.0.0.1")),
         )
 
     assertTrue(cert.selfSigned)
@@ -69,7 +71,7 @@ class CertTest {
             subject = subject,
             notBefore = LocalDate(2024, 1, 1),
             notAfter = LocalDate(2025, 12, 31),
-            sanDnsNames = listOf("example.com"),
+            sans = listOf(San.Dns("example.com")),
         )
 
     assertEquals("Test User", cert.commonName)
