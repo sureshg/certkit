@@ -50,7 +50,7 @@ object Crl {
       nextUpdate: Instant? = null,
       revokedSerials: List<Long> = emptyList(),
   ): X509CRL {
-    val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.derNull())
+    val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.nullValue())
 
     val revoked =
         revokedSerials.map { serial -> Der.sequence(Der.integer(serial), Der.utcTime(thisUpdate)) }

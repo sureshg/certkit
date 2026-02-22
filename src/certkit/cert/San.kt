@@ -14,8 +14,8 @@ sealed interface San {
   /** DER-encodes this SAN as a context-tagged GeneralName (RFC 5280 §4.2.1.6). */
   fun toDer(): ByteArray =
       when (this) {
-        is Dns -> Der.contextTag(2, name.encodeToByteArray())
-        is Email -> Der.contextTag(1, address.encodeToByteArray())
-        is Ip -> Der.contextTag(7, InetAddress.getByName(address).address)
+        is Dns -> Der.implicitTag(2, name.encodeToByteArray())
+        is Email -> Der.implicitTag(1, address.encodeToByteArray())
+        is Ip -> Der.implicitTag(7, InetAddress.getByName(address).address)
       }
 }

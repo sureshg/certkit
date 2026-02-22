@@ -67,29 +67,29 @@ object Cert {
     val pubKeyHash = hashPublicKey(pub)
     val sanEntries = sans.map { it.toDer() }
 
-    val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.derNull())
+    val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.nullValue())
 
     val rawCert =
         Der.sequence(
-            Der.contextSequence(0, Der.integer(2)),
+            Der.explicitTag(0, Der.integer(2)),
             Der.integer(serialNumber),
             sigAlg,
             issuer.encoded,
             Der.sequence(Der.utcTime(notBefore), Der.utcTime(notAfter)),
             subject.encoded,
             pub.encoded,
-            Der.contextSequence(
+            Der.explicitTag(
                 3,
                 Der.sequence(
                     Der.sequence(SUBJECT_KEY_ID_OID, Der.octetString(Der.octetString(pubKeyHash))),
                     Der.sequence(
                         AUTHORITY_KEY_ID_OID,
-                        Der.octetString(Der.sequence(Der.contextTag(0, pubKeyHash))),
+                        Der.octetString(Der.sequence(Der.implicitTag(0, pubKeyHash))),
                     ),
                     Der.sequence(
                         BASIC_CONSTRAINTS_OID,
-                        Der.booleanTrue(),
-                        Der.octetString(Der.sequence(Der.booleanTrue())),
+                        Der.boolean(true),
+                        Der.octetString(Der.sequence(Der.boolean(true))),
                     ),
                     Der.sequence(
                         SUBJECT_ALT_NAME_OID,

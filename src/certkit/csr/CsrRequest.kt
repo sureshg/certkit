@@ -80,7 +80,7 @@ data class CsrInfo(
                   Der.oid(EXTENSION_REQUEST_OID),
                   Der.set(Der.sequence(sanExtension)),
               )
-          Der.contextSequence(0, extRequest)
+          Der.explicitTag(0, extRequest)
         }
       }
 }

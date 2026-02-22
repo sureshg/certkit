@@ -73,8 +73,9 @@ object Der {
         .readByteArray()
   }
 
-  /** Encodes a DER BOOLEAN TRUE: `[01 01 FF]`. */
-  fun booleanTrue(): ByteArray = byteArrayOf(BOOLEAN_TAG.toByte(), 0x01, 0xFF.toByte())
+  /** Encodes a DER BOOLEAN: `[01 01 FF]` for true, `[01 01 00]` for false. */
+  fun boolean(value: Boolean): ByteArray =
+      byteArrayOf(BOOLEAN_TAG.toByte(), 0x01, if (value) 0xFF.toByte() else 0x00)
 
   /** Encodes a DER INTEGER (tag `0x02`) from a Long. */
   fun integer(value: Long): ByteArray = integer(BigInteger.valueOf(value))
@@ -116,7 +117,7 @@ object Der {
   }
 
   /** Encodes a DER NULL: `[05 00]`. */
-  fun derNull(): ByteArray = byteArrayOf(NULL_TAG.toByte(), 0x00)
+  fun nullValue(): ByteArray = byteArrayOf(NULL_TAG.toByte(), 0x00)
 
   /** Encodes a primitive DER tag (0-31) with the given body. */
   fun tag(tag: Int, body: ByteArray): ByteArray {
@@ -125,13 +126,13 @@ object Der {
   }
 
   /** Encodes a context-specific implicit tag (class bit 0x80 set). */
-  fun contextTag(tag: Int, body: ByteArray): ByteArray {
+  fun implicitTag(tag: Int, body: ByteArray): ByteArray {
     require(tag in 0..31) { "Invalid tag: $tag" }
     return writeTag(tag or 0x80, body)
   }
 
-  /** Encodes a context-specific constructed SEQUENCE (class bits 0xA0 set). */
-  fun contextSequence(tag: Int, vararg values: ByteArray): ByteArray {
+  /** Encodes a context-specific explicit tag (constructed, class bits 0xA0 set). */
+  fun explicitTag(tag: Int, vararg values: ByteArray): ByteArray {
     require(tag in 0..31) { "Invalid tag: $tag" }
     return constructed(tag or 0xA0, values)
   }
@@ -156,11 +157,10 @@ object Der {
   }
 
   /**
-   * Unwraps a context-specific optional element (`[A0+n] [len] [inner]`) and returns the inner
-   * bytes.
+   * Decodes a context-specific explicit tag (`[A0+n] [len] [inner]`) and returns the inner bytes.
    */
-  fun decodeOptionalElement(element: ByteArray): ByteArray {
-    require(element[0].toInt() and 0xE0 == 0xA0) { "Expected optional sequence element tag" }
+  fun decodeExplicitTag(element: ByteArray): ByteArray {
+    require(element[0].toInt() and 0xE0 == 0xA0) { "Expected context-specific constructed tag" }
     val (len, lenSize) = decodeLengthAt(element, 1)
     val dataStart = 1 + lenSize
     require(len + dataStart == element.size) { "Invalid optional sequence element" }

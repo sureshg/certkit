@@ -60,7 +60,7 @@ object Pem {
   private val RSA_KEY_OID = Der.oid("1.2.840.113549.1.1.1")
   private val DSA_KEY_OID = Der.oid("1.2.840.10040.4.1")
   private val EC_KEY_OID = Der.oid("1.2.840.10045.2.1")
-  private val DER_NULL = byteArrayOf(5, 0)
+  private val DER_NULL = Der.nullValue()
 
   private val certFactory = CertificateFactory.getInstance("X.509")
 
@@ -196,7 +196,7 @@ object Pem {
   private fun ecPkcs1ToPkcs8(pkcs1: ByteArray): ByteArray {
     val elements = Der.decodeSequence(pkcs1)
     require(elements.size == 4) { "Expected EC key to have 4 elements" }
-    val curveOid = Der.decodeOptionalElement(elements[2])
+    val curveOid = Der.decodeExplicitTag(elements[2])
     val keyId = Der.sequence(EC_KEY_OID, curveOid)
     return Der.sequence(
         VERSION_0,
