@@ -131,7 +131,7 @@ object Cert {
           sans = sans,
       )
 
-  private fun hashPublicKey(key: ECPublicKey): ByteArray {
+  fun hashPublicKey(key: ECPublicKey): ByteArray {
     val raw = Der.sequence(Der.integer(key.w.affineX), Der.integer(key.w.affineY))
     return MessageDigest.getInstance("SHA-1").digest(raw)
   }

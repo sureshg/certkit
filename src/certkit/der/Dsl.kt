@@ -7,7 +7,7 @@ import kotlin.time.Instant
 
 @DerDsl
 class DerBuilder {
-  private val elements = mutableListOf<ByteArray>()
+  internal val elements = mutableListOf<ByteArray>()
 
   fun integer(value: Long) {
     elements += Der.integer(value)
@@ -70,11 +70,9 @@ class DerBuilder {
   fun explicitTag(tag: Int, block: DerBuilder.() -> Unit) {
     elements += certkit.der.explicitTag(tag, block)
   }
-
-  fun build() = elements.toTypedArray()
 }
 
-private fun der(block: DerBuilder.() -> Unit) = DerBuilder().apply(block).build()
+private fun der(block: DerBuilder.() -> Unit) = DerBuilder().apply(block).elements.toTypedArray()
 
 fun seq(block: DerBuilder.() -> Unit): ByteArray = Der.sequence(*der(block))
 
