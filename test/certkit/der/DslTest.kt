@@ -13,7 +13,7 @@ class DslTest {
 
   @Test
   fun `seq encodes sequence`() {
-    val expected = Der.sequence(Der.integer(0L), Der.oid("1.2.840.113549.1.1.11"), Der.nullValue())
+    val expected = Der.sequence(Der.integer(0L), Der.oid("1.2.840.113549.1.1.11"), Der.nullValue)
     val actual = seq {
       integer(0L)
       oid("1.2.840.113549.1.1.11")
@@ -43,7 +43,8 @@ class DslTest {
 
   @Test
   fun `nested seq encodes correctly`() {
-    val expected = Der.sequence(Der.sequence(Der.oid("2.5.4.3"), Der.tag(12, "Alice".encodeToByteArray())))
+    val expected =
+        Der.sequence(Der.sequence(Der.oid("2.5.4.3"), Der.tag(12, "Alice".encodeToByteArray())))
     val actual = seq {
       seq {
         oid("2.5.4.3")
@@ -108,9 +109,10 @@ class DslTest {
 
   @Test
   fun `self-signed TBS structure`() {
-    val kp = KeyPairGenerator.getInstance("EC")
-        .apply { initialize(ECGenParameterSpec("secp256r1")) }
-        .generateKeyPair()
+    val kp =
+        KeyPairGenerator.getInstance("EC")
+            .apply { initialize(ECGenParameterSpec("secp256r1")) }
+            .generateKeyPair()
     val pub = kp.public as ECPublicKey
 
     val issuer = X500Principal("CN=Test,O=TestOrg")
@@ -121,21 +123,38 @@ class DslTest {
     val pubKeyHash = Cert.hashPublicKey(pub)
     val sanEntries = sans.map { it.toDer() }
 
-    val expected = Der.sequence(
-        Der.explicitTag(0, Der.integer(2)),
-        Der.integer(1L),
-        Der.sequence(Der.oid("1.2.840.10045.4.3.2"), Der.nullValue()),
-        issuer.encoded,
-        Der.sequence(Der.utcTime(notBefore), Der.utcTime(notAfter)),
-        issuer.encoded,
-        pub.encoded,
-        Der.explicitTag(3, Der.sequence(
-            Der.sequence(Der.oid("2.5.29.14"), Der.octetString(Der.octetString(pubKeyHash))),
-            Der.sequence(Der.oid("2.5.29.35"), Der.octetString(Der.sequence(Der.implicitTag(0, pubKeyHash)))),
-            Der.sequence(Der.oid("2.5.29.19"), Der.boolean(true), Der.octetString(Der.sequence(Der.boolean(true)))),
-            Der.sequence(Der.oid("2.5.29.17"), Der.octetString(Der.sequence(*sanEntries.toTypedArray()))),
-        )),
-    )
+    val expected =
+        Der.sequence(
+            Der.explicitTag(0, Der.integer(2)),
+            Der.integer(1L),
+            Der.sequence(Der.oid("1.2.840.10045.4.3.2"), Der.nullValue),
+            issuer.encoded,
+            Der.sequence(Der.utcTime(notBefore), Der.utcTime(notAfter)),
+            issuer.encoded,
+            pub.encoded,
+            Der.explicitTag(
+                3,
+                Der.sequence(
+                    Der.sequence(
+                        Der.oid("2.5.29.14"),
+                        Der.octetString(Der.octetString(pubKeyHash)),
+                    ),
+                    Der.sequence(
+                        Der.oid("2.5.29.35"),
+                        Der.octetString(Der.sequence(Der.implicitTag(0, pubKeyHash))),
+                    ),
+                    Der.sequence(
+                        Der.oid("2.5.29.19"),
+                        Der.boolean(true),
+                        Der.octetString(Der.sequence(Der.boolean(true))),
+                    ),
+                    Der.sequence(
+                        Der.oid("2.5.29.17"),
+                        Der.octetString(Der.sequence(*sanEntries.toTypedArray())),
+                    ),
+                ),
+            ),
+        )
 
     val actual = seq {
       explicitTag(0) { integer(2L) }
@@ -155,20 +174,20 @@ class DslTest {
         seq {
           seq {
             oid("2.5.29.14")
-            octetString(Der.octetString(pubKeyHash))
+            octetString { octetString(pubKeyHash) }
           }
           seq {
             oid("2.5.29.35")
-            octetString(certkit.der.seq { implicitTag(0, pubKeyHash) })
+            octetString { seq { implicitTag(0, pubKeyHash) } }
           }
           seq {
             oid("2.5.29.19")
             boolean(true)
-            octetString(certkit.der.seq { boolean(true) })
+            octetString { seq { boolean(true) } }
           }
           seq {
             oid("2.5.29.17")
-            octetString(certkit.der.seq { sanEntries.forEach { raw(it) } })
+            octetString { seq { sans.forEach { raw(it.toDer()) } } }
           }
         }
       }

@@ -68,6 +68,7 @@ test-settings:
         - kotlin.test.assertTrue
         - kotlin.test.assertEquals
         - kotlin.test.assertNull
+        - kotlin.test.assertContentEquals
 
 dependencies:
   - $libs.kotlinx.datetime

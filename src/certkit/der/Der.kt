@@ -1,5 +1,7 @@
 package certkit.der
 
+import java.math.BigInteger
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -7,8 +9,6 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
-import java.math.BigInteger
-import kotlin.time.Instant
 
 /**
  * ASN.1 DER (Distinguished Encoding Rules) encoder/decoder — the binary format used inside X.509
@@ -32,8 +32,6 @@ import kotlin.time.Instant
  */
 object Der {
 
-  private const val SEQUENCE_TAG = 0x30
-  private const val SET_TAG = 0x31
   private const val BOOLEAN_TAG = 0x01
   private const val INTEGER_TAG = 0x02
   private const val BIT_STRING_TAG = 0x03
@@ -41,6 +39,8 @@ object Der {
   private const val NULL_TAG = 0x05
   private const val OBJECT_IDENTIFIER_TAG = 0x06
   private const val UTC_TIME_TAG = 0x17
+  private const val SEQUENCE_TAG = 0x30
+  private const val SET_TAG = 0x31
 
   /** ASN.1 UTC time format: yyMMddHHmmssZ (2-digit year per X.680) */
   private val UTC_TIME_FORMAT =
@@ -53,12 +53,6 @@ object Der {
         second()
         char('Z')
       }
-
-  /** Encodes a DER SEQUENCE (tag `0x30`) wrapping the concatenated [values]. */
-  fun sequence(vararg values: ByteArray): ByteArray = constructed(SEQUENCE_TAG, values)
-
-  /** Encodes a DER SET (tag `0x31`) wrapping the concatenated [values]. */
-  fun set(vararg values: ByteArray): ByteArray = constructed(SET_TAG, values)
 
   /** Encodes a DER BIT STRING (tag `0x03`): `03 len padBits value...`. */
   fun bitString(padBits: Int, value: ByteArray): ByteArray {
@@ -83,18 +77,11 @@ object Der {
   /** Encodes a DER INTEGER (tag `0x02`) from a BigInteger (two's complement, minimal bytes). */
   fun integer(value: BigInteger): ByteArray = tag(INTEGER_TAG, value.toByteArray())
 
+  /** DER NULL: `[05 00]`. */
+  val nullValue = byteArrayOf(NULL_TAG.toByte(), 0x00)
+
   /** Encodes a DER OCTET STRING (tag `0x04`). */
   fun octetString(value: ByteArray): ByteArray = tag(OCTET_STRING_TAG, value)
-
-  /** Encodes a DER UTC TIME (tag `0x17`) from a raw `yyMMddHHmmssZ` string. */
-  fun utcTime(value: String): ByteArray = tag(UTC_TIME_TAG, value.encodeToByteArray())
-
-  /** Encodes a DER UTC TIME (tag `0x17`) from an [Instant], formatted as `yyMMddHHmmssZ`. */
-  fun utcTime(value: Instant): ByteArray =
-      tag(
-          UTC_TIME_TAG,
-          value.toLocalDateTime(TimeZone.UTC).format(UTC_TIME_FORMAT).encodeToByteArray(),
-      )
 
   /** Encodes a DER OBJECT IDENTIFIER from a dotted OID string (e.g. "1.2.840.113549.1.1.1"). */
   fun oid(oid: String): ByteArray {
@@ -116,8 +103,15 @@ object Der {
         .readByteArray()
   }
 
-  /** Encodes a DER NULL: `[05 00]`. */
-  fun nullValue(): ByteArray = byteArrayOf(NULL_TAG.toByte(), 0x00)
+  /** Encodes a DER UTC TIME (tag `0x17`) from a raw `yyMMddHHmmssZ` string. */
+  fun utcTime(value: String): ByteArray = tag(UTC_TIME_TAG, value.encodeToByteArray())
+
+  /** Encodes a DER UTC TIME (tag `0x17`) from an [Instant], formatted as `yyMMddHHmmssZ`. */
+  fun utcTime(value: Instant): ByteArray =
+      tag(
+          UTC_TIME_TAG,
+          value.toLocalDateTime(TimeZone.UTC).format(UTC_TIME_FORMAT).encodeToByteArray(),
+      )
 
   /** Encodes a primitive DER tag (0-31) with the given body. */
   fun tag(tag: Int, body: ByteArray): ByteArray {
@@ -136,6 +130,12 @@ object Der {
     require(tag in 0..31) { "Invalid tag: $tag" }
     return constructed(tag or 0xA0, values)
   }
+
+  /** Encodes a DER SEQUENCE (tag `0x30`) wrapping the concatenated [values]. */
+  fun sequence(vararg values: ByteArray): ByteArray = constructed(SEQUENCE_TAG, values)
+
+  /** Encodes a DER SET (tag `0x31`) wrapping the concatenated [values]. */
+  fun set(vararg values: ByteArray): ByteArray = constructed(SET_TAG, values)
 
   /** Decodes a DER SEQUENCE into its constituent TLV elements (each returned as raw bytes). */
   fun decodeSequence(data: ByteArray): List<ByteArray> {

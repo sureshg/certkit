@@ -67,7 +67,7 @@ object Cert {
     val pubKeyHash = hashPublicKey(pub)
     val sanEntries = sans.map { it.toDer() }
 
-    val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.nullValue())
+    val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.nullValue)
 
     val rawCert =
         Der.sequence(

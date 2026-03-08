@@ -60,7 +60,7 @@ object Pem {
   private val RSA_KEY_OID = Der.oid("1.2.840.113549.1.1.1")
   private val DSA_KEY_OID = Der.oid("1.2.840.10040.4.1")
   private val EC_KEY_OID = Der.oid("1.2.840.10045.2.1")
-  private val DER_NULL = Der.nullValue()
+  private val DER_NULL = Der.nullValue
 
   private val certFactory = CertificateFactory.getInstance("X.509")
 
