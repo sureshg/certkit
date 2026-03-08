@@ -12,7 +12,7 @@ import kotlin.test.assertContentEquals
 class DslTest {
 
   @Test
-  fun seq() {
+  fun `seq encodes sequence`() {
     val expected = Der.sequence(Der.integer(0L), Der.oid("1.2.840.113549.1.1.11"), Der.nullValue())
     val actual = seq {
       integer(0L)
@@ -23,7 +23,7 @@ class DslTest {
   }
 
   @Test
-  fun set() {
+  fun `set encodes set with nested seq`() {
     val expected = Der.set(Der.sequence(Der.oid("2.5.4.3"), Der.tag(12, "Bob".encodeToByteArray())))
     val actual = set {
       seq {
@@ -35,14 +35,14 @@ class DslTest {
   }
 
   @Test
-  fun explicitTag() {
+  fun `explicitTag wraps inner elements`() {
     val expected = Der.explicitTag(3, Der.sequence(Der.oid("2.5.29.17")))
     val actual = explicitTag(3) { seq { oid("2.5.29.17") } }
     assertContentEquals(expected, actual)
   }
 
   @Test
-  fun nestedSeq() {
+  fun `nested seq encodes correctly`() {
     val expected = Der.sequence(Der.sequence(Der.oid("2.5.4.3"), Der.tag(12, "Alice".encodeToByteArray())))
     val actual = seq {
       seq {
@@ -54,14 +54,14 @@ class DslTest {
   }
 
   @Test
-  fun implicitTag() {
+  fun `implicitTag encodes context tag`() {
     val expected = Der.sequence(Der.implicitTag(0, byteArrayOf(0x01, 0x02)))
     val actual = seq { implicitTag(0, byteArrayOf(0x01, 0x02)) }
     assertContentEquals(expected, actual)
   }
 
   @Test
-  fun raw() {
+  fun `raw injects prebuilt bytes`() {
     val prebuilt = Der.oid("1.2.3.4")
     val expected = Der.sequence(prebuilt, Der.integer(1L))
     val actual = seq {
@@ -72,7 +72,7 @@ class DslTest {
   }
 
   @Test
-  fun booleanAndOctetString() {
+  fun `boolean and octetString encode`() {
     val expected = Der.sequence(Der.boolean(true), Der.octetString(byteArrayOf(0xCA.toByte())))
     val actual = seq {
       boolean(true)
@@ -82,7 +82,7 @@ class DslTest {
   }
 
   @Test
-  fun bitString() {
+  fun `bitString encodes with pad bits`() {
     val data = byteArrayOf(0xFF.toByte(), 0x80.toByte())
     val expected = Der.sequence(Der.bitString(1, data))
     val actual = seq { bitString(1, data) }
@@ -90,7 +90,7 @@ class DslTest {
   }
 
   @Test
-  fun utcTime() {
+  fun `utcTime encodes time range`() {
     val expected = Der.sequence(Der.utcTime("240101000000Z"), Der.utcTime("251231235959Z"))
     val actual = seq {
       utcTime("240101000000Z")
@@ -100,14 +100,14 @@ class DslTest {
   }
 
   @Test
-  fun tagWithString() {
+  fun `tag encodes string value`() {
     val expected = Der.sequence(Der.tag(12, "Hello".encodeToByteArray()))
     val actual = seq { tag(12, "Hello") }
     assertContentEquals(expected, actual)
   }
 
   @Test
-  fun selfSignedTbs() {
+  fun `self-signed TBS structure`() {
     val kp = KeyPairGenerator.getInstance("EC")
         .apply { initialize(ECGenParameterSpec("secp256r1")) }
         .generateKeyPair()
