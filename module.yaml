@@ -39,7 +39,6 @@ settings:
     freeCompilerArgs:
       - -Wextra
       - -Xcontext-parameters
-      - -Xexpect-actual-classes
       - -Xreport-all-warnings
       - -Xreturn-value-checker=full
       - -Xcontext-sensitive-resolution
