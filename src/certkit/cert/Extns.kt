@@ -1,10 +1,12 @@
 package certkit.cert
 
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import java.security.cert.*
 import javax.naming.ldap.LdapName
+import kotlin.time.Clock
+import kotlin.time.Duration
 import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 /** Returns the subject common name (CN) from the certificate's distinguished name. */
 val X509Certificate.commonName: String
@@ -59,9 +61,31 @@ val X509Certificate.isCA: Boolean
 val X509Certificate.isIntermediateCA: Boolean
   get() = isCA && !selfSigned
 
-/** Returns the certificate expiry date/time in UTC. */
-val X509Certificate.expiryDateUTC
+/** Returns the certificate's start (notBefore) date/time in UTC. */
+val X509Certificate.startDateUtc
+  get() = Instant.fromEpochMilliseconds(notBefore.time).toLocalDateTime(TimeZone.UTC)
+
+/** Returns the certificate's start (notBefore) date/time in the system's local time zone. */
+val X509Certificate.startDate
+  get() =
+      Instant.fromEpochMilliseconds(notBefore.time).toLocalDateTime(TimeZone.currentSystemDefault())
+
+/** Returns the certificate's expiry (notAfter) date/time in UTC. */
+val X509Certificate.expiryDateUtc
   get() = Instant.fromEpochMilliseconds(notAfter.time).toLocalDateTime(TimeZone.UTC)
+
+/** Returns the certificate's expiry (notAfter) date/time in the system's local time zone. */
+val X509Certificate.expiryDate
+  get() =
+      Instant.fromEpochMilliseconds(notAfter.time).toLocalDateTime(TimeZone.currentSystemDefault())
+
+/** Returns `true` if this certificate has expired. */
+val X509Certificate.isExpired: Boolean
+  get() = Clock.System.now() > Instant.fromEpochMilliseconds(notAfter.time)
+
+/** Returns the remaining duration until this certificate expires (negative if already expired). */
+val X509Certificate.expiresIn: Duration
+  get() = Instant.fromEpochMilliseconds(notAfter.time) - Clock.System.now()
 
 /**
  * Returns `true` if this certificate chain is signed by one of the given [root] CA certificates.

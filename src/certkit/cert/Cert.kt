@@ -1,7 +1,6 @@
 package certkit.cert
 
-import certkit.der.Der
-import kotlinx.datetime.*
+import certkit.der.*
 import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.Signature
@@ -10,8 +9,8 @@ import java.security.cert.X509Certificate
 import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
 import javax.security.auth.x500.X500Principal
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
+import kotlinx.datetime.*
 
 /**
  * Self-signed X.509 certificate builder (EC keys, SHA256withECDSA).
@@ -25,7 +24,7 @@ import kotlin.time.Instant
  *     serialNumber     INTEGER,
  *     signature        AlgorithmIdentifier (SHA256withECDSA),
  *     issuer           Name,
- *     validity         SEQUENCE { notBefore UTCTime, notAfter UTCTime },
+ *     validity         SEQUENCE { notBefore UTCTime, notAfter UTCTime },  -- second precision only
  *     subject          Name,
  *     subjectPublicKey SubjectPublicKeyInfo,
  *     extensions       [3] SEQUENCE {
@@ -47,7 +46,13 @@ object Cert {
 
   private val certFactory = CertificateFactory.getInstance("X.509")
 
-  /** Builds a self-signed X.509v3 certificate. The [keyPair] must be EC (P-256/P-384/P-521). */
+  /**
+   * Builds a self-signed X.509v3 certificate. The [keyPair] must be EC (P-256/P-384/P-521).
+   *
+   * **Note:** [notBefore] and [notAfter] are encoded as ASN.1 UTCTime, which has only
+   * whole-second precision ([RFC 5280 §4.1.2.5.1](https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.5.1)).
+   * Any sub-second component is silently truncated.
+   */
   fun buildSelfSigned(
       keyPair: KeyPair,
       serialNumber: Long = 0,
@@ -65,39 +70,41 @@ object Cert {
     require(notBefore <= notAfter) { "notAfter is before notBefore" }
 
     val pubKeyHash = hashPublicKey(pub)
-    val sanEntries = sans.map { it.toDer() }
-
     val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.nullValue)
 
-    val rawCert =
-        Der.sequence(
-            Der.explicitTag(0, Der.integer(2)),
-            Der.integer(serialNumber),
-            sigAlg,
-            issuer.encoded,
-            Der.sequence(Der.utcTime(notBefore), Der.utcTime(notAfter)),
-            subject.encoded,
-            pub.encoded,
-            Der.explicitTag(
-                3,
-                Der.sequence(
-                    Der.sequence(SUBJECT_KEY_ID_OID, Der.octetString(Der.octetString(pubKeyHash))),
-                    Der.sequence(
-                        AUTHORITY_KEY_ID_OID,
-                        Der.octetString(Der.sequence(Der.implicitTag(0, pubKeyHash))),
-                    ),
-                    Der.sequence(
-                        BASIC_CONSTRAINTS_OID,
-                        Der.boolean(true),
-                        Der.octetString(Der.sequence(Der.boolean(true))),
-                    ),
-                    Der.sequence(
-                        SUBJECT_ALT_NAME_OID,
-                        Der.octetString(Der.sequence(*sanEntries.toTypedArray())),
-                    ),
-                ),
-            ),
-        )
+    val rawCert = seq {
+      explicitTag(0) { integer(2L) }
+      integer(serialNumber)
+      raw(sigAlg)
+      raw(issuer.encoded)
+      seq {
+        utcTime(notBefore)
+        utcTime(notAfter)
+      }
+      raw(subject.encoded)
+      raw(pub.encoded)
+      explicitTag(3) {
+        seq {
+          seq {
+            raw(SUBJECT_KEY_ID_OID)
+            octetString { octetString(pubKeyHash) }
+          }
+          seq {
+            raw(AUTHORITY_KEY_ID_OID)
+            octetString { seq { implicitTag(0, pubKeyHash) } }
+          }
+          seq {
+            raw(BASIC_CONSTRAINTS_OID)
+            boolean(true)
+            octetString { seq { boolean(true) } }
+          }
+          seq {
+            raw(SUBJECT_ALT_NAME_OID)
+            octetString { seq { sans.forEach { raw(it.toDer()) } } }
+          }
+        }
+      }
+    }
 
     val sig =
         Signature.getInstance("SHA256withECDSA")
@@ -107,11 +114,15 @@ object Cert {
             }
             .sign()
 
-    val encoded = Der.sequence(rawCert, sigAlg, Der.bitString(0, sig))
+    val encoded = seq {
+      raw(rawCert)
+      raw(sigAlg)
+      bitString(0, sig)
+    }
     return certFactory.generateCertificate(encoded.inputStream()) as X509Certificate
   }
 
-  /** Convenience overload: [notBefore] = start of day UTC, [notAfter] = 23:59:59 UTC. */
+  /** Convenience overload that accepts [LocalDate] instead of [Instant]. */
   fun buildSelfSigned(
       keyPair: KeyPair,
       serialNumber: Long = 0,
@@ -127,7 +138,8 @@ object Cert {
           issuer = issuer,
           subject = subject,
           notBefore = notBefore.atStartOfDayIn(TimeZone.UTC),
-          notAfter = notAfter.plus(1, DateTimeUnit.DAY).atStartOfDayIn(TimeZone.UTC) - 1.seconds,
+          // Converts the LocalDate to the last second of that day in UTC (23:59:59 UTC)
+          notAfter = notAfter.atTime(23, 59, 59).toInstant(TimeZone.UTC),
           sans = sans,
       )
 

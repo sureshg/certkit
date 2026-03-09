@@ -1,34 +1,34 @@
 package certkit.cert
 
-import certkit.pem.Pem
-import certkit.pem.pem
+import certkit.pem.*
 import certkit.tls.trustManagers
-import kotlinx.datetime.LocalDate
 import java.math.BigInteger
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 
 class CertTest {
 
   @Test
   fun `buildSelfSigned produces a valid self-signed CA certificate`() {
     val keyPair = genECKeyPair()
-    val subject = X500Principal("CN=Test,O=Test Org")
+    val subject = X500Principal("CN=Test,O=TestOrg")
+    val now = Clock.System.now()
     val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
             serialNumber = 1,
             issuer = subject,
             subject = subject,
-            notBefore = LocalDate(2024, 1, 1),
-            notAfter = LocalDate(2025, 12, 31),
+            notBefore = now - 1.days,
+            notAfter = now + 1.days,
             sans = listOf(San.Dns("localhost"), San.Ip("127.0.0.1")),
         )
 
@@ -40,37 +40,52 @@ class CertTest {
   @Test
   fun `buildSelfSigned sets certificate fields correctly`() {
     val keyPair = genECKeyPair()
-    val issuer = X500Principal("CN=issuer,O=Airlift")
-    val subject = X500Principal("CN=subject,O=Airlift")
+    val issuer = X500Principal("CN=issuer,O=TestOrg")
+    val subject = X500Principal("CN=subject,O=TestOrg")
+    val now = Clock.System.now()
+    val yesterday = now - 1.days
+    val tomorrow = now + 1.days
     val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
             serialNumber = 12345,
             issuer = issuer,
             subject = subject,
-            notBefore = LocalDate(2024, 1, 1),
-            notAfter = LocalDate(2025, 12, 31),
+            notBefore = yesterday,
+            notAfter = tomorrow,
         )
 
     assertEquals(BigInteger.valueOf(12345), cert.serialNumber)
     assertEquals(issuer, cert.issuerX500Principal)
     assertEquals(subject, cert.subjectX500Principal)
     assertEquals(keyPair.public, cert.publicKey)
-    assertEquals("2024-01-01T00:00:00Z", cert.notBefore.toInstant().toString())
-    assertEquals("2025-12-31T23:59:59Z", cert.notAfter.toInstant().toString())
+
+    // X.509 UTCTime has only second-level precision
+    // https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.5.1
+    assertEquals(
+        yesterday.epochSeconds,
+        cert.startDateUtc.toInstant(TimeZone.UTC).epochSeconds,
+    )
+    assertEquals(
+        tomorrow.epochSeconds,
+        cert.expiryDateUtc.toInstant(TimeZone.UTC).epochSeconds,
+    )
+    assertFalse(cert.isExpired)
+    assertTrue(cert.expiresIn in 0.days..2.days)
   }
 
   @Test
   fun `buildSelfSigned includes extensions`() {
     val keyPair = genECKeyPair()
-    val subject = X500Principal("CN=Test User,O=Test Org")
+    val subject = X500Principal("CN=Test User,O=TestOrg")
+    val now = Clock.System.now()
     val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
             issuer = subject,
             subject = subject,
-            notBefore = LocalDate(2024, 1, 1),
-            notAfter = LocalDate(2025, 12, 31),
+            notBefore = now - 1.days,
+            notAfter = now + 1.days,
             sans = listOf(San.Dns("example.com")),
         )
 
@@ -82,13 +97,14 @@ class CertTest {
   fun `buildSelfSigned certificate is trusted in a trust store`() {
     val keyPair = genECKeyPair()
     val subject = X500Principal("CN=Trust Test")
+    val now = Clock.System.now()
     val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
             issuer = subject,
             subject = subject,
-            notBefore = LocalDate(2024, 1, 1),
-            notAfter = LocalDate(2025, 12, 31),
+            notBefore = now - 1.days,
+            notAfter = now + 1.days,
         )
 
     val keyStore =
@@ -103,13 +119,14 @@ class CertTest {
   fun `certificate PEM round-trip`() {
     val keyPair = genECKeyPair()
     val subject = X500Principal("CN=RoundTrip")
+    val now = Clock.System.now()
     val cert =
         Cert.buildSelfSigned(
             keyPair = keyPair,
             issuer = subject,
             subject = subject,
-            notBefore = LocalDate(2024, 1, 1),
-            notAfter = LocalDate(2025, 12, 31),
+            notBefore = now - 1.days,
+            notAfter = now + 1.days,
         )
 
     val parsed = Pem.readCertificateChain(cert.pem).single()

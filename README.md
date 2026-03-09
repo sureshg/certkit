@@ -7,32 +7,21 @@
 [![Build-Amper][amper_img]][amper_url]
 
 Lightweight X.509 certificate toolkit for Kotlin/JVM. Build self-signed certs, CSRs, CRLs, and work with PEM/DER
-encoding, all using JDK standard libraries.
+encoding, all using JDK standard libraries. **No BouncyCastle, no Guava.**
 
 ## Features
 
 - **Self-signed certificates** — X.509v3 with SAN, Basic Constraints, key identifiers (EC keys)
 - **CSR creation** — PKCS#10 Certificate Signing Requests with SAN support
-- **CRL support** — parse, build, and check certificate revocation lists; extract CRL Distribution Points
+- **CRL support** — parse, build, and check certificate revocation lists
 - **PEM read/write** — load and encode certificates, private keys, public keys
-- **Private key formats** — PKCS#8 unencrypted, PKCS#8 PBE-encrypted, PKCS#1 (RSA, DSA, EC)
+- **DER DSL** — type-safe Kotlin DSL for building ASN.1 DER structures
+- **Private key formats** — PKCS#8, PKCS#8 encrypted, PKCS#1 (RSA, DSA, EC)
 - **TLS scanning** — connect to any host and capture the certificate chain
-- **No BouncyCastle, no Guava** — all crypto is pure JDK `java.security.*` and `javax.crypto.*`
-
-## Supported Types
-
-- **Private keys** — PKCS#8, PKCS#8 encrypted, PKCS#1 (RSA, DSA, EC)
-- **Public keys** — X.509/SPKI, PKCS#1 RSA
-- **Certificates** — X.509v3 (PEM & DER)
-- **CRLs** — X.509 CRL (PEM & DER)
-- **Key algorithms** — RSA, EC (secp256r1, secp384r1, …), DSA
-- **Cert builder** — EC keys (SHA256withECDSA)
 
 ## 🚀 Quick Start
 
 > **Requires JDK 21+**
-
-Add the dependency:
 
 ```kotlin
 dependencies {
@@ -47,36 +36,49 @@ val keyPair = KeyPairGenerator.getInstance("EC")
     .apply { initialize(ECGenParameterSpec("secp256r1")) }
     .generateKeyPair()
 
+val today = Clock.System.todayIn(TimeZone.UTC)
+
 val cert = Cert.buildSelfSigned(
     keyPair = keyPair,
     serialNumber = 1,
-    issuer = X500Principal("CN=My CA,O=Acme"),
-    subject = X500Principal("CN=My CA,O=Acme"),
-    notBefore = LocalDate(2025, 1, 1),
-    notAfter = LocalDate(2026, 12, 31),
+    issuer = X500Principal("CN=My CA,O=TestOrg"),
+    subject = X500Principal("CN=My CA,O=TestOrg"),
+    notBefore = today,
+    notAfter = today + DatePeriod(days = 30),
     sans = listOf(San.Dns("localhost"), San.Dns("*.local"), San.Ip("127.0.0.1")),
 )
 
 println(cert.pem)
 ```
 
-### Create a CSR
+An `Instant` overload is also available for precise control over validity times.
+
+### Certificate Extensions
 
 ```kotlin
-val keyPair = KeyPairGenerator.getInstance("RSA")
-    .apply { initialize(2048) }
-    .generateKeyPair()
+cert.commonName          // "My CA"
+cert.subjectAltNames     // ["localhost", "*.local", "127.0.0.1"]
+cert.expiryDateUtc       // 2026-04-07T23:59:59
+cert.isExpired           // false
+cert.expiresIn           // 30d 0h ...
+cert.isCA                // true
+cert.selfSigned          // true
+cert.signedBy(caCert)    // true
+```
 
+### CSR
+
+```kotlin
 val csr = Csr.create(
     x500Name = "CN=app.example.com,O=Acme",
     algorithmName = "SHA256withRSA",
     keyPair = keyPair,
     sans = listOf(San.Dns("app.example.com"), San.Ip("10.0.0.1")),
 )
-println(csr.encoded)
+println(csr.pem)
 ```
 
-### Build & Check a CRL
+### CRL
 
 ```kotlin
 val crl = Crl.build(
@@ -87,39 +89,65 @@ val crl = Crl.build(
     revokedSerials = listOf(42L, 99L),
 )
 
-// Check if a certificate is revoked
-val revoked = cert.isRevokedBy(crl)
-
-// Extract CRL Distribution Points from a certificate
-val urls = Crl.distributionPoints(cert)
+cert.isRevokedBy(crl)          // check revocation
+Crl.distributionPoints(cert)   // extract CRL URLs
 ```
 
-### Load PEM Keys & Certificates
+### PEM
 
 ```kotlin
+// Load
 val privateKey = Pem.loadPrivateKey(Path("server.key"), keyPassword = "secret")
 val publicKey = Pem.loadPublicKey(Path("server.pub"))
 val certs = Pem.readCertificateChain(Path("chain.crt"))
 val keyStore = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
 val trustStore = Pem.loadTrustStore(Path("ca.crt"))
+
+// Encode — .pem extension on all major types
+keyPair.public.pem       // -----BEGIN PUBLIC KEY-----
+keyPair.private.pem      // -----BEGIN PRIVATE KEY-----
+certificate.pem          // -----BEGIN CERTIFICATE-----
+csr.pem                  // -----BEGIN CERTIFICATE REQUEST-----
+crl.pem                  // -----BEGIN X509 CRL-----
 ```
 
-### Scan TLS Certificates
+### DER DSL
+
+Type-safe Kotlin DSL for building ASN.1 DER-encoded structures:
+
+```kotlin
+val encoded: ByteArray = seq {
+    integer(1L)
+    boolean(true)
+    seq {
+        oid("2.5.29.14")
+        octetString(byteArrayOf(0x01, 0x02))
+    }
+    utcTime(Clock.System.now())
+    explicitTag(0) { integer(2L) }
+}
+```
+
+All standard ASN.1 types are supported: `integer`, `boolean`, `bitString`, `octetString`, `oid`,
+`utcTime`, `nullValue`, `tag`, `implicitTag`, `explicitTag`, `seq`, and `set`.
+
+### TLS Scanning
 
 ```kotlin
 val chain = scanCertificates("github.com")
-chain.forEach { println("${it.commonName} — expires ${it.expiryDateUTC}") }
+chain.forEach { println("${it.commonName} — expires ${it.expiryDateUtc}") }
 ```
 
-### PEM Encoding
+## Supported Types
 
-```kotlin
-println(keyPair.public.pem)     // -----BEGIN PUBLIC KEY-----
-println(keyPair.private.pem)    // -----BEGIN PRIVATE KEY-----
-println(certificate.pem)        // -----BEGIN CERTIFICATE-----
-println(csr.pem)                // -----BEGIN CERTIFICATE REQUEST-----
-println(crl.pem)                // -----BEGIN X509 CRL-----
-```
+| Category       | Formats                                         |
+|----------------|-------------------------------------------------|
+| Private keys   | PKCS#8, PKCS#8 encrypted, PKCS#1 (RSA, DSA, EC) |
+| Public keys    | X.509/SPKI, PKCS#1 RSA                          |
+| Certificates   | X.509v3 (PEM & DER)                             |
+| CRLs           | X.509 CRL (PEM & DER)                           |
+| Key algorithms | RSA, EC (secp256r1, secp384r1, …), DSA          |
+| Cert builder   | EC keys (SHA256withECDSA)                       |
 
 ## 🔧 Build & Test
 
@@ -131,8 +159,8 @@ println(crl.pem)                // -----BEGIN X509 CRL-----
 
 ## Credits
 
-Huge thanks to the [Airlift](https://github.com/airlift/airlift) team. The crypto and DER/PEM logic in this library is a
-Kotlin rewrite of the security module, stripped of the Guava dependency and rewritten as idiomatic Kotlin.
+Thanks to the [Airlift](https://github.com/airlift/airlift) project. The crypto and DER/PEM logic is adapted from its
+security module, rewritten as idiomatic Kotlin without the Guava dependency.
 
 ## License
 
