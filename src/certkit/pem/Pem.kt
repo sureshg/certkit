@@ -125,12 +125,32 @@ object Pem {
     }
   }
 
-  /** Loads a private key from a PEM file. Supports PKCS#8, encrypted PKCS#8, and PKCS#1 formats. */
+  /**
+   * Loads a private key from a PEM file.
+   *
+   * @see loadPrivateKey(String, String?) for supported formats and limitations.
+   */
   fun loadPrivateKey(path: Path, keyPassword: String? = null): PrivateKey =
       loadPrivateKey(path.readText(Charsets.US_ASCII), keyPassword)
 
   /**
-   * Loads a private key from a PEM string. Supports PKCS#8, encrypted PKCS#8, and PKCS#1 formats.
+   * Loads a private key from a PEM string.
+   *
+   * Supported formats:
+   * - **Unencrypted PKCS#8** (`BEGIN PRIVATE KEY`): Loaded directly via `PKCS8EncodedKeySpec`.
+   * - **Encrypted PKCS#8** (`BEGIN ENCRYPTED PRIVATE KEY`): Decrypted with `keyPassword`, then
+   *   loaded as PKCS#8.
+   * - **Unencrypted PKCS#1** (Legacy OpenSSL format: `BEGIN RSA/DSA/EC PRIVATE KEY`): Converted
+   *   internally to PKCS#8, then loaded.
+   * - **Encrypted PKCS#1** (Legacy OpenSSL format: `BEGIN [TYPE] PRIVATE KEY` with `Proc-Type:
+   *   4,ENCRYPTED`): **Not Supported**. Throws an error if detected.
+   *
+   * All supported formats are converted to unencrypted PKCS#8 before loading, resulting in a
+   * [PrivateKey] containing raw decrypted material without storing the password.
+   *
+   * @param pem The PEM-encoded private key string.
+   * @param keyPassword Optional password for encrypted PKCS#8 keys.
+   * @return The loaded [PrivateKey] containing decrypted, raw key material in PKCS#8 format.
    */
   fun loadPrivateKey(pem: String, keyPassword: String? = null): PrivateKey {
     val match = PRIVATE_KEY_PATTERN.find(pem) ?: error("did not find a private key")
@@ -138,7 +158,7 @@ object Pem {
     val base64Key = match.groupValues[2]
 
     if (base64Key.lowercase().startsWith("proc-type")) {
-      error("Password protected PKCS 1 private keys are not supported")
+      error("Password protected PKCS#1 private keys are not supported")
     }
 
     val encodedKey = Base64.Mime.decode(base64Key.encodeToByteArray())
