@@ -2,10 +2,9 @@ package certkit.crl
 
 import certkit.cert.Cert
 import certkit.pem.pem
-import java.security.KeyPairGenerator
+import certkit.tls.newEcKeyPair
 import java.security.cert.X509CRL
 import java.security.cert.X509Certificate
-import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,9 +17,9 @@ class CrlTest {
 
   companion object {
     private val now = Clock.System.now()
-    private val caKey = genECKeyPair()
-    private val leafKey = genECKeyPair()
-    private val otherKey = genECKeyPair()
+    private val caKey = newEcKeyPair()
+    private val leafKey = newEcKeyPair()
+    private val otherKey = newEcKeyPair()
     private val CA = X500Principal("CN=Test CA")
 
     private val caCert: X509Certificate =
@@ -59,11 +58,6 @@ class CrlTest {
             nextUpdate = now - 30.days,
             revokedSerials = listOf(2L),
         )
-
-    private fun genECKeyPair() =
-        KeyPairGenerator.getInstance("EC")
-            .apply { initialize(ECGenParameterSpec("secp256r1")) }
-            .generateKeyPair()
   }
 
   @Test fun `from PEM round-trips`() = assertEquals(crl, Crl.from(crl.pem))

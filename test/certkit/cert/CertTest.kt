@@ -1,12 +1,10 @@
 package certkit.cert
 
 import certkit.pem.*
+import certkit.tls.newEcKeyPair
 import certkit.tls.trustManagers
 import java.math.BigInteger
-import java.security.KeyPair
-import java.security.KeyPairGenerator
 import java.security.KeyStore
-import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
 import kotlin.test.*
 import kotlin.time.Clock
@@ -18,7 +16,7 @@ class CertTest {
 
   @Test
   fun `buildSelfSigned produces a valid self-signed CA certificate`() {
-    val keyPair = genECKeyPair()
+    val keyPair = newEcKeyPair()
     val subject = X500Principal("CN=Test,O=TestOrg")
     val now = Clock.System.now()
     val cert =
@@ -39,7 +37,7 @@ class CertTest {
 
   @Test
   fun `buildSelfSigned sets certificate fields correctly`() {
-    val keyPair = genECKeyPair()
+    val keyPair = newEcKeyPair()
     val issuer = X500Principal("CN=issuer,O=TestOrg")
     val subject = X500Principal("CN=subject,O=TestOrg")
     val now = Clock.System.now()
@@ -76,7 +74,7 @@ class CertTest {
 
   @Test
   fun `buildSelfSigned includes extensions`() {
-    val keyPair = genECKeyPair()
+    val keyPair = newEcKeyPair()
     val subject = X500Principal("CN=Test User,O=TestOrg")
     val now = Clock.System.now()
     val cert =
@@ -95,7 +93,7 @@ class CertTest {
 
   @Test
   fun `buildSelfSigned certificate is trusted in a trust store`() {
-    val keyPair = genECKeyPair()
+    val keyPair = newEcKeyPair()
     val subject = X500Principal("CN=Trust Test")
     val now = Clock.System.now()
     val cert =
@@ -117,7 +115,7 @@ class CertTest {
 
   @Test
   fun `certificate PEM round-trip`() {
-    val keyPair = genECKeyPair()
+    val keyPair = newEcKeyPair()
     val subject = X500Principal("CN=RoundTrip")
     val now = Clock.System.now()
     val cert =
@@ -135,14 +133,9 @@ class CertTest {
 
   @Test
   fun `key pair PEM encoding`() {
-    val keyPair = genECKeyPair()
+    val keyPair = newEcKeyPair()
 
     assertTrue(keyPair.public.pem.startsWith("-----BEGIN PUBLIC KEY-----"))
     assertTrue(keyPair.private.pem.startsWith("-----BEGIN PRIVATE KEY-----"))
   }
-
-  private fun genECKeyPair(): KeyPair =
-      KeyPairGenerator.getInstance("EC")
-          .apply { initialize(ECGenParameterSpec("secp256r1")) }
-          .generateKeyPair()
 }

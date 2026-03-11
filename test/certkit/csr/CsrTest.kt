@@ -2,10 +2,9 @@ package certkit.csr
 
 import certkit.cert.San
 import certkit.pem.pem
+import certkit.tls.*
 import java.security.KeyPair
-import java.security.KeyPairGenerator
 import java.security.Signature
-import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
 import kotlin.test.*
 
@@ -20,7 +19,7 @@ class CsrTest {
 
   @Test
   fun `create with RSA key produces verifiable CSR`() {
-    val keyPair = generateRSAKeyPair()
+    val keyPair = newRsaKeyPair(2048)
     val csr = Csr.create("CN=test", "SHA256withRSA", keyPair)
 
     assertEquals("CN=test", csr.info.subject.name)
@@ -30,7 +29,7 @@ class CsrTest {
 
   @Test
   fun `create with EC key produces verifiable CSR`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = newEcKeyPair()
     val csr = Csr.create("CN=test", "SHA256withECDSA", keyPair)
 
     assertEquals("CN=test", csr.info.subject.name)
@@ -40,13 +39,13 @@ class CsrTest {
   @Test
   fun `create with unknown algorithm throws`() {
     assertFailsWith<IllegalStateException> {
-      val _ = Csr.create("CN=test", "NoSuchAlgorithm", generateRSAKeyPair())
+      val _ = Csr.create("CN=test", "NoSuchAlgorithm", newRsaKeyPair(2048))
     }
   }
 
   @Test
   fun `create with DNS SANs`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = newEcKeyPair()
     val sans = listOf(San.Dns("example.com"), San.Dns("*.example.com"))
     val csr = Csr.create("CN=example.com", "SHA256withECDSA", keyPair, sans)
 
@@ -56,7 +55,7 @@ class CsrTest {
 
   @Test
   fun `create with mixed SANs`() {
-    val keyPair = generateRSAKeyPair()
+    val keyPair = newRsaKeyPair(2048)
     val sans = listOf(San.Dns("example.com"), San.Ip("10.0.0.1"), San.Email("admin@example.com"))
     val csr = Csr.create("CN=example.com", "SHA256withRSA", keyPair, sans)
 
@@ -66,7 +65,7 @@ class CsrTest {
 
   @Test
   fun `create with IPv6 SAN`() {
-    val keyPair = generateECKeyPair()
+    val keyPair = newEcKeyPair()
     val csr = Csr.create("CN=test", "SHA256withECDSA", keyPair, listOf(San.Ip("::1")))
 
     assertEquals(listOf(San.Ip("::1")), csr.info.sans)
@@ -75,7 +74,7 @@ class CsrTest {
 
   @Test
   fun `CsrInfo equality and hashCode`() {
-    val keyPair = generateRSAKeyPair()
+    val keyPair = newRsaKeyPair(2048)
     val subject = X500Principal("CN=test")
     val info1 = CsrInfo(subject, keyPair.public)
     val info2 = CsrInfo(subject, keyPair.public)
@@ -101,12 +100,4 @@ class CsrTest {
     verifier.update(csr.info.encoded)
     assertTrue(verifier.verify(csr.signature))
   }
-
-  private fun generateECKeyPair(): KeyPair =
-      KeyPairGenerator.getInstance("EC")
-          .apply { initialize(ECGenParameterSpec("secp256r1")) }
-          .generateKeyPair()
-
-  private fun generateRSAKeyPair(): KeyPair =
-      KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }.generateKeyPair()
 }

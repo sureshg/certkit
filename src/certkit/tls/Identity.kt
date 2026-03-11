@@ -1,10 +1,24 @@
 package certkit.tls
 
 import java.net.Socket
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.Principal
+import java.security.spec.ECGenParameterSpec
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.X509KeyManager
+
+/** Generates an Ed25519 [KeyPair]. Requires JDK 15+. */
+fun newEd25519KeyPair(): KeyPair = KeyPairGenerator.getInstance("Ed25519").generateKeyPair()
+
+/** Generates an Elliptic Curve [KeyPair] using the given [curve] (default: P-256). */
+fun newEcKeyPair(curve: String = "secp256r1"): KeyPair =
+    KeyPairGenerator.getInstance("EC").apply { initialize(ECGenParameterSpec(curve)) }.generateKeyPair()
+
+/** Generates an RSA [KeyPair] with the given [keySize] (default: 3072). */
+fun newRsaKeyPair(keySize: Int = 3072): KeyPair =
+    KeyPairGenerator.getInstance("RSA").apply { initialize(keySize) }.generateKeyPair()
 
 /** Creates an in-memory KeyStore of the given [type]. */
 fun newKeyStore(type: String = KeyStore.getDefaultType()): KeyStore =

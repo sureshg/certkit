@@ -2,9 +2,8 @@ package certkit.der
 
 import certkit.cert.Cert
 import certkit.cert.San
-import java.security.KeyPairGenerator
+import certkit.tls.newEcKeyPair
 import java.security.interfaces.ECPublicKey
-import java.security.spec.ECGenParameterSpec
 import javax.security.auth.x500.X500Principal
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -109,10 +108,7 @@ class DslTest {
 
   @Test
   fun `self-signed TBS structure`() {
-    val kp =
-        KeyPairGenerator.getInstance("EC")
-            .apply { initialize(ECGenParameterSpec("secp256r1")) }
-            .generateKeyPair()
+    val kp = newEcKeyPair()
     val pub = kp.public as ECPublicKey
 
     val issuer = X500Principal("CN=Test,O=TestOrg")

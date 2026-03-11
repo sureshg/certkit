@@ -17,17 +17,17 @@ class PemTest {
 
   @Test
   fun `isPem detects certificates, keys, and rejects non-PEM`() {
-    assertTrue(Pem.isPem(resourcePath("rsa.client.crt")))
-    assertTrue(Pem.isPem(resourcePath("rsa.client.pkcs8.key")))
-    assertTrue(Pem.isPem(resourcePath("rsa.client.pkcs8.pub")))
+    assertTrue(Pem.isPem(resource("rsa.client.crt")))
+    assertTrue(Pem.isPem(resource("rsa.client.pkcs8.key")))
+    assertTrue(Pem.isPem(resource("rsa.client.pkcs8.pub")))
     assertFalse(Pem.isPem("not a pem string"))
   }
 
   @Test
   fun `loadTrustStore loads RSA, EC, and DSA CA certificates`() {
-    assertCertificateChain(Pem.loadTrustStore(resourcePath("rsa.ca.crt")), CA_NAME)
-    assertCertificateChain(Pem.loadTrustStore(resourcePath("ec.ca.crt")), CA_NAME)
-    assertCertificateChain(Pem.loadTrustStore(resourcePath("dsa.ca.crt")), CA_NAME)
+    assertCertificateChain(Pem.loadTrustStore(resource("rsa.ca.crt")), CA_NAME)
+    assertCertificateChain(Pem.loadTrustStore(resource("ec.ca.crt")), CA_NAME)
+    assertCertificateChain(Pem.loadTrustStore(resource("dsa.ca.crt")), CA_NAME)
   }
 
   @Test
@@ -83,16 +83,16 @@ class PemTest {
   @Test
   fun `loadPrivateKey PKCS1 and PKCS8 produce same key`() {
     assertEquals(
-        Pem.loadPrivateKey(resourcePath("rsa.client.pkcs8.key")),
-        Pem.loadPrivateKey(resourcePath("rsa.client.pkcs1.key")),
+        Pem.loadPrivateKey(resource("rsa.client.pkcs8.key")),
+        Pem.loadPrivateKey(resource("rsa.client.pkcs1.key")),
     )
     assertEquals(
-        Pem.loadPrivateKey(resourcePath("dsa.client.pkcs8.key")),
-        Pem.loadPrivateKey(resourcePath("dsa.client.pkcs1.key")),
+        Pem.loadPrivateKey(resource("dsa.client.pkcs8.key")),
+        Pem.loadPrivateKey(resource("dsa.client.pkcs1.key")),
     )
     assertEquals(
-        Pem.loadPrivateKey(resourcePath("ec.client.pkcs8.key")),
-        Pem.loadPrivateKey(resourcePath("ec.client.pkcs1.key")),
+        Pem.loadPrivateKey(resource("ec.client.pkcs8.key")),
+        Pem.loadPrivateKey(resource("ec.client.pkcs1.key")),
     )
   }
 
@@ -106,7 +106,7 @@ class PemTest {
   @Test
   fun `loadPrivateKey throws on encrypted key without password`() {
     assertFailsWith<IllegalStateException> {
-      val _ = Pem.loadPrivateKey(resourcePath("rsa.client.pkcs8.key.encrypted"), null)
+      val _ = Pem.loadPrivateKey(resource("rsa.client.pkcs8.key.encrypted"), null)
     }
   }
 
@@ -120,8 +120,8 @@ class PemTest {
   @Test
   fun `loadPublicKey RSA PKCS1 and PKCS8 produce same key`() {
     assertEquals(
-        Pem.loadPublicKey(resourcePath("rsa.client.pkcs8.pub")),
-        Pem.loadPublicKey(resourcePath("rsa.client.pkcs1.pub")),
+        Pem.loadPublicKey(resource("rsa.client.pkcs8.pub")),
+        Pem.loadPublicKey(resource("rsa.client.pkcs1.pub")),
     )
   }
 
@@ -138,15 +138,15 @@ class PemTest {
       keyPassword: String?,
       expectedName: String,
   ) {
-    val keyStore = Pem.loadKeyStore(resourcePath(certFile), resourcePath(keyFile), keyPassword)
+    val keyStore = Pem.loadKeyStore(resource(certFile), resource(keyFile), keyPassword)
     assertCertificateChain(keyStore, expectedName)
     val key = keyStore.getKey("key", charArrayOf()) as PrivateKey
     assertEquals(key, Pem.loadPrivateKey(key.pem))
   }
 
   private fun testLoadPublicKey(certFile: String, keyFile: String) {
-    val publicKey = Pem.loadPublicKey(resourcePath(keyFile))
-    assertEquals(publicKey, Pem.readCertificateChain(resourcePath(certFile)).single().publicKey)
+    val publicKey = Pem.loadPublicKey(resource(keyFile))
+    assertEquals(publicKey, Pem.readCertificateChain(resource(certFile)).single().publicKey)
     assertEquals(publicKey, Pem.loadPublicKey(publicKey.pem))
   }
 
@@ -162,7 +162,7 @@ class PemTest {
     assertEquals(expectedName, LdapName(cert.subjectX500Principal.name).toString())
   }
 
-  private fun resourcePath(name: String) =
+  private fun resource(name: String) =
       this::class.java.classLoader.getResource(name)?.toURI()?.toPath()
           ?: error("Resource not found: $name")
 }
