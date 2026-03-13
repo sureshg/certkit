@@ -5,7 +5,6 @@
 [![GitHub Workflow Status][gha_badge]][gha_url]
 [![Kotlin release][kt_img]][kt_url]
 [![OpenJDK Version][java_img]][java_url]
-[![Build-Amper][amper_img]][amper_url]
 
 Lightweight X.509 certificate toolkit for Kotlin/JVM. Build self-signed certs, CSRs, CRLs, and work with PEM/DER
 encoding, all using JDK standard libraries. **No BouncyCastle, no Guava.**
@@ -78,11 +77,11 @@ val keyStore   = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
 val trustStore = Pem.loadTrustStore(Path("ca.crt"))
 
 // Encode — .pem extension on all major types
-publicKey.pem            // -----BEGIN PUBLIC KEY-----
-privateKey.pem           // -----BEGIN PRIVATE KEY-----
-certificate.pem          // -----BEGIN CERTIFICATE-----
-csr.pem                  // -----BEGIN CERTIFICATE REQUEST-----
-crl.pem                  // -----BEGIN X509 CRL-----
+publicKey.pem                              // -----BEGIN PUBLIC KEY-----
+privateKey.pem                             // -----BEGIN PRIVATE KEY-----
+certificate.pem                            // -----BEGIN CERTIFICATE-----
+csr.pem                                    // -----BEGIN CERTIFICATE REQUEST-----
+crl.pem                                    // -----BEGIN X509 CRL-----
 
 // PKCS#8 export (encrypted & unencrypted)
 privateKey.toPkcs8Pem()                    // -----BEGIN PRIVATE KEY-----
