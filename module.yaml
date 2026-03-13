@@ -32,11 +32,12 @@ settings:
     languageVersion: 2.3
     apiVersion: 2.3
     progressiveMode: true
-    allWarningsAsErrors: false
+    allWarningsAsErrors: true
     suppressWarnings: false
     powerAssert: enabled
     verbose: false
     freeCompilerArgs:
+      - -Xexplicit-api=strict
       - -Wextra
       - -Xcontext-parameters
       - -Xreport-all-warnings
@@ -60,6 +61,8 @@ settings:
 
 test-settings:
   kotlin:
+    freeCompilerArgs:
+      - -Xexplicit-api=disable
     powerAssert:
       enabled: true
       functions:

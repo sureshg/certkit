@@ -8,21 +8,21 @@ import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
 /** Platform-specific trust store types. */
-sealed class TrustStoreType(val name: String) {
-  data object WinUser : TrustStoreType("Windows-MY")
+public sealed class TrustStoreType(public val name: String) {
+  public data object WinUser : TrustStoreType("Windows-MY")
 
-  data object WinSystem : TrustStoreType("Windows-ROOT")
+  public data object WinSystem : TrustStoreType("Windows-ROOT")
 
-  data object MacUser : TrustStoreType("KeychainStore")
+  public data object MacUser : TrustStoreType("KeychainStore")
 
-  data object MacSystem : TrustStoreType("KeychainStore-ROOT")
+  public data object MacSystem : TrustStoreType("KeychainStore-ROOT")
 
-  class Directory(val path: Path) : TrustStoreType("Directory")
+  public class Directory(public val path: Path) : TrustStoreType("Directory")
 }
 
 /** Trust manager that captures the certificate chain presented during TLS handshake. */
-class CaptureTrustManager : X509TrustManager {
-  val certChain: List<X509Certificate>
+public class CaptureTrustManager : X509TrustManager {
+  public val certChain: List<X509Certificate>
     field = mutableListOf<X509Certificate>()
 
   override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
@@ -37,7 +37,7 @@ class CaptureTrustManager : X509TrustManager {
 }
 
 /** Lists all available KeyStore types from registered security providers. */
-fun allTrustStores(): List<String> =
+public fun allTrustStores(): List<String> =
     Security.getProviders()
         .flatMap { it.entries }
         .map { it.key.toString() }
@@ -46,7 +46,7 @@ fun allTrustStores(): List<String> =
         .distinct()
 
 /** Default trust managers initialized from JDK's `cacerts` trust store. */
-val jdkCACerts: List<X509TrustManager> by lazy {
+public val jdkCACerts: List<X509TrustManager> by lazy {
   TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).run {
     init(null as KeyStore?)
     trustManagers.filterIsInstance<X509TrustManager>()
@@ -54,14 +54,14 @@ val jdkCACerts: List<X509TrustManager> by lazy {
 }
 
 /** Loads the system trust store for the given [type]. */
-fun systemTrustStore(type: TrustStoreType): KeyStore =
+public fun systemTrustStore(type: TrustStoreType): KeyStore =
     when (type) {
       is TrustStoreType.Directory -> KeyStore.getInstance(type.name).apply { load { null } }
       else -> KeyStore.getInstance(type.name).apply { load(null, null) }
     }
 
 /** Returns [X509TrustManager]s initialized from this [KeyStore]. */
-val KeyStore.trustManagers: List<X509TrustManager>
+public val KeyStore.trustManagers: List<X509TrustManager>
   get() =
       TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).let { tm ->
         tm.init(this)

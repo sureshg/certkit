@@ -13,7 +13,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 /** Connects to a TLS server and captures the certificate chain presented during the handshake. */
-fun scanCertificates(
+public fun scanCertificates(
     host: String,
     port: Int = 443,
     sni: String? = null,
@@ -36,7 +36,7 @@ fun scanCertificates(
 }
 
 /** SSLSocketFactory wrapper that disables SNI and hostname verification on created sockets. */
-class ScanSSLFactory(private val delegate: SSLSocketFactory) : SSLSocketFactory() {
+public class ScanSSLFactory(private val delegate: SSLSocketFactory) : SSLSocketFactory() {
   override fun getDefaultCipherSuites(): Array<String> = delegate.defaultCipherSuites
 
   override fun getSupportedCipherSuites(): Array<String> = delegate.supportedCipherSuites
@@ -76,7 +76,7 @@ class ScanSSLFactory(private val delegate: SSLSocketFactory) : SSLSocketFactory(
 }
 
 /** JSSE system and security properties for TLS configuration. */
-enum class TLSProp(val key: String, val desc: String, val system: Boolean = true) {
+public enum class TLSProp(public val key: String, public val desc: String, public val system: Boolean = true) {
   // KeyStore
   KeyStore("javax.net.ssl.keyStore", "Default keystore"),
   KeyStoreType("javax.net.ssl.keyStoreType", "Default keystore type"),
@@ -109,7 +109,7 @@ enum class TLSProp(val key: String, val desc: String, val system: Boolean = true
   // Debug
   Debug("javax.net.debug", "Debugging SSL/TLS connections");
 
-  fun set(value: String) {
+  public fun set(value: String) {
     if (system) System.setProperty(key, value) else Security.setProperty(key, value)
   }
 }

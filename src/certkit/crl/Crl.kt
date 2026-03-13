@@ -11,7 +11,7 @@ import kotlin.io.encoding.Base64
 import kotlin.time.Instant
 
 /** Parses and builds X.509 Certificate Revocation Lists (CRLs). */
-object Crl {
+public object Crl {
 
   private val CRL_PATTERN =
       """-+BEGIN\s+X509\s+CRL[^-]*-+[\s\r\n]+([a-z0-9+/=\r\n]+)-+END\s+X509\s+CRL[^-]*-+"""
@@ -22,14 +22,14 @@ object Crl {
   private val certFactory = CertificateFactory.getInstance("X.509")
 
   /** Parses an [X509CRL] from a PEM-encoded string. */
-  fun from(pem: String): X509CRL {
+  public fun from(pem: String): X509CRL {
     val match = CRL_PATTERN.find(pem) ?: error("No PEM-encoded CRL found")
     val der = Base64.Mime.decode(match.groupValues[1].encodeToByteArray())
     return certFactory.generateCRL(der.inputStream()) as X509CRL
   }
 
   /** Parses an [X509CRL] from DER-encoded bytes. */
-  fun from(bytes: ByteArray): X509CRL = certFactory.generateCRL(bytes.inputStream()) as X509CRL
+  public fun from(bytes: ByteArray): X509CRL = certFactory.generateCRL(bytes.inputStream()) as X509CRL
 
   /**
    * Builds a minimal X.509 CRL signed with SHA256withECDSA.
@@ -43,7 +43,7 @@ object Crl {
    * }
    * ```
    */
-  fun build(
+  public fun build(
       keyPair: KeyPair,
       issuer: X500Principal,
       thisUpdate: Instant,
@@ -92,7 +92,7 @@ object Crl {
    * GeneralName  ::= CHOICE { uniformResourceIdentifier [6] IA5String, ... }
    * ```
    */
-  fun distributionPoints(cert: X509Certificate): List<String> =
+  public fun distributionPoints(cert: X509Certificate): List<String> =
       cert
           .getExtensionValue("2.5.29.31")
           ?.let { unwrapOctetString(it) }

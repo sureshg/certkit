@@ -19,12 +19,12 @@ import javax.security.auth.x500.X500Principal
  * }
  * ```
  */
-object Csr {
+public object Csr {
 
   private const val SIGNATURE_OID_PREFIX = "Alg.Alias.Signature.OID."
 
   /** All signature algorithms discovered from JCA security providers, keyed by name. */
-  val signatureAlgorithms: Map<String, SignatureAlgo> by lazy {
+  public val signatureAlgorithms: Map<String, SignatureAlgo> by lazy {
     buildMap {
       Security.getProviders()
           .flatMap { it.entries }
@@ -38,7 +38,7 @@ object Csr {
   }
 
   /** Creates a CSR from an X.500 name string, signing with the given [keyPair]. */
-  fun create(
+  public fun create(
       x500Name: String,
       algorithmName: String,
       keyPair: KeyPair,
@@ -51,7 +51,7 @@ object Csr {
   }
 
   /** Creates a CSR by signing the given [info] with the [privateKey]. */
-  fun create(info: CsrInfo, algorithm: SignatureAlgo, privateKey: PrivateKey): CsrRequest =
+  public fun create(info: CsrInfo, algorithm: SignatureAlgo, privateKey: PrivateKey): CsrRequest =
       CsrRequest(info, algorithm, sign(info, algorithm, privateKey))
 
   private fun sign(info: CsrInfo, algorithm: SignatureAlgo, privateKey: PrivateKey): ByteArray =

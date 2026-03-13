@@ -6,40 +6,40 @@ import java.security.PublicKey
 import javax.security.auth.x500.X500Principal
 
 /** An immutable PKCS#10 Certificate Signing Request. */
-class CsrRequest(
-    val info: CsrInfo,
-    val algorithm: SignatureAlgo,
-    val signature: ByteArray,
+public class CsrRequest(
+    public val info: CsrInfo,
+    public val algorithm: SignatureAlgo,
+    public val signature: ByteArray,
 ) {
-  val encoded =
+  public val encoded: ByteArray =
       Der.sequence(info.encoded, Der.sequence(algorithm.encoded), Der.bitString(0, signature))
 
-  override fun equals(other: Any?) =
+  override fun equals(other: Any?): Boolean =
       this === other || (other is CsrRequest && encoded.contentEquals(other.encoded))
 
-  override fun hashCode() = encoded.contentHashCode()
+  override fun hashCode(): Int = encoded.contentHashCode()
 
-  override fun toString() = "CsrRequest(info=$info, algorithm=$algorithm)"
+  override fun toString(): String = "CsrRequest(info=$info, algorithm=$algorithm)"
 }
 
 /**
  * Signature algorithm (name + OID) resolved from JCA security providers. Equality is by OID only.
  */
-class SignatureAlgo(val name: String, val oid: String) {
-  val encoded = Der.oid(oid)
+public class SignatureAlgo(public val name: String, public val oid: String) {
+  public val encoded: ByteArray = Der.oid(oid)
 
-  override fun equals(other: Any?) = this === other || (other is SignatureAlgo && oid == other.oid)
+  override fun equals(other: Any?): Boolean = this === other || (other is SignatureAlgo && oid == other.oid)
 
-  override fun hashCode() = oid.hashCode()
+  override fun hashCode(): Int = oid.hashCode()
 
-  override fun toString() = "SignatureAlgo(name=$name, oid=$oid)"
+  override fun toString(): String = "SignatureAlgo(name=$name, oid=$oid)"
 }
 
 /** PKCS#10 CSR info: subject name + public key + optional SANs, DER-encoded per RFC 2986 §4.1. */
-data class CsrInfo(
-    val subject: X500Principal,
-    val publicKey: PublicKey,
-    val sans: List<San> = emptyList(),
+public data class CsrInfo(
+    public val subject: X500Principal,
+    public val publicKey: PublicKey,
+    public val sans: List<San> = emptyList(),
 ) {
 
   private companion object {
@@ -56,7 +56,7 @@ data class CsrInfo(
     const val SUBJECT_ALT_NAME_OID = "2.5.29.17"
   }
 
-  val encoded: ByteArray
+  public val encoded: ByteArray
     get() =
         Der.sequence(
             VERSION_0,

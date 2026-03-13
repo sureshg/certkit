@@ -21,7 +21,7 @@ import kotlin.io.path.readText
  *
  * [pem.h](https://github.com/openssl/openssl/blob/master/include/openssl/pem.h#L35)
  */
-enum class PemType(val marker: String) {
+public enum class PemType(public val marker: String) {
   X509("CERTIFICATE"),
   X509_REQ("CERTIFICATE REQUEST"),
   X509_CRL("X509 CRL"),
@@ -38,7 +38,7 @@ enum class PemType(val marker: String) {
 }
 
 /** Reads and loads PEM-encoded certificates, private keys, public keys, and key/trust stores. */
-object Pem {
+public object Pem {
 
   private val CERT_PATTERN =
       """-+BEGIN\s+.*CERTIFICATE[^-]*-+(?:\s|\r|\n)+([a-z0-9+/=\r\n]+)-+END\s+.*CERTIFICATE[^-]*-+"""
@@ -65,20 +65,20 @@ object Pem {
   private val certFactory = CertificateFactory.getInstance("X.509")
 
   /** Returns `true` if the data contains PEM-encoded certificates, keys, or private keys. */
-  fun isPem(path: Path): Boolean = isPem(path.readText(Charsets.US_ASCII))
+  public fun isPem(path: Path): Boolean = isPem(path.readText(Charsets.US_ASCII))
 
   /** Returns `true` if the string contains PEM-encoded certificates, keys, or private keys. */
-  fun isPem(data: String): Boolean =
+  public fun isPem(data: String): Boolean =
       CERT_PATTERN.containsMatchIn(data) ||
           PUBLIC_KEY_PATTERN.containsMatchIn(data) ||
           PRIVATE_KEY_PATTERN.containsMatchIn(data)
 
   /** Reads all PEM-encoded X.509 certificates from the given file. */
-  fun readCertificateChain(path: Path): List<X509Certificate> =
+  public fun readCertificateChain(path: Path): List<X509Certificate> =
       readCertificateChain(path.readText(Charsets.US_ASCII))
 
   /** Reads all PEM-encoded X.509 certificates from the given string. */
-  fun readCertificateChain(pem: String): List<X509Certificate> =
+  public fun readCertificateChain(pem: String): List<X509Certificate> =
       CERT_PATTERN.findAll(pem)
           .map {
             val der = Base64.Mime.decode(it.groupValues[1].encodeToByteArray())
@@ -87,7 +87,7 @@ object Pem {
           .toList()
 
   /** Loads a JKS trust store from a PEM certificate chain file. */
-  fun loadTrustStore(path: Path): KeyStore {
+  public fun loadTrustStore(path: Path): KeyStore {
     val keyStore = KeyStore.getInstance("JKS").apply { load(null, null) }
     for (cert in readCertificateChain(path)) {
       keyStore.setCertificateEntry(cert.subjectX500Principal.getName("RFC2253"), cert)
@@ -96,7 +96,7 @@ object Pem {
   }
 
   /** Loads a JKS key store from a PEM certificate chain and private key file. */
-  fun loadKeyStore(
+  public fun loadKeyStore(
       certChainFile: Path,
       privateKeyFile: Path,
       keyPassword: String? = null,
@@ -130,7 +130,7 @@ object Pem {
    *
    * @see loadPrivateKey(String, String?) for supported formats and limitations.
    */
-  fun loadPrivateKey(path: Path, keyPassword: String? = null): PrivateKey =
+  public fun loadPrivateKey(path: Path, keyPassword: String? = null): PrivateKey =
       loadPrivateKey(path.readText(Charsets.US_ASCII), keyPassword)
 
   /**
@@ -152,7 +152,7 @@ object Pem {
    * @param keyPassword Optional password for encrypted PKCS#8 keys.
    * @return The loaded [PrivateKey] containing decrypted, raw key material in PKCS#8 format.
    */
-  fun loadPrivateKey(pem: String, keyPassword: String? = null): PrivateKey {
+  public fun loadPrivateKey(pem: String, keyPassword: String? = null): PrivateKey {
     val match = PRIVATE_KEY_PATTERN.find(pem) ?: error("did not find a private key")
     val keyType = match.groupValues[1].ifEmpty { null }
     val base64Key = match.groupValues[2]
@@ -182,10 +182,10 @@ object Pem {
   }
 
   /** Loads a public key from a PEM file. Supports PKCS#8 and RSA PKCS#1 formats. */
-  fun loadPublicKey(path: Path): PublicKey = loadPublicKey(path.readText(Charsets.US_ASCII))
+  public fun loadPublicKey(path: Path): PublicKey = loadPublicKey(path.readText(Charsets.US_ASCII))
 
   /** Loads a public key from a PEM string. Supports PKCS#8 and RSA PKCS#1 formats. */
-  fun loadPublicKey(pem: String): PublicKey {
+  public fun loadPublicKey(pem: String): PublicKey {
     val match = PUBLIC_KEY_PATTERN.find(pem) ?: error("did not find a public key")
     val keyType = match.groupValues[1].ifEmpty { null }
     val encodedKey = Base64.Mime.decode(match.groupValues[2].encodeToByteArray())

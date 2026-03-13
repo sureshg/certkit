@@ -36,7 +36,7 @@ import kotlinx.datetime.*
  * }
  * ```
  */
-object Cert {
+public object Cert {
 
   private val SHA256_ECDSA_OID = Der.oid("1.2.840.10045.4.3.2")
   private val SUBJECT_KEY_ID_OID = Der.oid("2.5.29.14")
@@ -53,7 +53,7 @@ object Cert {
    * whole-second precision ([RFC 5280 §4.1.2.5.1](https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.5.1)).
    * Any sub-second component is silently truncated.
    */
-  fun buildSelfSigned(
+  public fun buildSelfSigned(
       keyPair: KeyPair,
       serialNumber: Long = 0,
       issuer: X500Principal,
@@ -123,7 +123,7 @@ object Cert {
   }
 
   /** Convenience overload that accepts [LocalDate] instead of [Instant]. */
-  fun buildSelfSigned(
+  public fun buildSelfSigned(
       keyPair: KeyPair,
       serialNumber: Long = 0,
       issuer: X500Principal,
@@ -143,7 +143,7 @@ object Cert {
           sans = sans,
       )
 
-  fun hashPublicKey(key: ECPublicKey): ByteArray {
+  public fun hashPublicKey(key: ECPublicKey): ByteArray {
     val raw = Der.sequence(Der.integer(key.w.affineX), Der.integer(key.w.affineY))
     return MessageDigest.getInstance("SHA-1").digest(raw)
   }

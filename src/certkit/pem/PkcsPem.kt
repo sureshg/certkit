@@ -17,12 +17,12 @@ import javax.crypto.spec.PBEParameterSpec
  * - **v1 (MD5 + DES)** — Legacy compatibility. OpenSSL: `pkcs8 -topk8 -v1 PBE-MD5-DES`
  * - **v2** — PBKDF2(HMAC-SHA256) + AES-256-CBC. OpenSSL: `pkcs8 -topk8 -v2 aes-256-cbc`
  */
-object Pkcs8Algo {
-  const val V1_SHA1_3DES = "PBEWithSHA1AndDESede"
-  const val V1_MD5_DES = "PBEWithMD5AndDES"
-  const val V2_AES_256_CBC = "PBEWithHmacSHA256AndAES_256"
+public object Pkcs8Algo {
+  public const val V1_SHA1_3DES: String = "PBEWithSHA1AndDESede"
+  public const val V1_MD5_DES: String = "PBEWithMD5AndDES"
+  public const val V2_AES_256_CBC: String = "PBEWithHmacSHA256AndAES_256"
 
-  fun isV1(algorithm: String) = algorithm == V1_SHA1_3DES || algorithm == V1_MD5_DES
+  public fun isV1(algorithm: String): Boolean = algorithm == V1_SHA1_3DES || algorithm == V1_MD5_DES
 }
 
 /**
@@ -37,7 +37,7 @@ object Pkcs8Algo {
  * @param iterationCount PBE iterations (default 2048, matches OpenSSL). Ignored when [password] is
  *   null.
  */
-fun PrivateKey.toPkcs8Pem(
+public fun PrivateKey.toPkcs8Pem(
     password: String? = null,
     algorithm: String = Pkcs8Algo.V1_SHA1_3DES,
     iterationCount: Int = 2048,
@@ -76,7 +76,7 @@ fun PrivateKey.toPkcs8Pem(
  *
  * @throws IllegalStateException if the key is not an [RSAPrivateCrtKey].
  */
-fun PrivateKey.toPkcs1Pem(): String =
+public fun PrivateKey.toPkcs1Pem(): String =
     when (this) {
       is RSAPrivateCrtKey ->
           seq {

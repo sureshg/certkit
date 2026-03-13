@@ -30,7 +30,7 @@ import kotlinx.io.readByteArray
  * - First two arcs merged: `arc0 * 40 + arc1` → single byte
  * - Each remaining arc → base-128 varint (high bit = "more bytes follow")
  */
-object Der {
+public object Der {
 
   private const val BOOLEAN_TAG = 0x01
   private const val INTEGER_TAG = 0x02
@@ -55,7 +55,7 @@ object Der {
       }
 
   /** Encodes a DER BIT STRING (tag `0x03`): `03 len padBits value...`. */
-  fun bitString(padBits: Int, value: ByteArray): ByteArray {
+  public fun bitString(padBits: Int, value: ByteArray): ByteArray {
     require(padBits in 0..7) { "Invalid pad bits: $padBits" }
     return Buffer()
         .apply {
@@ -68,23 +68,23 @@ object Der {
   }
 
   /** Encodes a DER BOOLEAN: `[01 01 FF]` for true, `[01 01 00]` for false. */
-  fun boolean(value: Boolean): ByteArray =
+  public fun boolean(value: Boolean): ByteArray =
       byteArrayOf(BOOLEAN_TAG.toByte(), 0x01, if (value) 0xFF.toByte() else 0x00)
 
   /** Encodes a DER INTEGER (tag `0x02`) from a Long. */
-  fun integer(value: Long): ByteArray = integer(BigInteger.valueOf(value))
+  public fun integer(value: Long): ByteArray = integer(BigInteger.valueOf(value))
 
   /** Encodes a DER INTEGER (tag `0x02`) from a BigInteger (two's complement, minimal bytes). */
-  fun integer(value: BigInteger): ByteArray = tag(INTEGER_TAG, value.toByteArray())
+  public fun integer(value: BigInteger): ByteArray = tag(INTEGER_TAG, value.toByteArray())
 
   /** DER NULL: `[05 00]`. */
-  val nullValue = byteArrayOf(NULL_TAG.toByte(), 0x00)
+  public val nullValue: ByteArray = byteArrayOf(NULL_TAG.toByte(), 0x00)
 
   /** Encodes a DER OCTET STRING (tag `0x04`). */
-  fun octetString(value: ByteArray): ByteArray = tag(OCTET_STRING_TAG, value)
+  public fun octetString(value: ByteArray): ByteArray = tag(OCTET_STRING_TAG, value)
 
   /** Encodes a DER OBJECT IDENTIFIER from a dotted OID string (e.g. "1.2.840.113549.1.1.1"). */
-  fun oid(oid: String): ByteArray {
+  public fun oid(oid: String): ByteArray {
     val parts = oid.split('.').map { it.toInt() }
     require(parts.size >= 2) { "OID requires at least 2 parts" }
     val body =
@@ -104,41 +104,41 @@ object Der {
   }
 
   /** Encodes a DER UTC TIME (tag `0x17`) from a raw `yyMMddHHmmssZ` string. */
-  fun utcTime(value: String): ByteArray = tag(UTC_TIME_TAG, value.encodeToByteArray())
+  public fun utcTime(value: String): ByteArray = tag(UTC_TIME_TAG, value.encodeToByteArray())
 
   /** Encodes a DER UTC TIME (tag `0x17`) from an [Instant], formatted as `yyMMddHHmmssZ`. */
-  fun utcTime(value: Instant): ByteArray =
+  public fun utcTime(value: Instant): ByteArray =
       tag(
           UTC_TIME_TAG,
           value.toLocalDateTime(TimeZone.UTC).format(UTC_TIME_FORMAT).encodeToByteArray(),
       )
 
   /** Encodes a primitive DER tag (0-31) with the given body. */
-  fun tag(tag: Int, body: ByteArray): ByteArray {
+  public fun tag(tag: Int, body: ByteArray): ByteArray {
     require(tag in 0..31) { "Invalid tag: $tag" }
     return writeTag(tag, body)
   }
 
   /** Encodes a context-specific implicit tag (class bit 0x80 set). */
-  fun implicitTag(tag: Int, body: ByteArray): ByteArray {
+  public fun implicitTag(tag: Int, body: ByteArray): ByteArray {
     require(tag in 0..31) { "Invalid tag: $tag" }
     return writeTag(tag or 0x80, body)
   }
 
   /** Encodes a context-specific explicit tag (constructed, class bits 0xA0 set). */
-  fun explicitTag(tag: Int, vararg values: ByteArray): ByteArray {
+  public fun explicitTag(tag: Int, vararg values: ByteArray): ByteArray {
     require(tag in 0..31) { "Invalid tag: $tag" }
     return constructed(tag or 0xA0, values)
   }
 
   /** Encodes a DER SEQUENCE (tag `0x30`) wrapping the concatenated [values]. */
-  fun sequence(vararg values: ByteArray): ByteArray = constructed(SEQUENCE_TAG, values)
+  public fun sequence(vararg values: ByteArray): ByteArray = constructed(SEQUENCE_TAG, values)
 
   /** Encodes a DER SET (tag `0x31`) wrapping the concatenated [values]. */
-  fun set(vararg values: ByteArray): ByteArray = constructed(SET_TAG, values)
+  public fun set(vararg values: ByteArray): ByteArray = constructed(SET_TAG, values)
 
   /** Decodes a DER SEQUENCE into its constituent TLV elements (each returned as raw bytes). */
-  fun decodeSequence(data: ByteArray): List<ByteArray> {
+  public fun decodeSequence(data: ByteArray): List<ByteArray> {
     require(data[0].toInt() == SEQUENCE_TAG) { "Expected sequence tag" }
     val (dataLength, headerSize) = decodeLengthAt(data, 1)
     val dataStart = 1 + headerSize
@@ -159,7 +159,7 @@ object Der {
   /**
    * Decodes a context-specific explicit tag (`[A0+n] [len] [inner]`) and returns the inner bytes.
    */
-  fun decodeExplicitTag(element: ByteArray): ByteArray {
+  public fun decodeExplicitTag(element: ByteArray): ByteArray {
     require(element[0].toInt() and 0xE0 == 0xA0) { "Expected context-specific constructed tag" }
     val (len, lenSize) = decodeLengthAt(element, 1)
     val dataStart = 1 + lenSize
