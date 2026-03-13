@@ -67,6 +67,31 @@ cert.selfSigned          // true
 cert.signedBy(caCert)    // true
 ```
 
+### PEM
+
+```kotlin
+// Load
+val privateKey = Pem.loadPrivateKey(Path("server.key"), keyPassword = "secret")
+val publicKey  = Pem.loadPublicKey(Path("server.pub"))
+val certs      = Pem.readCertificateChain(Path("chain.crt"))
+val keyStore   = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
+val trustStore = Pem.loadTrustStore(Path("ca.crt"))
+
+// Encode — .pem extension on all major types
+publicKey.pem            // -----BEGIN PUBLIC KEY-----
+privateKey.pem           // -----BEGIN PRIVATE KEY-----
+certificate.pem          // -----BEGIN CERTIFICATE-----
+csr.pem                  // -----BEGIN CERTIFICATE REQUEST-----
+crl.pem                  // -----BEGIN X509 CRL-----
+
+// PKCS#8 export (encrypted & unencrypted)
+privateKey.toPkcs8Pem()                    // -----BEGIN PRIVATE KEY-----
+privateKey.toPkcs8Pem(password = "secret") // -----BEGIN ENCRYPTED PRIVATE KEY-----
+
+// PKCS#1 export (RSA only)
+rsaPrivateKey.toPkcs1Pem()                 // -----BEGIN RSA PRIVATE KEY-----
+```
+
 ### CSR
 
 ```kotlin
@@ -92,31 +117,6 @@ val crl = Crl.build(
 
 cert.isRevokedBy(crl)          // check revocation
 Crl.distributionPoints(cert)   // extract CRL URLs
-```
-
-### PEM
-
-```kotlin
-// Load
-val privateKey = Pem.loadPrivateKey(Path("server.key"), keyPassword = "secret")
-val publicKey  = Pem.loadPublicKey(Path("server.pub"))
-val certs      = Pem.readCertificateChain(Path("chain.crt"))
-val keyStore   = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
-val trustStore = Pem.loadTrustStore(Path("ca.crt"))
-
-// Encode — .pem extension on all major types
-keyPair.public.pem       // -----BEGIN PUBLIC KEY-----
-keyPair.private.pem      // -----BEGIN PRIVATE KEY-----
-certificate.pem          // -----BEGIN CERTIFICATE-----
-csr.pem                  // -----BEGIN CERTIFICATE REQUEST-----
-crl.pem                  // -----BEGIN X509 CRL-----
-
-// PKCS#8 export (encrypted & unencrypted)
-keyPair.private.toPkcs8Pem()                          // -----BEGIN PRIVATE KEY-----
-keyPair.private.toPkcs8Pem(password = "secret")       // -----BEGIN ENCRYPTED PRIVATE KEY-----
-
-// PKCS#1 export (RSA only)
-rsaKey.private.toPkcs1Pem()                            // -----BEGIN RSA PRIVATE KEY-----
 ```
 
 ### DER DSL
