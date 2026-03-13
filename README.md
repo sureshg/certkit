@@ -2,6 +2,7 @@
   <img src="docs/banner.png" alt="certkit"/>
 </p>
 
+[![GitHub Workflow Status][gha_badge]][gha_url]
 [![Kotlin release][kt_img]][kt_url]
 [![OpenJDK Version][java_img]][java_url]
 [![Build-Amper][amper_img]][amper_url]
@@ -98,9 +99,9 @@ Crl.distributionPoints(cert)   // extract CRL URLs
 ```kotlin
 // Load
 val privateKey = Pem.loadPrivateKey(Path("server.key"), keyPassword = "secret")
-val publicKey = Pem.loadPublicKey(Path("server.pub"))
-val certs = Pem.readCertificateChain(Path("chain.crt"))
-val keyStore = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
+val publicKey  = Pem.loadPublicKey(Path("server.pub"))
+val certs      = Pem.readCertificateChain(Path("chain.crt"))
+val keyStore   = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
 val trustStore = Pem.loadTrustStore(Path("ca.crt"))
 
 // Encode — .pem extension on all major types
@@ -109,6 +110,13 @@ keyPair.private.pem      // -----BEGIN PRIVATE KEY-----
 certificate.pem          // -----BEGIN CERTIFICATE-----
 csr.pem                  // -----BEGIN CERTIFICATE REQUEST-----
 crl.pem                  // -----BEGIN X509 CRL-----
+
+// PKCS#8 export (encrypted & unencrypted)
+keyPair.private.toPkcs8Pem()                          // -----BEGIN PRIVATE KEY-----
+keyPair.private.toPkcs8Pem(password = "secret")       // -----BEGIN ENCRYPTED PRIVATE KEY-----
+
+// PKCS#1 export (RSA only)
+rsaKey.private.toPkcs1Pem()                            // -----BEGIN RSA PRIVATE KEY-----
 ```
 
 ### DER DSL
@@ -167,6 +175,10 @@ security module, rewritten as idiomatic Kotlin without the Guava dependency.
 Apache 2.0 — see [LICENSE](LICENSE) for details.
 
 <!-- Badges -->
+
+[gha_url]: https://github.com/sureshg/certkit/actions/workflows/build.yaml
+
+[gha_badge]: https://img.shields.io/github/actions/workflow/status/sureshg/certkit/build.yaml?branch=main&style=flat&logo=kotlin&logoColor=white&label=Amper%20Build
 
 [java_url]: https://www.azul.com/downloads/?version=java-25-lts&package=jdk#zulu
 
