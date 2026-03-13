@@ -10,9 +10,9 @@ import kotlin.test.*
 class PemTest {
 
   companion object {
-    private const val CA_NAME = "OU=RootCA,O=Airlift,L=Palo Alto,ST=CA,C=US"
-    private const val CLIENT_NAME = "CN=Test User,OU=Server,O=Airlift,L=Palo Alto,ST=CA,C=US"
-    private const val KEY_PASSWORD = "airlift"
+    private const val CA_NAME = "OU=RootCA,O=CertKit,L=San Jose,ST=CA,C=US"
+    private const val CLIENT_NAME = "CN=Test User,OU=Server,O=CertKit,L=San Jose,ST=CA,C=US"
+    private const val KEY_PASSWORD = "certkit"
   }
 
   @Test
