@@ -28,7 +28,7 @@ settings:
         - --enable-native-access=ALL-UNNAMED
 
   kotlin:
-    version: 2.3.10
+    version: 2.3.20
     languageVersion: 2.3
     apiVersion: 2.3
     progressiveMode: true
