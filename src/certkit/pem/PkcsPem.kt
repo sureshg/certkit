@@ -54,7 +54,10 @@ public fun PrivateKey.toPkcs8Pem(
             Cipher.getInstance(algorithm).apply { init(Cipher.ENCRYPT_MODE, secretKey, pbeSpec) }
         val ciphertext = cipher.doFinal(encoded)
 
-        // v1 params are recognized by EncryptedPrivateKeyInfo; v2 must be re-wrapped as "PBES2"
+        // v1 params are recognized by EncryptedPrivateKeyInfo directly;
+        // v2 (PBES2, RFC 8018 §6.2) derives a symmetric key from password + salt + iteration count
+        // via PBKDF2(HMAC-SHA256), then encrypts with AES-256-CBC — must be re-wrapped as "PBES2"
+        // for standard ASN.1 encoding.
         val params =
             when {
               Pkcs8Algo.isV1(algorithm) -> cipher.parameters
