@@ -42,15 +42,15 @@ public enum class PemType(public val marker: String) {
 public object Pem {
 
   private val CERT_PATTERN =
-      """-+BEGIN\s+.*CERTIFICATE[^-]*-+(?:\s|\r|\n)+([a-z0-9+/=\r\n]+)-+END\s+.*CERTIFICATE[^-]*-+"""
+      """-+BEGIN\s+.*CERTIFICATE[^-]*-+\s+([a-z0-9+/=\r\n]+)-+END\s+.*CERTIFICATE[^-]*-+"""
           .toRegex(RegexOption.IGNORE_CASE)
 
   private val PRIVATE_KEY_PATTERN =
-      """-+BEGIN\s+(?:(.*)\s+)?PRIVATE\s+KEY[^-]*-+(?:\s|\r|\n)+([a-z0-9+/=\r\n]+)-+END\s+.*PRIVATE\s+KEY[^-]*-+"""
+      """-+BEGIN\s+(?:(.*)\s+)?PRIVATE\s+KEY[^-]*-+\s+([a-z0-9+/=\r\n]+)-+END\s+.*PRIVATE\s+KEY[^-]*-+"""
           .toRegex(RegexOption.IGNORE_CASE)
 
   private val PUBLIC_KEY_PATTERN =
-      """-+BEGIN\s+(?:(.*)\s+)?PUBLIC\s+KEY[^-]*-+(?:\s|\r|\n)+([a-z0-9+/=\r\n]+)-+END\s+.*PUBLIC\s+KEY[^-]*-+"""
+      """-+BEGIN\s+(?:(.*)\s+)?PUBLIC\s+KEY[^-]*-+\s+([a-z0-9+/=\r\n]+)-+END\s+.*PUBLIC\s+KEY[^-]*-+"""
           .toRegex(RegexOption.IGNORE_CASE)
 
   // Test data must be exactly 20 bytes for DSA
