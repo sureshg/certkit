@@ -1,10 +1,10 @@
 package certkit.pem
 
+import certkit.resPath
 import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
 import javax.naming.ldap.LdapName
-import kotlin.io.path.toPath
 import kotlin.test.*
 
 class PemTest {
@@ -17,17 +17,17 @@ class PemTest {
 
   @Test
   fun `isPem detects certificates, keys, and rejects non-PEM`() {
-    assertTrue(Pem.isPem(resource("rsa.client.crt")))
-    assertTrue(Pem.isPem(resource("rsa.client.pkcs8.key")))
-    assertTrue(Pem.isPem(resource("rsa.client.pkcs8.pub")))
+    assertTrue(Pem.isPem(resPath("rsa.client.crt")))
+    assertTrue(Pem.isPem(resPath("rsa.client.pkcs8.key")))
+    assertTrue(Pem.isPem(resPath("rsa.client.pkcs8.pub")))
     assertFalse(Pem.isPem("not a pem string"))
   }
 
   @Test
   fun `loadTrustStore loads RSA, EC, and DSA CA certificates`() {
-    assertCertificateChain(Pem.loadTrustStore(resource("rsa.ca.crt")), CA_NAME)
-    assertCertificateChain(Pem.loadTrustStore(resource("ec.ca.crt")), CA_NAME)
-    assertCertificateChain(Pem.loadTrustStore(resource("dsa.ca.crt")), CA_NAME)
+    assertCertificateChain(Pem.loadTrustStore(resPath("rsa.ca.crt")), CA_NAME)
+    assertCertificateChain(Pem.loadTrustStore(resPath("ec.ca.crt")), CA_NAME)
+    assertCertificateChain(Pem.loadTrustStore(resPath("dsa.ca.crt")), CA_NAME)
   }
 
   @Test
@@ -83,16 +83,16 @@ class PemTest {
   @Test
   fun `loadPrivateKey PKCS1 and PKCS8 produce same key`() {
     assertEquals(
-        Pem.loadPrivateKey(resource("rsa.client.pkcs8.key")),
-        Pem.loadPrivateKey(resource("rsa.client.pkcs1.key")),
+        Pem.loadPrivateKey(resPath("rsa.client.pkcs8.key")),
+        Pem.loadPrivateKey(resPath("rsa.client.pkcs1.key")),
     )
     assertEquals(
-        Pem.loadPrivateKey(resource("dsa.client.pkcs8.key")),
-        Pem.loadPrivateKey(resource("dsa.client.pkcs1.key")),
+        Pem.loadPrivateKey(resPath("dsa.client.pkcs8.key")),
+        Pem.loadPrivateKey(resPath("dsa.client.pkcs1.key")),
     )
     assertEquals(
-        Pem.loadPrivateKey(resource("ec.client.pkcs8.key")),
-        Pem.loadPrivateKey(resource("ec.client.pkcs1.key")),
+        Pem.loadPrivateKey(resPath("ec.client.pkcs8.key")),
+        Pem.loadPrivateKey(resPath("ec.client.pkcs1.key")),
     )
   }
 
@@ -106,7 +106,7 @@ class PemTest {
   @Test
   fun `loadPrivateKey throws on encrypted key without password`() {
     assertFailsWith<IllegalStateException> {
-      val _ = Pem.loadPrivateKey(resource("rsa.client.pkcs8.key.encrypted"), null)
+      val _ = Pem.loadPrivateKey(resPath("rsa.client.pkcs8.key.encrypted"), null)
     }
   }
 
@@ -120,8 +120,8 @@ class PemTest {
   @Test
   fun `loadPublicKey RSA PKCS1 and PKCS8 produce same key`() {
     assertEquals(
-        Pem.loadPublicKey(resource("rsa.client.pkcs8.pub")),
-        Pem.loadPublicKey(resource("rsa.client.pkcs1.pub")),
+        Pem.loadPublicKey(resPath("rsa.client.pkcs8.pub")),
+        Pem.loadPublicKey(resPath("rsa.client.pkcs1.pub")),
     )
   }
 
@@ -138,15 +138,15 @@ class PemTest {
       keyPassword: String?,
       expectedName: String,
   ) {
-    val keyStore = Pem.loadKeyStore(resource(certFile), resource(keyFile), keyPassword)
+    val keyStore = Pem.loadKeyStore(resPath(certFile), resPath(keyFile), keyPassword)
     assertCertificateChain(keyStore, expectedName)
     val key = keyStore.getKey("key", charArrayOf()) as PrivateKey
     assertEquals(key, Pem.loadPrivateKey(key.pem))
   }
 
   private fun testLoadPublicKey(certFile: String, keyFile: String) {
-    val publicKey = Pem.loadPublicKey(resource(keyFile))
-    assertEquals(publicKey, Pem.readCertificateChain(resource(certFile)).single().publicKey)
+    val publicKey = Pem.loadPublicKey(resPath(keyFile))
+    assertEquals(publicKey, Pem.readCertificateChain(resPath(certFile)).single().publicKey)
     assertEquals(publicKey, Pem.loadPublicKey(publicKey.pem))
   }
 
@@ -161,8 +161,4 @@ class PemTest {
   private fun assertX509Certificate(cert: X509Certificate, expectedName: String) {
     assertEquals(expectedName, LdapName(cert.subjectX500Principal.name).toString())
   }
-
-  private fun resource(name: String) =
-      this::class.java.classLoader.getResource(name)?.toURI()?.toPath()
-          ?: error("Resource not found: $name")
 }

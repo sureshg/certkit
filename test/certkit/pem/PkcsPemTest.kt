@@ -1,7 +1,7 @@
 package certkit.pem
 
+import certkit.resPath
 import java.security.PrivateKey
-import kotlin.io.path.toPath
 import kotlin.test.*
 
 class PkcsPemTest {
@@ -68,9 +68,5 @@ class PkcsPemTest {
     assertFailsWith<IllegalStateException> { loadKey("dsa.client.pkcs8.key").toPkcs1Pem() }
   }
 
-  private fun loadKey(name: String): PrivateKey =
-      Pem.loadPrivateKey(
-          this::class.java.classLoader.getResource(name)?.toURI()?.toPath()
-              ?: error("Resource not found: $name")
-      )
+  private fun loadKey(name: String): PrivateKey = Pem.loadPrivateKey(resPath(name))
 }
