@@ -2,14 +2,17 @@ package certkit.pem
 
 import certkit.der.seq
 import java.security.AlgorithmParameters
+import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.SecureRandom
+import java.security.cert.X509Certificate
 import java.security.interfaces.RSAPrivateCrtKey
 import javax.crypto.Cipher
 import javax.crypto.EncryptedPrivateKeyInfo
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.PBEParameterSpec
+import kotlin.io.encoding.Base64
 
 /**
  * PBE algorithm identifiers for PKCS#8 encryption.
@@ -96,3 +99,48 @@ public fun PrivateKey.toPkcs1Pem(): String =
               .encodePem(PemType.PKCS1)
       else -> error("PKCS#1 PEM export is only supported for RSA keys, got $algorithm")
     }
+
+/** PEM bundle parsed from a PKCS#12 keystore. */
+public data class PemBundle(
+    val key: String,
+    val cert: String,
+    val certChain: String,
+    val keyPass: String? = null,
+)
+
+/**
+ * Parses a Base64-encoded PKCS#12 keystore and returns a PEM-encoded bundle.
+ *
+ * @param data Base64-encoded PKCS#12 data.
+ * @param storePass password to unlock the PKCS#12 keystore.
+ * @param keyPass if non-null, the exported key is PBE-encrypted with this password.
+ * @param pkcs1 `true` → PKCS#1 RSA PEM; `false` (default) → PKCS#8 PEM.
+ */
+public fun parsePkcs12(
+    data: String,
+    storePass: String,
+    keyPass: String? = null,
+    pkcs1: Boolean = false,
+): PemBundle {
+  val ks =
+      KeyStore.getInstance("PKCS12").apply {
+        load(Base64.decode(data).inputStream(), storePass.toCharArray())
+      }
+
+  val alias =
+      ks.aliases().toList().firstOrNull { ks.isKeyEntry(it) }
+          ?: error("PKCS#12: no private key found")
+
+  val key = ks.getKey(alias, storePass.toCharArray()) as PrivateKey
+  val cert = ks.getCertificate(alias) as? X509Certificate ?: error("PKCS#12: no certificate found")
+  val caCerts = ks.getCertificateChain(alias).map { it as X509Certificate }.filter { it != cert }
+
+  require(caCerts.isNotEmpty()) { "PKCS#12: no CA certificates found in chain" }
+
+  return PemBundle(
+      key = if (pkcs1) key.toPkcs1Pem() else key.toPkcs8Pem(password = keyPass),
+      cert = cert.pem,
+      certChain = caCerts.joinToString("") { it.pem },
+      keyPass = keyPass,
+  )
+}
