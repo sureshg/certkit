@@ -57,7 +57,7 @@ public val jdkCACerts: List<X509TrustManager> by lazy {
 public fun systemTrustStore(type: TrustStoreType): KeyStore =
     when (type) {
       is TrustStoreType.Directory -> KeyStore.getInstance(type.name).apply { load { null } }
-      else -> KeyStore.getInstance(type.name).apply { load(null, null) }
+      else -> newKeyStore(type.name)
     }
 
 /** Returns [X509TrustManager]s initialized from this [KeyStore]. */

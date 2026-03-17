@@ -2,9 +2,9 @@ package certkit.cert
 
 import certkit.pem.*
 import certkit.tls.newEcKeyPair
+import certkit.tls.newKeyStore
 import certkit.tls.trustManagers
 import java.math.BigInteger
-import java.security.KeyStore
 import javax.security.auth.x500.X500Principal
 import kotlin.test.*
 import kotlin.time.Clock
@@ -105,11 +105,7 @@ class CertTest {
             notAfter = now + 1.days,
         )
 
-    val keyStore =
-        KeyStore.getInstance(KeyStore.getDefaultType()).apply {
-          load(null, null)
-          setCertificateEntry("test", cert)
-        }
+    val keyStore = newKeyStore().apply { setCertificateEntry("test", cert) }
     keyStore.trustManagers.forEach { it.checkServerTrusted(arrayOf(cert), "EC") }
   }
 
