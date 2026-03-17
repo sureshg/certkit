@@ -100,7 +100,7 @@ public fun PrivateKey.toPkcs1Pem(): String =
       else -> error("PKCS#1 PEM export is only supported for RSA keys, got $algorithm")
     }
 
-/** PEM bundle parsed from a PKCS#12 keystore. */
+/** PEM bundle parsed from a keystore (PKCS#12 or JKS). */
 public data class PemBundle(
     val key: String,
     val cert: String,
@@ -109,33 +109,36 @@ public data class PemBundle(
 )
 
 /**
- * Parses a Base64-encoded PKCS#12 keystore and returns a PEM-encoded bundle.
+ * Parses a Base64-encoded keystore (PKCS#12 or JKS) and returns a PEM-encoded bundle.
  *
- * @param data Base64-encoded PKCS#12 data.
- * @param storePass password to unlock the PKCS#12 keystore.
+ * @param data Base64-encoded keystore data (PKCS#12 or JKS).
+ * @param storePass password to unlock the keystore.
+ * @param storeType keystore type — `"PKCS12"` (default) or `"JKS"`.
  * @param keyPass if non-null, the exported key is PBE-encrypted with this password.
  * @param pkcs1 `true` → PKCS#1 RSA PEM; `false` (default) → PKCS#8 PEM.
  */
-public fun parsePkcs12(
+public fun parseKeyStore(
     data: String,
     storePass: String,
+    storeType: String = "PKCS12",
     keyPass: String? = null,
     pkcs1: Boolean = false,
 ): PemBundle {
   val ks =
-      KeyStore.getInstance("PKCS12").apply {
+      KeyStore.getInstance(storeType).apply {
         load(Base64.decode(data).inputStream(), storePass.toCharArray())
       }
 
   val alias =
       ks.aliases().toList().firstOrNull { ks.isKeyEntry(it) }
-          ?: error("PKCS#12: no private key found")
+          ?: error("${ks.type}: no private key found")
 
   val key = ks.getKey(alias, storePass.toCharArray()) as PrivateKey
-  val cert = ks.getCertificate(alias) as? X509Certificate ?: error("PKCS#12: no certificate found")
+  val cert =
+      ks.getCertificate(alias) as? X509Certificate ?: error("${ks.type}: no certificate found")
   val caCerts = ks.getCertificateChain(alias).map { it as X509Certificate }.filter { it != cert }
 
-  require(caCerts.isNotEmpty()) { "PKCS#12: no CA certificates found in chain" }
+  require(caCerts.isNotEmpty()) { "${ks.type}: no CA certificates found in chain" }
 
   return PemBundle(
       key = if (pkcs1) key.toPkcs1Pem() else key.toPkcs8Pem(password = keyPass),

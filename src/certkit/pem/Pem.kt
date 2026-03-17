@@ -1,6 +1,7 @@
 package certkit.pem
 
 import certkit.der.Der
+import certkit.tls.newKeyStore
 import java.nio.file.Path
 import java.security.*
 import java.security.cert.Certificate
@@ -86,16 +87,27 @@ public object Pem {
           }
           .toList()
 
-  /** Loads a JKS trust store from a PEM certificate chain file. */
+  /** Loads a PKCS#12 trust store from a PEM certificate chain file. */
   public fun loadTrustStore(path: Path): KeyStore {
-    val keyStore = KeyStore.getInstance("JKS").apply { load(null, null) }
+    val keyStore = newKeyStore()
     for (cert in readCertificateChain(path)) {
       keyStore.setCertificateEntry(cert.subjectX500Principal.getName("RFC2253"), cert)
     }
     return keyStore
   }
 
-  /** Loads a JKS key store from a PEM certificate chain and private key file. */
+  /**
+   * Loads a PKCS#12 [KeyStore] from PEM-encoded certificate chain and private key files.
+   *
+   * The resulting key store contains a single private key entry ("key") that bundles:
+   * 1. The private key (from [privateKeyFile])
+   * 2. The full certificate chain (from [certChainFile]) — ordered as `[leaf, intermediate CA(s)…,
+   *    root CA]`
+   * 3. An optional password protecting the key entry
+   *
+   * PKCS#12 requires the leaf certificate (whose public key matches the private key) to be at index
+   * 0 of the chain, so the function reorders certificates accordingly.
+   */
   public fun loadKeyStore(
       certChainFile: Path,
       privateKeyFile: Path,
@@ -108,20 +120,13 @@ public object Pem {
       "Certificate file does not contain any certificates: $certChainFile"
     }
 
-    val matchIndex = chain.indexOfFirst { matches(key, it) }
-    require(matchIndex >= 0) { "Private key does not match the public key of any certificate" }
-    // Certificate for private key must be at index zero
-    val certs = chain.toMutableList()
-    if (matchIndex != 0) {
-      val matched = certs[matchIndex]
-      certs[matchIndex] = certs[0]
-      certs[0] = matched
-    }
+    val (matched, rest) = chain.partition { matches(key, it) }
+    require(matched.isNotEmpty()) { "Private key does not match the public key of any certificate" }
+    val certs = matched + rest
 
-    val password = keyPassword?.takeIf { storeKeyWithPassword }?.toCharArray() ?: charArrayOf()
-    return KeyStore.getInstance("JKS").apply {
-      load(null, null)
-      setKeyEntry("key", key, password, certs.toTypedArray())
+    val password = keyPassword?.takeIf { storeKeyWithPassword }.orEmpty()
+    return newKeyStore().apply {
+      setKeyEntry("key", key, password.toCharArray(), certs.toTypedArray())
     }
   }
 
