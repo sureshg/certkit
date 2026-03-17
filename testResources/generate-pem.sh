@@ -61,6 +61,11 @@ cat rsa.ca.crt rsa.client.crt rsa.client.pkcs8.key.encrypted > rsa.client.pkcs8.
 cat dsa.ca.crt dsa.client.crt dsa.client.pkcs8.key.encrypted > dsa.client.pkcs8.pem.encrypted
 cat ec.ca.crt ec.client.crt ec.client.pkcs8.key.encrypted > ec.client.pkcs8.pem.encrypted
 
+# --- PKCS#12 bundles (client key + client cert + CA cert) ---
+openssl pkcs12 -export -inkey rsa.client.pkcs8.key -in rsa.client.crt -certfile rsa.ca.crt -passout pass:"$PASSWORD" -out rsa.client.p12
+openssl pkcs12 -export -inkey dsa.client.pkcs8.key -in dsa.client.crt -certfile dsa.ca.crt -passout pass:"$PASSWORD" -out dsa.client.p12
+openssl pkcs12 -export -inkey ec.client.pkcs8.key -in ec.client.crt -certfile ec.ca.crt -passout pass:"$PASSWORD" -out ec.client.p12
+
 # --- Cleanup intermediate files ---
 rm rsa.ca.key dsa.ca.key ec.ca.key dsaparam.pem
 rm rsa.client.csr dsa.client.csr ec.client.csr
