@@ -5,6 +5,7 @@
 [![GitHub Workflow Status][gha_badge]][gha_url]
 [![Kotlin release][kt_img]][kt_url]
 [![OpenJDK Version][java_img]][java_url]
+[![Test Report][test_img]][test_url]
 
 Lightweight X.509 certificate toolkit for Kotlin/JVM. Build self-signed certs, CSRs, CRLs, and work with PEM/DER
 encoding, all using JDK standard libraries. **No BouncyCastle, no Guava.**
@@ -202,6 +203,10 @@ Apache 2.0 — see [LICENSE](LICENSE) for details.
 [kt_url]: https://github.com/JetBrains/kotlin/releases/latest
 
 [kt_img]: https://img.shields.io/github/v/release/Jetbrains/kotlin?include_prereleases&color=7f53ff&label=Kotlin&logo=kotlin&logoColor=7f53ff
+
+[test_url]: https://suresh.dev/certkit/reports/
+
+[test_img]: https://img.shields.io/badge/Test_Report-passing-4c1?logo=junit5&logoColor=white
 
 [amper_url]: https://github.com/JetBrains/amper
 
