@@ -147,13 +147,13 @@ public fun parseKeyStore(
   require(caCerts.isNotEmpty()) { "${ks.type}: no CA certificates found in chain" }
 
   return when (format) {
-    is KeyFormat.Pkcs1 ->
+    is Pkcs1 ->
         PemBundle(
             key = key.toPkcs1Pem(),
             cert = cert.pem,
             certChain = caCerts.joinToString("") { it.pem },
         )
-    is KeyFormat.Pkcs8 ->
+    is Pkcs8 ->
         PemBundle(
             key = key.toPkcs8Pem(password = format.keyPass),
             cert = cert.pem,
