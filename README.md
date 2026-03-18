@@ -32,10 +32,7 @@ dependencies {
 ### Self-Signed Certificate
 
 ```kotlin
-val keyPair = KeyPairGenerator.getInstance("EC")
-    .apply { initialize(ECGenParameterSpec("secp256r1")) }
-    .generateKeyPair()
-
+val keyPair = newEcKeyPair()
 val today = Clock.System.todayIn(TimeZone.UTC)
 
 val cert = Cert.buildSelfSigned(
@@ -71,9 +68,9 @@ cert.signedBy(caCert)    // true
 ```kotlin
 // Load
 val privateKey = Pem.loadPrivateKey(Path("server.key"), keyPassword = "secret")
-val publicKey  = Pem.loadPublicKey(Path("server.pub"))
-val certs      = Pem.readCertificateChain(Path("chain.crt"))
-val keyStore   = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
+val publicKey = Pem.loadPublicKey(Path("server.pub"))
+val certs = Pem.readCertificateChain(Path("chain.crt"))
+val keyStore = Pem.loadKeyStore(Path("server.crt"), Path("server.key"))
 val trustStore = Pem.loadTrustStore(Path("ca.crt"))
 
 // Encode — .pem extension on all major types
@@ -89,6 +86,23 @@ privateKey.toPkcs8Pem(password = "secret") // -----BEGIN ENCRYPTED PRIVATE KEY--
 
 // PKCS#1 export (RSA only)
 rsaPrivateKey.toPkcs1Pem()                 // -----BEGIN RSA PRIVATE KEY-----
+```
+
+### KeyStore
+
+```kotlin
+// Parse a Base64-encoded PKCS#12 keystore into PEM components
+val bundle = parseKeyStore(base64Data, storePass = "changeit")
+// Export with encrypted PKCS#8 key
+val encrypted = parseKeyStore(base64Data, "changeit", format = KeyFormat.Pkcs8(keyPass = "secret"))
+// Export with PKCS#1 key (RSA only, no encryption)
+val pkcs1 = parseKeyStore(base64Data, "changeit", format = KeyFormat.Pkcs1)
+
+// PemBundle fields
+bundle.key        // PEM-encoded private key
+bundle.cert       // PEM-encoded leaf certificate
+bundle.certChain  // PEM-encoded CA certificate chain
+bundle.keyPass    // key password
 ```
 
 ### CSR
@@ -138,11 +152,13 @@ val encoded: ByteArray = seq {
 All standard ASN.1 types are supported: `integer`, `boolean`, `bitString`, `octetString`, `oid`,
 `utcTime`, `nullValue`, `tag`, `implicitTag`, `explicitTag`, `seq`, and `set`.
 
-### TLS Scanning
+### TLS
 
 ```kotlin
+// Scan remote server certificates
 val chain = scanCertificates("github.com")
 chain.forEach { println("${it.commonName} — expires ${it.expiryDateUtc}") }
+
 ```
 
 ## Supported Types
