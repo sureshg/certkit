@@ -62,6 +62,24 @@ jobs:
       - name: 🧪 Test
         run: ./amper test
 
+      - name: 📄 Generate HTML Report
+        if: always()
+        run: |
+          curl -sLO https://repo1.maven.org/maven2/org/opentest4j/reporting/open-test-reporting-cli/0.2.5/open-test-reporting-cli-0.2.5-standalone.jar
+          java -jar open-test-reporting-cli-0.2.5-standalone.jar html-report open-test-report.xml
+          mkdir -p build/reports
+          mv open-test-report.html build/reports/open-test-report.html
+
+      - name: 🚀 Publish to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@v4.8.0
+        with:
+          branch: gh-pages
+          folder: build/reports
+          target-folder: test-report
+          clean: true
+          commit-message: 'test: Deployed test report'
+
       - name: 🔭 Upload build traces
         if: always()
         uses: actions/upload-artifact@v7

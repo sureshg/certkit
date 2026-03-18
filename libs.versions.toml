@@ -5,8 +5,8 @@ kotlinx-io        = "0.9.0"
 junit             = "6.1.0-M1"
 
 [libraries]
-kotlin-bom        = { module = "org.jetbrains.kotlin:kotlin-bom"          , version.ref = "kotlin"}
-kotlinx-datetime  = { module = "org.jetbrains.kotlinx:kotlinx-datetime"   , version.ref = "kotlinx-datetime" }
-kotlinx-io-core   = { module = "org.jetbrains.kotlinx:kotlinx-io-core"    , version.ref = "kotlinx-io" }
-junit-bom         = { module = "org.junit:junit-bom"                      , version.ref = "junit" }
-junit-jupiter     = { module = "org.junit.jupiter:junit-jupiter"          , version.ref = "junit" }
+kotlin-bom        = { module = "org.jetbrains.kotlin:kotlin-bom"               , version.ref = "kotlin"}
+kotlinx-datetime  = { module = "org.jetbrains.kotlinx:kotlinx-datetime"        , version.ref = "kotlinx-datetime" }
+kotlinx-io-core   = { module = "org.jetbrains.kotlinx:kotlinx-io-core"         , version.ref = "kotlinx-io" }
+junit-bom         = { module = "org.junit:junit-bom"                           , version.ref = "junit" }
+junit-jupiter     = { module = "org.junit.jupiter:junit-jupiter"               , version.ref = "junit" }
