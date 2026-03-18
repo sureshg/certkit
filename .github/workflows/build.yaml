@@ -23,6 +23,9 @@ env:
   AMPER_BOOTSTRAP_CACHE_DIR: ${{ github.workspace }}/.amper/boot-cache
   AMPER_SHARED_CACHE_DIR: ${{ github.workspace }}/.amper/shared-cache
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: 🔨 Build & Test
