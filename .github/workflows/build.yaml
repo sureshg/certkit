@@ -66,9 +66,9 @@ jobs:
         if: always()
         run: |
           curl -sLO https://repo1.maven.org/maven2/org/opentest4j/reporting/open-test-reporting-cli/0.2.5/open-test-reporting-cli-0.2.5-standalone.jar
-          java -jar open-test-reporting-cli-0.2.5-standalone.jar html-report open-test-report.xml
+          java -jar open-test-reporting-cli-0.2.5-standalone.jar html-report build/reports/certkit/jvm/open-test-report.xml
           mkdir -p build/reports
-          mv open-test-report.html build/reports/open-test-report.html
+          mv open-test-report.html build/reports/index.html
 
       - name: 🚀 Publish to GitHub Pages
         if: always() && github.ref == 'refs/heads/main'
@@ -76,7 +76,7 @@ jobs:
         with:
           branch: gh-pages
           folder: build/reports
-          target-folder: test-report
+          target-folder: reports
           clean: true
           commit-message: 'test: Deployed test report'
 
