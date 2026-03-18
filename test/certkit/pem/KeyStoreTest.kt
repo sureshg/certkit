@@ -1,5 +1,6 @@
 package certkit.pem
 
+import certkit.pem.KeyFormat.*
 import certkit.resBytes
 import certkit.resText
 import certkit.tls.newKeyStore
@@ -44,7 +45,7 @@ class KeyStoreTest {
   fun `parseKeyStore with keyPass produces decryptable key`() {
     val keyPass = "secret"
     val bundle =
-        parseKeyStore(Base64.encode(resBytes("rsa.client.p12")), storePass, keyPass = keyPass)
+        parseKeyStore(Base64.encode(resBytes("rsa.client.p12")), storePass, format = Pkcs8(keyPass))
     val expectedKey = Pem.loadPrivateKey(resText("rsa.client.pkcs8.key"))
     assertEquals(expectedKey, Pem.loadPrivateKey(bundle.key, keyPass))
     assertEquals(keyPass, bundle.keyPass)
@@ -52,9 +53,10 @@ class KeyStoreTest {
 
   @Test
   fun `parseKeyStore with pkcs1 produces correct RSA key`() {
-    val bundle = parseKeyStore(Base64.encode(resBytes("rsa.client.p12")), storePass, pkcs1 = true)
+    val bundle = parseKeyStore(Base64.encode(resBytes("rsa.client.p12")), storePass, format = Pkcs1)
     val expectedKey = Pem.loadPrivateKey(resText("rsa.client.pkcs1.key"))
     assertEquals(expectedKey, Pem.loadPrivateKey(bundle.key))
+    assertNull(bundle.keyPass)
   }
 
   @Test

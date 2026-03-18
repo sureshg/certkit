@@ -100,6 +100,15 @@ public fun PrivateKey.toPkcs1Pem(): String =
       else -> error("PKCS#1 PEM export is only supported for RSA keys, got $algorithm")
     }
 
+/** PEM key format for keystore export. */
+public sealed interface KeyFormat {
+  /** PKCS#1 RSA PEM (unencrypted only). */
+  public data object Pkcs1 : KeyFormat
+
+  /** PKCS#8 PEM, optionally encrypted with [keyPass]. */
+  public data class Pkcs8(val keyPass: String? = null) : KeyFormat
+}
+
 /** PEM bundle parsed from a keystore (PKCS#12 or JKS). */
 public data class PemBundle(
     val key: String,
@@ -114,15 +123,13 @@ public data class PemBundle(
  * @param data Base64-encoded keystore data (PKCS#12 or JKS).
  * @param storePass password to unlock the keystore.
  * @param storeType keystore type — `"PKCS12"` (default) or `"JKS"`.
- * @param keyPass if non-null, the exported key is PBE-encrypted with this password.
- * @param pkcs1 `true` → PKCS#1 RSA PEM; `false` (default) → PKCS#8 PEM.
+ * @param format key export format — [KeyFormat.Pkcs8] (default) or [KeyFormat.Pkcs1].
  */
 public fun parseKeyStore(
     data: String,
     storePass: String,
     storeType: String = "PKCS12",
-    keyPass: String? = null,
-    pkcs1: Boolean = false,
+    format: KeyFormat = KeyFormat.Pkcs8(),
 ): PemBundle {
   val ks =
       KeyStore.getInstance(storeType).apply {
@@ -137,13 +144,21 @@ public fun parseKeyStore(
   val cert =
       ks.getCertificate(alias) as? X509Certificate ?: error("${ks.type}: no certificate found")
   val caCerts = ks.getCertificateChain(alias).map { it as X509Certificate }.filter { it != cert }
-
   require(caCerts.isNotEmpty()) { "${ks.type}: no CA certificates found in chain" }
 
-  return PemBundle(
-      key = if (pkcs1) key.toPkcs1Pem() else key.toPkcs8Pem(password = keyPass),
-      cert = cert.pem,
-      certChain = caCerts.joinToString("") { it.pem },
-      keyPass = keyPass,
-  )
+  return when (format) {
+    is KeyFormat.Pkcs1 ->
+        PemBundle(
+            key = key.toPkcs1Pem(),
+            cert = cert.pem,
+            certChain = caCerts.joinToString("") { it.pem },
+        )
+    is KeyFormat.Pkcs8 ->
+        PemBundle(
+            key = key.toPkcs8Pem(password = format.keyPass),
+            cert = cert.pem,
+            certChain = caCerts.joinToString("") { it.pem },
+            keyPass = format.keyPass,
+        )
+  }
 }
