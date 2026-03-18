@@ -64,11 +64,12 @@ jobs:
 
       - name: 📄 Generate HTML Report
         if: always()
+        env:
+          REPORT_DIR: build/reports/certkit/jvm
         run: |
           curl -sLO https://repo1.maven.org/maven2/org/opentest4j/reporting/open-test-reporting-cli/0.2.5/open-test-reporting-cli-0.2.5-standalone.jar
-          java -jar open-test-reporting-cli-0.2.5-standalone.jar html-report build/reports/certkit/jvm/open-test-report.xml
-          mkdir -p build/reports
-          mv open-test-report.html build/reports/index.html
+          java -jar open-test-reporting-cli-0.2.5-standalone.jar html-report "$REPORT_DIR/open-test-report.xml"
+          mv "$REPORT_DIR/open-test-report.html" build/reports/index.html
 
       - name: 🚀 Publish to GitHub Pages
         if: always() && github.ref == 'refs/heads/main'
