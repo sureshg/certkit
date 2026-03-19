@@ -49,9 +49,10 @@ public object Cert {
   /**
    * Builds a self-signed X.509v3 certificate. The [keyPair] must be EC (P-256/P-384/P-521).
    *
-   * **Note:** [notBefore] and [notAfter] are encoded as ASN.1 UTCTime, which has only
-   * whole-second precision ([RFC 5280 §4.1.2.5.1](https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.5.1)).
-   * Any sub-second component is silently truncated.
+   * **Note:** [notBefore] and [notAfter] are encoded as ASN.1 UTCTime, which has only whole-second
+   * precision ([RFC 5280
+   * §4.1.2.5.1](https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.5.1)). Any sub-second
+   * component is silently truncated.
    */
   public fun buildSelfSigned(
       keyPair: KeyPair,

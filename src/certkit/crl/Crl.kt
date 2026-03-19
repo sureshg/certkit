@@ -29,7 +29,8 @@ public object Crl {
   }
 
   /** Parses an [X509CRL] from DER-encoded bytes. */
-  public fun from(bytes: ByteArray): X509CRL = certFactory.generateCRL(bytes.inputStream()) as X509CRL
+  public fun from(bytes: ByteArray): X509CRL =
+      certFactory.generateCRL(bytes.inputStream()) as X509CRL
 
   /**
    * Builds a minimal X.509 CRL signed with SHA256withECDSA.

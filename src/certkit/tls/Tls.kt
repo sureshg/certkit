@@ -76,7 +76,11 @@ public class ScanSSLFactory(private val delegate: SSLSocketFactory) : SSLSocketF
 }
 
 /** JSSE system and security properties for TLS configuration. */
-public enum class TLSProp(public val key: String, public val desc: String, public val system: Boolean = true) {
+public enum class TLSProp(
+    public val key: String,
+    public val desc: String,
+    public val system: Boolean = true,
+) {
   // KeyStore
   KeyStore("javax.net.ssl.keyStore", "Default keystore"),
   KeyStoreType("javax.net.ssl.keyStoreType", "Default keystore type"),

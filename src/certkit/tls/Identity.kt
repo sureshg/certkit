@@ -5,6 +5,8 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.Principal
+import java.security.cert.PKIXParameters
+import java.security.cert.X509Certificate
 import java.security.spec.ECGenParameterSpec
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.X509KeyManager
@@ -14,7 +16,9 @@ public fun newEd25519KeyPair(): KeyPair = KeyPairGenerator.getInstance("Ed25519"
 
 /** Generates an Elliptic Curve [KeyPair] using the given [curve] (default: P-256). */
 public fun newEcKeyPair(curve: String = "secp256r1"): KeyPair =
-    KeyPairGenerator.getInstance("EC").apply { initialize(ECGenParameterSpec(curve)) }.generateKeyPair()
+    KeyPairGenerator.getInstance("EC")
+        .apply { initialize(ECGenParameterSpec(curve)) }
+        .generateKeyPair()
 
 /** Generates an RSA [KeyPair] with the given [keySize] (default: 3072). */
 public fun newRsaKeyPair(keySize: Int = 3072): KeyPair =
@@ -30,6 +34,10 @@ public fun KeyStore.keyManagers(passwd: CharArray? = null): List<X509KeyManager>
       km.init(this, passwd)
       km.keyManagers.filterIsInstance<X509KeyManager>()
     }
+
+/** Retrieves the trust anchors (trusted certificates) from the KeyStore. */
+public val KeyStore.trustAnchors: List<X509Certificate>
+  get() = PKIXParameters(this).trustAnchors.mapNotNull { it.trustedCert }
 
 /**
  * Converts this keystore to PKCS12 format (the default since JDK 9), or returns it as-is if already

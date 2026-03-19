@@ -28,7 +28,8 @@ public class CsrRequest(
 public class SignatureAlgo(public val name: String, public val oid: String) {
   public val encoded: ByteArray = Der.oid(oid)
 
-  override fun equals(other: Any?): Boolean = this === other || (other is SignatureAlgo && oid == other.oid)
+  override fun equals(other: Any?): Boolean =
+      this === other || (other is SignatureAlgo && oid == other.oid)
 
   override fun hashCode(): Int = oid.hashCode()
 
