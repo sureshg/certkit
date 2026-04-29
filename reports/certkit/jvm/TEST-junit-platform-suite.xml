@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="JUnit Platform Suite" tests="0" skipped="0" failures="0" errors="0" time="0.003" hostname="runnervm46oaq" timestamp="2026-03-18T19:51:20">
+<testsuite name="JUnit Platform Suite" tests="0" skipped="0" failures="0" errors="0" time="0.004" hostname="runnervmeorf1" timestamp="2026-04-29T20:47:26">
 <properties>
 <property name="file.encoding" value="UTF-8"/>
 <property name="file.separator" value="/"/>
-<property name="java.class.path" value="/home/runner/work/certkit/certkit/.amper/shared-cache/download.cache/0b74afa580-junit-platform-console-standalone-6.1.0-M1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/amper-junit-listeners-jvm.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/serviceMessages-2024.12.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/kotlin-stdlib-2.3.10.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/annotations-13.0.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-core-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-jvm-jna-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-jvm-ffm-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-jvm-graal-ffi-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/jna-5.14.0.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/colormath-jvm-3.6.0.jar:/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/java-output:/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/kotlin-output:/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/resources-output:/home/runner/work/certkit/certkit/build/tasks/_certkit_jarJvm/certkit-jvm.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlin/kotlin-stdlib/2.3.20/kotlin-stdlib-2.3.20.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlin/kotlin-test-junit5/2.3.20/kotlin-test-junit5-2.3.20.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlinx/kotlinx-datetime-jvm/0.7.1/kotlinx-datetime-jvm-0.7.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlinx/kotlinx-io-core-jvm/0.9.0/kotlinx-io-core-jvm-0.9.0.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/annotations/13.0/annotations-13.0.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlin/kotlin-test/2.3.20/kotlin-test-2.3.20.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlinx/kotlinx-io-bytestring-jvm/0.9.0/kotlinx-io-bytestring-jvm-0.9.0.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1.jar"/>
+<property name="java.class.path" value="/home/runner/work/certkit/certkit/.amper/shared-cache/download.cache/dad4b20241-junit-platform-console-standalone-6.1.0-RC1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/amper-junit-listeners-jvm.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/serviceMessages-2024.12.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/kotlin-stdlib-2.3.10.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/annotations-13.0.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-core-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-jvm-jna-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-jvm-ffm-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/mordant-jvm-graal-ffi-jvm-3.0.1.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/jna-5.14.0.jar:/home/runner/work/certkit/certkit/build/temp/amper-junit-listeners/colormath-jvm-3.6.0.jar:/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/java-output:/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/kotlin-output:/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/resources-output:/home/runner/work/certkit/certkit/build/tasks/_certkit_jarJvm/certkit-jvm.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlin/kotlin-stdlib/2.3.21/kotlin-stdlib-2.3.21.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlin/kotlin-test-junit5/2.3.21/kotlin-test-junit5-2.3.21.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlinx/kotlinx-datetime-jvm/0.8.0-rc02/kotlinx-datetime-jvm-0.8.0-rc02.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlinx/kotlinx-io-core-jvm/0.9.0/kotlinx-io-core-jvm-0.9.0.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/annotations/13.0/annotations-13.0.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlin/kotlin-test/2.3.21/kotlin-test-2.3.21.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/jupiter/junit-jupiter-engine/5.10.1/junit-jupiter-engine-5.10.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/platform/junit-platform-launcher/1.10.1/junit-platform-launcher-1.10.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/platform/junit-platform-engine/1.10.1/junit-platform-engine-1.10.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/jupiter/junit-jupiter-api/5.10.1/junit-jupiter-api-5.10.1.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/jetbrains/kotlinx/kotlinx-io-bytestring-jvm/0.9.0/kotlinx-io-bytestring-jvm-0.9.0.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/runner/work/certkit/certkit/.amper/shared-cache/.m2.cache/org/junit/platform/junit-platform-commons/1.10.1/junit-platform-commons-1.10.1.jar"/>
 <property name="java.class.version" value="69.0"/>
-<property name="java.home" value="/home/runner/work/certkit/certkit/.amper/shared-cache/extract.cache/529179af2b-zulu25.32.21-ca-jdk25.0.2-linux_x64.tar.gz.5d095d.d/zulu25.32.21-ca-jdk25.0.2-linux_x64"/>
+<property name="java.home" value="/home/runner/work/certkit/certkit/.amper/shared-cache/extract.cache/68b1afc330-zulu25.34.17-ca-jdk25.0.3-linux_x64.tar.gz.49e49d.d/zulu25.34.17-ca-jdk25.0.3-linux_x64"/>
 <property name="java.io.tmpdir" value="/tmp"/>
 <property name="java.library.path" value="/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib"/>
 <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
-<property name="java.runtime.version" value="25.0.2+10-LTS"/>
+<property name="java.runtime.version" value="25.0.3+9-LTS"/>
 <property name="java.specification.name" value="Java Platform API Specification"/>
 <property name="java.specification.vendor" value="Oracle Corporation"/>
 <property name="java.specification.version" value="25"/>
 <property name="java.vendor" value="Azul Systems, Inc."/>
 <property name="java.vendor.url" value="http://www.azul.com/"/>
 <property name="java.vendor.url.bug" value="http://www.azul.com/support/"/>
-<property name="java.vendor.version" value="Zulu25.32+21-CA"/>
-<property name="java.version" value="25.0.2"/>
-<property name="java.version.date" value="2026-01-20"/>
+<property name="java.vendor.version" value="Zulu25.34+17-CA"/>
+<property name="java.version" value="25.0.3"/>
+<property name="java.version.date" value="2026-04-21"/>
 <property name="java.vm.compressedOopsMode" value="Zero based"/>
 <property name="java.vm.info" value="mixed mode, sharing"/>
 <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
@@ -26,9 +26,9 @@
 <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
 <property name="java.vm.specification.version" value="25"/>
 <property name="java.vm.vendor" value="Azul Systems, Inc."/>
-<property name="java.vm.version" value="25.0.2+10-LTS"/>
+<property name="java.vm.version" value="25.0.3+9-LTS"/>
 <property name="jdk.debug" value="release"/>
-<property name="junit.docs.version" value="6.1.0-M1"/>
+<property name="junit.docs.version" value="6.1.0-RC1"/>
 <property name="junit.platform.reporting.open.xml.enabled" value="true"/>
 <property name="junit.vintage.discovery.issue.reporting.enabled" value="false"/>
 <property name="line.separator" value="&#10;"/>
@@ -38,13 +38,13 @@
 <property name="org.jetbrains.amper.junit.listener.console.enabled" value="true"/>
 <property name="os.arch" value="amd64"/>
 <property name="os.name" value="Linux"/>
-<property name="os.version" value="6.14.0-1017-azure"/>
+<property name="os.version" value="6.17.0-1010-azure"/>
 <property name="path.separator" value=":"/>
 <property name="stderr.encoding" value="UTF-8"/>
 <property name="stdin.encoding" value="UTF-8"/>
 <property name="stdout.encoding" value="UTF-8"/>
 <property name="sun.arch.data.model" value="64"/>
-<property name="sun.boot.library.path" value="/home/runner/work/certkit/certkit/.amper/shared-cache/extract.cache/529179af2b-zulu25.32.21-ca-jdk25.0.2-linux_x64.tar.gz.5d095d.d/zulu25.32.21-ca-jdk25.0.2-linux_x64/lib"/>
+<property name="sun.boot.library.path" value="/home/runner/work/certkit/certkit/.amper/shared-cache/extract.cache/68b1afc330-zulu25.34.17-ca-jdk25.0.3-linux_x64.tar.gz.49e49d.d/zulu25.34.17-ca-jdk25.0.3-linux_x64/lib"/>
 <property name="sun.cpu.endian" value="little"/>
 <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
 <property name="sun.java.command" value="org.junit.platform.console.ConsoleLauncher execute --disable-banner --fail-if-no-tests --reports-dir=/home/runner/work/certkit/certkit/build/reports/certkit/jvm --scan-class-path=/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/java-output --scan-class-path=/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/kotlin-output --scan-class-path=/home/runner/work/certkit/certkit/build/artifacts/CompiledJvmArtifact/certkitjvmTest/resources-output --details=summary"/>
