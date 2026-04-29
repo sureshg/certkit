@@ -23,13 +23,13 @@ settings:
       distributions: [ zulu, temurin ]
 
     test:
-      junitPlatformVersion: 6.1.0-M1
+      junitPlatformVersion: 6.1.0-RC1
       freeJvmArgs:
         - --enable-native-access=ALL-UNNAMED
         - -Djunit.platform.reporting.open.xml.enabled=true
 
   kotlin:
-    version: 2.3.20
+    version: 2.3.21
     languageVersion: 2.3
     apiVersion: 2.3
     progressiveMode: true

@@ -1,8 +1,8 @@
 [versions]
-kotlin            = "2.3.20"
-kotlinx-datetime  = "0.7.1"
+kotlin            = "2.3.21"
+kotlinx-datetime  = "0.8.0-rc02"
 kotlinx-io        = "0.9.0"
-junit             = "6.1.0-M1"
+junit             = "6.1.0-RC1"
 
 [libraries]
 kotlin-bom        = { module = "org.jetbrains.kotlin:kotlin-bom"               , version.ref = "kotlin"}
