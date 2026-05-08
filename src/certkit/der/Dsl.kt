@@ -1,8 +1,9 @@
 package certkit.der
 
+import kotlinx.io.Buffer
+import kotlinx.io.readByteArray
 import java.math.BigInteger
 import kotlin.time.Instant
-import kotlinx.io.*
 
 @DslMarker public annotation class DerDsl
 

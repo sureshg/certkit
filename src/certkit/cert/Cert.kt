@@ -1,6 +1,8 @@
 package certkit.cert
 
-import certkit.der.*
+import certkit.der.Der
+import certkit.der.seq
+import kotlinx.datetime.*
 import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.Signature
@@ -10,7 +12,6 @@ import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
 import javax.security.auth.x500.X500Principal
 import kotlin.time.Instant
-import kotlinx.datetime.*
 
 /**
  * Self-signed X.509 certificate builder (EC keys, SHA256withECDSA).

@@ -24,7 +24,7 @@ public fun scanCertificates(
   val socket = sslContext.socketFactory.createSocket() as SSLSocket
   return socket.use { sock ->
     if (!sni.isNullOrBlank()) {
-      sock.sslParameters = sock.sslParameters.apply { serverNames = listOf(SNIHostName(sni)) }
+      sock.sslParameters = sock.sslParameters.apply { serverNames = [SNIHostName(sni)] }
     }
     sock.soTimeout = timeout.inWholeMilliseconds.toInt()
     val _ = runCatching {

@@ -1,16 +1,20 @@
 package certkit.cert
 
-import certkit.pem.*
+import certkit.pem.Pem
+import certkit.pem.pem
 import certkit.tls.newEcKeyPair
 import certkit.tls.newKeyStore
 import certkit.tls.trustManagers
-import java.math.BigInteger
-import javax.security.auth.x500.X500Principal
-import kotlin.test.*
-import kotlin.time.Clock
-import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import java.math.BigInteger
+import javax.security.auth.x500.X500Principal
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 
 class CertTest {
 
@@ -27,7 +31,7 @@ class CertTest {
             subject = subject,
             notBefore = now - 1.days,
             notAfter = now + 1.days,
-            sans = listOf(San.Dns("localhost"), San.Ip("127.0.0.1")),
+            sans = [San.Dns("localhost"), San.Ip("127.0.0.1")],
         )
 
     assertTrue(cert.selfSigned)
@@ -84,7 +88,7 @@ class CertTest {
             subject = subject,
             notBefore = now - 1.days,
             notAfter = now + 1.days,
-            sans = listOf(San.Dns("example.com")),
+            sans = [San.Dns("example.com")],
         )
 
     assertEquals("Test User", cert.commonName)

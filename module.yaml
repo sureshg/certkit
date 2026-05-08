@@ -9,11 +9,6 @@ product:
   platforms: [ jvm ]
 
 settings:
-  publishing:
-    enabled: true
-    group: dev.suresh.certkit
-    version: 1.0.0-SNAPSHOT
-
   jvm:
     release: 21
     storeParameterNames: true
@@ -29,9 +24,9 @@ settings:
         - -Djunit.platform.reporting.open.xml.enabled=true
 
   kotlin:
-    version: 2.3.21
-    languageVersion: 2.3
-    apiVersion: 2.3
+    version: 2.4.0-Beta2
+    languageVersion: 2.4
+    apiVersion: 2.4
     progressiveMode: true
     allWarningsAsErrors: true
     suppressWarnings: false
@@ -40,16 +35,12 @@ settings:
     freeCompilerArgs:
       - -Xexplicit-api=strict
       - -Wextra
-      - -Xcontext-parameters
+      - -Xcollection-literals
       - -Xreport-all-warnings
       - -Xreturn-value-checker=full
       - -Xcontext-sensitive-resolution
-      - -Xannotation-default-target=param-property
-      - -Xexplicit-backing-fields
       - -Xconsistent-data-class-copy-visibility
-      - -Xno-param-assertions
-      - -Xno-call-assertions
-      - -Xno-receiver-assertions
+      - -Xname-based-destructuring=complete
       - -Xwhen-expressions=indy
     optIns:
       - kotlin.ExperimentalStdlibApi
@@ -59,6 +50,27 @@ settings:
       - kotlin.time.ExperimentalTime
       - kotlin.uuid.ExperimentalUuidApi
       - kotlin.concurrent.atomics.ExperimentalAtomicApi
+
+  publishing:
+    enabled: true
+    group: dev.suresh.certkit
+    version: 1.0.0-SNAPSHOT
+    signArtifacts: true
+    publishSources: false
+    pom:
+      url: https://github.com/sureshg/certkit
+      description: Certificate toolkit for Kotlin/JVM
+      licenses:
+        - name: The Apache License, Version 2.0
+          url: https://www.apache.org/licenses/LICENSE-2.0.txt
+      developers:
+        - id: suresh
+          name: Suresh
+          email: email@suresh.dev
+          organization: suresh.dev
+          organizationUrl: https://suresh.dev
+      scm:
+        url: https://github.com/sureshg/certkit
 
 test-settings:
   kotlin:

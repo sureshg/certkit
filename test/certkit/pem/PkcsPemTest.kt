@@ -7,7 +7,7 @@ import kotlin.test.*
 class PkcsPemTest {
 
   private val password = "testpass"
-  private val keyTypes = listOf("rsa", "ec", "dsa")
+  private val keyTypes = ["rsa", "ec", "dsa"]
 
   @Test
   fun `toPkcs8Pem unencrypted round-trip for all key types`() {

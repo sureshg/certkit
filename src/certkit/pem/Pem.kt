@@ -120,7 +120,7 @@ public object Pem {
       "Certificate file does not contain any certificates: $certChainFile"
     }
 
-    val (matched, rest) = chain.partition { matches(key, it) }
+    val [matched, rest] = chain.partition { matches(key, it) }
     require(matched.isNotEmpty()) { "Private key does not match the public key of any certificate" }
     val certs = matched + rest
 

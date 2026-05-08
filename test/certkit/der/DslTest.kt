@@ -114,7 +114,7 @@ class DslTest {
     val issuer = X500Principal("CN=Test,O=TestOrg")
     val notBefore = "240101000000Z"
     val notAfter = "251231235959Z"
-    val sans = listOf(San.Dns("localhost"), San.Ip("127.0.0.1"))
+    val sans = [San.Dns("localhost"), San.Ip("127.0.0.1")]
 
     val pubKeyHash = Cert.hashPublicKey(pub)
     val sanEntries = sans.map { it.toDer() }

@@ -2,7 +2,8 @@ package certkit.csr
 
 import certkit.cert.San
 import certkit.pem.pem
-import certkit.tls.*
+import certkit.tls.newEcKeyPair
+import certkit.tls.newRsaKeyPair
 import java.security.KeyPair
 import java.security.Signature
 import javax.security.auth.x500.X500Principal
@@ -46,7 +47,7 @@ class CsrTest {
   @Test
   fun `create with DNS SANs`() {
     val keyPair = newEcKeyPair()
-    val sans = listOf(San.Dns("example.com"), San.Dns("*.example.com"))
+    val sans = [San.Dns("example.com"), San.Dns("*.example.com")]
     val csr = Csr.create("CN=example.com", "SHA256withECDSA", keyPair, sans)
 
     assertEquals(sans, csr.info.sans)
@@ -56,7 +57,7 @@ class CsrTest {
   @Test
   fun `create with mixed SANs`() {
     val keyPair = newRsaKeyPair(2048)
-    val sans = listOf(San.Dns("example.com"), San.Ip("10.0.0.1"), San.Email("admin@example.com"))
+    val sans = [San.Dns("example.com"), San.Ip("10.0.0.1"), San.Email("admin@example.com")]
     val csr = Csr.create("CN=example.com", "SHA256withRSA", keyPair, sans)
 
     assertEquals(sans, csr.info.sans)
@@ -66,9 +67,9 @@ class CsrTest {
   @Test
   fun `create with IPv6 SAN`() {
     val keyPair = newEcKeyPair()
-    val csr = Csr.create("CN=test", "SHA256withECDSA", keyPair, listOf(San.Ip("::1")))
+    val csr = Csr.create("CN=test", "SHA256withECDSA", keyPair, [San.Ip("::1")])
 
-    assertEquals(listOf(San.Ip("::1")), csr.info.sans)
+    assertEquals([San.Ip("::1")], csr.info.sans)
     verifySignature(csr, keyPair)
   }
 

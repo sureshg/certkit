@@ -1,14 +1,18 @@
 package certkit.pem
 
-import certkit.pem.KeyFormat.*
+import certkit.pem.KeyFormat.Pkcs1
+import certkit.pem.KeyFormat.Pkcs8
 import certkit.resBytes
 import certkit.resText
 import certkit.tls.newKeyStore
-import kotlin.io.encoding.Base64
-import kotlin.test.*
 import kotlinx.io.Buffer
 import kotlinx.io.asOutputStream
 import kotlinx.io.readByteArray
+import kotlin.io.encoding.Base64
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 class KeyStoreTest {
 
@@ -16,7 +20,7 @@ class KeyStoreTest {
 
   @Test
   fun `parseKeyStore extracts key cert and chain matching original files`() {
-    listOf("rsa", "ec", "dsa").forEach { type ->
+    ["rsa", "ec", "dsa"].forEach { type ->
       val bundle = parseKeyStore(Base64.encode(resBytes("$type.client.p12")), storePass)
 
       val expectedKey = Pem.loadPrivateKey(resText("$type.client.pkcs8.key"))

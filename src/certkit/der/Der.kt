@@ -1,7 +1,5 @@
 package certkit.der
 
-import java.math.BigInteger
-import kotlin.time.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -9,6 +7,8 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
+import java.math.BigInteger
+import kotlin.time.Instant
 
 /**
  * ASN.1 DER (Distinguished Encoding Rules) encoder/decoder — the binary format used inside X.509
@@ -43,16 +43,15 @@ public object Der {
   private const val SET_TAG = 0x31
 
   /** ASN.1 UTC time format: yyMMddHHmmssZ (2-digit year per X.680) */
-  private val UTC_TIME_FORMAT =
-      LocalDateTime.Format {
-        yearTwoDigits(2000)
-        monthNumber()
-        day()
-        hour()
-        minute()
-        second()
-        char('Z')
-      }
+  private val UTC_TIME_FORMAT = LocalDateTime.Format {
+    yearTwoDigits(2000)
+    monthNumber()
+    day()
+    hour()
+    minute()
+    second()
+    char('Z')
+  }
 
   /** Encodes a DER BIT STRING (tag `0x03`): `03 len padBits value...`. */
   public fun bitString(padBits: Int, value: ByteArray): ByteArray {
@@ -140,7 +139,7 @@ public object Der {
   /** Decodes a DER SEQUENCE into its constituent TLV elements (each returned as raw bytes). */
   public fun decodeSequence(data: ByteArray): List<ByteArray> {
     require(data[0].toInt() == SEQUENCE_TAG) { "Expected sequence tag" }
-    val (dataLength, headerSize) = decodeLengthAt(data, 1)
+    val [dataLength, headerSize] = decodeLengthAt(data, 1)
     val dataStart = 1 + headerSize
     require(dataLength + dataStart == data.size) { "Invalid sequence" }
 
@@ -149,7 +148,7 @@ public object Der {
       while (pos < data.size) {
         val elementStart = pos
         pos++ // skip tag
-        val (len, lenSize) = decodeLengthAt(data, pos)
+        val [len, lenSize] = decodeLengthAt(data, pos)
         pos += lenSize + len
         add(data.copyOfRange(elementStart, pos))
       }
@@ -161,7 +160,7 @@ public object Der {
    */
   public fun decodeExplicitTag(element: ByteArray): ByteArray {
     require(element[0].toInt() and 0xE0 == 0xA0) { "Expected context-specific constructed tag" }
-    val (len, lenSize) = decodeLengthAt(element, 1)
+    val [len, lenSize] = decodeLengthAt(element, 1)
     val dataStart = 1 + lenSize
     require(len + dataStart == element.size) { "Invalid optional sequence element" }
     return element.copyOfRange(dataStart, dataStart + len)

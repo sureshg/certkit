@@ -53,8 +53,9 @@ public object Crl {
   ): X509CRL {
     val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.nullValue)
 
-    val revoked =
-        revokedSerials.map { serial -> Der.sequence(Der.integer(serial), Der.utcTime(thisUpdate)) }
+    val revoked = revokedSerials.map { serial ->
+      Der.sequence(Der.integer(serial), Der.utcTime(thisUpdate))
+    }
 
     val tbsComponents = buildList {
       add(sigAlg)
@@ -115,7 +116,7 @@ public object Crl {
     var pos = 0
     while (pos < data.size) {
       val tag = data[pos].toInt() and 0xFF
-      val (contentLen, headerLen) = derLength(data, pos + 1)
+      val [contentLen, headerLen] = derLength(data, pos + 1)
       val contentStart = pos + 1 + headerLen
       if (tag == 0x86) add(String(data, contentStart, contentLen, Charsets.US_ASCII))
       pos = contentStart + if (tag and 0x20 != 0) 0 else contentLen

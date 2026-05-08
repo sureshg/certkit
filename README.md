@@ -43,7 +43,7 @@ val cert = Cert.buildSelfSigned(
     subject = X500Principal("CN=My CA,O=TestOrg"),
     notBefore = today,
     notAfter = today + DatePeriod(days = 30),
-    sans = listOf(San.Dns("localhost"), San.Dns("*.local"), San.Ip("127.0.0.1")),
+    sans = [San.Dns("localhost"), San.Dns("*.local"), San.Ip("127.0.0.1")],
 )
 
 println(cert.pem)
@@ -113,7 +113,7 @@ val csr = Csr.create(
     x500Name = "CN=app.example.com,O=Acme",
     algorithmName = "SHA256withRSA",
     keyPair = keyPair,
-    sans = listOf(San.Dns("app.example.com"), San.Ip("10.0.0.1")),
+    sans = [San.Dns("app.example.com"), San.Ip("10.0.0.1")],
 )
 println(csr.pem)
 ```
@@ -126,7 +126,7 @@ val crl = Crl.build(
     issuer = X500Principal("CN=My CA,O=Acme"),
     thisUpdate = Clock.System.now(),
     nextUpdate = Clock.System.now() + 30.days,
-    revokedSerials = listOf(42L, 99L),
+    revokedSerials = [42L, 99L],
 )
 
 cert.isRevokedBy(crl)          // check revocation

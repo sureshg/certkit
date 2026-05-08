@@ -47,7 +47,7 @@ class CrlTest {
             issuer = CA,
             thisUpdate = now,
             nextUpdate = now + 30.days,
-            revokedSerials = listOf(2L, 42L),
+            revokedSerials = [2L, 42L],
         )
 
     private val expiredCrl: X509CRL =
@@ -56,7 +56,7 @@ class CrlTest {
             issuer = CA,
             thisUpdate = now - 60.days,
             nextUpdate = now - 30.days,
-            revokedSerials = listOf(2L),
+            revokedSerials = [2L],
         )
   }
 
