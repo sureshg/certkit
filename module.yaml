@@ -5,8 +5,7 @@ repositories:
     publish: true
 
 product:
-  type: lib
-  platforms: [ jvm ]
+  type: jvm/lib
 
 settings:
   jvm:
