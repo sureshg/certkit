@@ -176,9 +176,9 @@ chain.forEach { println("${it.commonName} — expires ${it.expiryDateUtc}") }
 ## 🔧 Build & Test
 
 ```bash
-./amper build                 # Build
-./amper test                  # Test
-./amper publish mavenLocal    # Publish to local Maven repository
+./kotlin build                # Build
+./kotlin test                 # Test
+./kotlin publish mavenLocal   # Publish to local Maven repository
 ```
 
 ## Credits
@@ -194,7 +194,7 @@ Apache 2.0 — see [LICENSE](LICENSE) for details.
 
 [gha_url]: https://github.com/sureshg/certkit/actions/workflows/build.yaml
 
-[gha_badge]: https://img.shields.io/github/actions/workflow/status/sureshg/certkit/build.yaml?branch=main&style=flat&logo=kotlin&logoColor=white&label=Amper%20Build
+[gha_badge]: https://img.shields.io/github/actions/workflow/status/sureshg/certkit/build.yaml?branch=main&style=flat&logo=kotlin&logoColor=white&label=Kotlin%20Build
 
 [java_url]: https://www.azul.com/downloads/?version=java-25-lts&package=jdk#zulu
 
@@ -208,6 +208,6 @@ Apache 2.0 — see [LICENSE](LICENSE) for details.
 
 [test_img]: https://img.shields.io/badge/Test_Report-passing-4c1?logo=junit5&logoColor=white
 
-[amper_url]: https://github.com/JetBrains/amper
+[kt_toolchain_url]: https://kotlin-toolchain.org/dev/
 
-[amper_img]: https://img.shields.io/badge/Build-Amper-6B57FF?logo=jetbrains&logoColor=white
+[kt_toolchain_img]: https://img.shields.io/badge/Build-Kotlin%20Toolchain-6B57FF?logo=kotlin&logoColor=white
