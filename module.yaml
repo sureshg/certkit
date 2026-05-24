@@ -17,7 +17,7 @@ settings:
       distributions: [ zulu, temurin ]
 
     test:
-      junitPlatformVersion: 6.1.0-RC1
+      junitPlatformVersion: 6.1.0
       freeJvmArgs:
         - --enable-native-access=ALL-UNNAMED
         - -Djunit.platform.reporting.open.xml.enabled=true
@@ -55,7 +55,7 @@ settings:
     group: dev.suresh.certkit
     version: 1.0.0-SNAPSHOT
     signArtifacts: true
-    publishSources: false
+    publishSources: true
     pom:
       url: https://github.com/sureshg/certkit
       description: Certificate toolkit for Kotlin/JVM

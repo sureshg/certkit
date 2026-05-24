@@ -3,7 +3,7 @@ kotlin              = "2.4.0-RC"
 kotlinx-coroutines  = "1.11.0"
 kotlinx-datetime    = "0.8.0"
 kotlinx-io          = "0.9.0"
-junit               = "6.1.0-RC1"
+junit               = "6.1.0"
 
 [libraries]
 kotlin-bom               = { module = "org.jetbrains.kotlin:kotlin-bom"                 , version.ref = "kotlin"}
