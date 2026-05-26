@@ -26,7 +26,7 @@ encoding, all using JDK standard libraries. **No BouncyCastle, no Guava.**
 
 ```kotlin
 dependencies {
-    implementation("dev.suresh.certkit:certkit:1.0.0-SNAPSHOT")
+    implementation("dev.suresh.certkit:certkit:0.1.0")
 }
 ```
 

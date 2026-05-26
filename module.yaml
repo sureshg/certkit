@@ -7,6 +7,8 @@ repositories:
 product:
   type: jvm/lib
 
+description: Certificate toolkit for Kotlin/JVM
+
 settings:
   jvm:
     release: 21
@@ -52,13 +54,16 @@ settings:
 
   publishing:
     enabled: true
+    artifactId: certkit
     group: dev.suresh.certkit
-    version: 1.0.0-SNAPSHOT
+    version: 0.1.0
     signArtifacts: true
     publishSources: true
+    mavenCentral:
+      enabled: true
+      publishingMode: auto
     pom:
       url: https://github.com/sureshg/certkit
-      description: Certificate toolkit for Kotlin/JVM
       licenses:
         - name: The Apache License, Version 2.0
           url: https://www.apache.org/licenses/LICENSE-2.0.txt
