@@ -56,25 +56,21 @@ settings:
     enabled: true
     artifactId: certkit
     group: dev.suresh.certkit
-    version: 0.1.0
-    signArtifacts: true
-    publishSources: true
+    version: 0.2.0
     mavenCentral:
       enabled: true
       publishingMode: auto
+    signArtifacts: true
+    publishSources: true
     pom:
       url: https://github.com/sureshg/certkit
+      scm: https://github.com/sureshg/certkit.git
+      developers:
+        - name: Suresh
+          url: https://suresh.dev
       licenses:
         - name: The Apache License, Version 2.0
           url: https://www.apache.org/licenses/LICENSE-2.0.txt
-      developers:
-        - id: suresh
-          name: Suresh
-          email: email@suresh.dev
-          organization: suresh.dev
-          organizationUrl: https://suresh.dev
-      scm:
-        url: https://github.com/sureshg/certkit
 
 test-settings:
   kotlin:
