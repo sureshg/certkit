@@ -176,9 +176,11 @@ chain.forEach { println("${it.commonName} — expires ${it.expiryDateUtc}") }
 ## 🔧 Build & Test
 
 ```bash
-./kotlin build                # Build
-./kotlin test                 # Test
-./kotlin publish mavenLocal   # Publish to local Maven repository
+$ ./kotlin build                # Build
+$ ./kotlin test                 # Test
+
+$ ./kotlin publish mavenLocal   # Publish to local Maven repository
+$ ./kotlin publish mavenCentral # Publish to Maven Central
 ```
 
 ## Credits
