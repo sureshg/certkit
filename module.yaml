@@ -25,7 +25,7 @@ settings:
         - -Djunit.platform.reporting.open.xml.enabled=true
 
   kotlin:
-    version: 2.4.0-RC
+    version: 2.4.0-RC2
     languageVersion: 2.4
     apiVersion: 2.4
     progressiveMode: true
@@ -54,7 +54,6 @@ settings:
 
   publishing:
     enabled: true
-    artifactId: certkit
     group: dev.suresh.certkit
     version: 0.2.0
     mavenCentral:
