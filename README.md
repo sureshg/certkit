@@ -187,8 +187,8 @@ $ ./kotlin publish mavenLocal   # Publish to local Maven repository
 Push a version tag to publish to Maven Central and create a GitHub release:
 
 ```bash
-$ git tag -a v0.2.0 -m "Release v0.2.0"
-$ git push origin v0.2.0
+$ git tag -am "Release v1.0.0" v1.0.0
+$ git push origin --tags
 ```
 
 ## Credits
