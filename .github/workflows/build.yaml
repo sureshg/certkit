@@ -21,10 +21,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  KOTLIN_CLI_BOOTSTRAP_CACHE_DIR: ${{ github.workspace }}/.kotlin/boot-cache
-  KOTLIN_SHARED_CACHE_DIR: ${{ github.workspace }}/.kotlin/shared-cache
-
 permissions:
   contents: write
 
@@ -39,42 +35,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 🗃️ Cache Kotlin CLI bootstrap
-        uses: actions/cache@v5
-        with:
-          path: ${{ env.KOTLIN_CLI_BOOTSTRAP_CACHE_DIR }}
-          key: kotlin-boot-${{ runner.os }}-${{ hashFiles('kotlin', 'kotlin.bat') }}
-
-      - name: 🗃️ Cache toolchains & JDKs
-        uses: actions/cache@v5
-        with:
-          path: |
-            ${{ env.KOTLIN_SHARED_CACHE_DIR }}/download.cache
-            ${{ env.KOTLIN_SHARED_CACHE_DIR }}/extract.cache
-          key: kotlin-shared-downloads-${{ runner.os }}-${{ hashFiles('project.yaml', '**/module.yaml', 'kotlin', 'kotlin.bat', 'libs.versions.toml') }}
-          restore-keys: |
-            kotlin-shared-downloads-${{ runner.os }}-
-
-      - name: 🗃️ Cache Maven & Kotlin dependencies
-        uses: actions/cache@v5
-        with:
-          path: |
-            ${{ env.KOTLIN_SHARED_CACHE_DIR }}/.m2.cache
-            ${{ env.KOTLIN_SHARED_CACHE_DIR }}/kotlin
-          enableCrossOsArchive: true
-          key: kotlin-shared-dependencies-${{ hashFiles('project.yaml', '**/module.yaml', 'kotlin', 'kotlin.bat', 'libs.versions.toml') }}
-          restore-keys: |
-            kotlin-shared-dependencies-
-
-      - name: 🗃️ Cache build outputs
-        uses: actions/cache@v5
-        with:
-          path: |
-            build/*
-            !build/logs
-          key: kotlin-project-${{ runner.os }}-${{ hashFiles('project.yaml', '**/module.yaml', 'kotlin', 'kotlin.bat', 'libs.versions.toml') }}
-          restore-keys: |
-            kotlin-project-${{ runner.os }}-
+      - name: 🅺 Cache Kotlin Toolchain
+        uses: sureshg/actions/kotlin-toolchain-cache@v1
 
       - name: 🧪 Test
         run: ./kotlin test
