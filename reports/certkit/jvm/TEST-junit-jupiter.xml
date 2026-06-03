@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="JUnit Jupiter" tests="56" skipped="0" failures="0" errors="0" time="2.261" hostname="runnervm3jyl0" timestamp="2026-06-03T01:35:25">
+<testsuite name="JUnit Jupiter" tests="56" skipped="0" failures="0" errors="0" time="2.032" hostname="runnervm3jyl0" timestamp="2026-06-03T01:55:33">
 <properties>
 <property name="file.encoding" value="UTF-8"/>
 <property name="file.separator" value="/"/>
@@ -57,7 +57,7 @@
 <property name="user.name" value="runner"/>
 <property name="user.timezone" value="Etc/UTC"/>
 </properties>
-<testcase name="issuerCN returns common name()" classname="certkit.crl.CrlTest" time="0">
+<testcase name="issuerCN returns common name()" classname="certkit.crl.CrlTest" time="0.002">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.crl.CrlTest]/[method:issuerCN returns common name()]
 display-name: JUnit Jupiter > CrlTest > issuerCN returns common name()
@@ -69,7 +69,7 @@ unique-id: [engine:junit-jupiter]/[class:certkit.crl.CrlTest]/[method:contains a
 display-name: JUnit Jupiter > CrlTest > contains and isRevokedBy check revocation()
 ]]></system-out>
 </testcase>
-<testcase name="key pair PEM encoding()" classname="certkit.cert.CertTest" time="0.003">
+<testcase name="key pair PEM encoding()" classname="certkit.cert.CertTest" time="0.004">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.cert.CertTest]/[method:key pair PEM encoding()]
 display-name: JUnit Jupiter > CertTest > key pair PEM encoding()
@@ -87,7 +87,7 @@ unique-id: [engine:junit-jupiter]/[class:certkit.pem.PkcsPemTest]/[method:toPkcs
 display-name: JUnit Jupiter > PkcsPemTest > toPkcs1Pem fails for non-RSA keys()
 ]]></system-out>
 </testcase>
-<testcase name="from DER round-trips()" classname="certkit.crl.CrlTest" time="0">
+<testcase name="from DER round-trips()" classname="certkit.crl.CrlTest" time="0.001">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.crl.CrlTest]/[method:from DER round-trips()]
 display-name: JUnit Jupiter > CrlTest > from DER round-trips()
@@ -117,7 +117,7 @@ unique-id: [engine:junit-jupiter]/[class:certkit.pem.PemTest]/[method:loadPublic
 display-name: JUnit Jupiter > PemTest > loadPublicKey RSA PKCS1 and PKCS8 produce same key()
 ]]></system-out>
 </testcase>
-<testcase name="buildSelfSigned certificate is trusted in a trust store()" classname="certkit.cert.CertTest" time="0.007">
+<testcase name="buildSelfSigned certificate is trusted in a trust store()" classname="certkit.cert.CertTest" time="0.006">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.cert.CertTest]/[method:buildSelfSigned certificate is trusted in a trust store()]
 display-name: JUnit Jupiter > CertTest > buildSelfSigned certificate is trusted in a trust store()
@@ -129,19 +129,19 @@ unique-id: [engine:junit-jupiter]/[class:certkit.pem.PemTest]/[method:loadTrustS
 display-name: JUnit Jupiter > PemTest > loadTrustStore loads RSA, EC, and DSA CA certificates()
 ]]></system-out>
 </testcase>
-<testcase name="toPkcs1Pem round-trip for RSA()" classname="certkit.pem.PkcsPemTest" time="0.004">
+<testcase name="toPkcs1Pem round-trip for RSA()" classname="certkit.pem.PkcsPemTest" time="0.005">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PkcsPemTest]/[method:toPkcs1Pem round-trip for RSA()]
 display-name: JUnit Jupiter > PkcsPemTest > toPkcs1Pem round-trip for RSA()
 ]]></system-out>
 </testcase>
-<testcase name="buildSelfSigned produces a valid self-signed CA certificate()" classname="certkit.cert.CertTest" time="0.004">
+<testcase name="buildSelfSigned produces a valid self-signed CA certificate()" classname="certkit.cert.CertTest" time="0.005">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.cert.CertTest]/[method:buildSelfSigned produces a valid self-signed CA certificate()]
 display-name: JUnit Jupiter > CertTest > buildSelfSigned produces a valid self-signed CA certificate()
 ]]></system-out>
 </testcase>
-<testcase name="set encodes set with nested seq()" classname="certkit.der.DslTest" time="0.051">
+<testcase name="set encodes set with nested seq()" classname="certkit.der.DslTest" time="0.043">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.der.DslTest]/[method:set encodes set with nested seq()]
 display-name: JUnit Jupiter > DslTest > set encodes set with nested seq()
@@ -153,13 +153,13 @@ unique-id: [engine:junit-jupiter]/[class:certkit.csr.CsrTest]/[method:create wit
 display-name: JUnit Jupiter > CsrTest > create with IPv6 SAN()
 ]]></system-out>
 </testcase>
-<testcase name="explicitTag wraps inner elements()" classname="certkit.der.DslTest" time="0">
+<testcase name="explicitTag wraps inner elements()" classname="certkit.der.DslTest" time="0.001">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.der.DslTest]/[method:explicitTag wraps inner elements()]
 display-name: JUnit Jupiter > DslTest > explicitTag wraps inner elements()
 ]]></system-out>
 </testcase>
-<testcase name="create with unknown algorithm throws()" classname="certkit.csr.CsrTest" time="0.231">
+<testcase name="create with unknown algorithm throws()" classname="certkit.csr.CsrTest" time="0.214">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.csr.CsrTest]/[method:create with unknown algorithm throws()]
 display-name: JUnit Jupiter > CsrTest > create with unknown algorithm throws()
@@ -183,13 +183,13 @@ unique-id: [engine:junit-jupiter]/[class:certkit.crl.CrlTest]/[method:from PEM r
 display-name: JUnit Jupiter > CrlTest > from PEM round-trips()
 ]]></system-out>
 </testcase>
-<testcase name="toPkcs8Pem encrypted with wrong password fails()" classname="certkit.pem.PkcsPemTest" time="0.007">
+<testcase name="toPkcs8Pem encrypted with wrong password fails()" classname="certkit.pem.PkcsPemTest" time="0.009">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PkcsPemTest]/[method:toPkcs8Pem encrypted with wrong password fails()]
 display-name: JUnit Jupiter > PkcsPemTest > toPkcs8Pem encrypted with wrong password fails()
 ]]></system-out>
 </testcase>
-<testcase name="pem produces valid PEM block()" classname="certkit.crl.CrlTest" time="0.002">
+<testcase name="pem produces valid PEM block()" classname="certkit.crl.CrlTest" time="0.004">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.crl.CrlTest]/[method:pem produces valid PEM block()]
 display-name: JUnit Jupiter > CrlTest > pem produces valid PEM block()
@@ -243,25 +243,25 @@ unique-id: [engine:junit-jupiter]/[class:certkit.der.DslTest]/[method:tag encode
 display-name: JUnit Jupiter > DslTest > tag encodes string value()
 ]]></system-out>
 </testcase>
-<testcase name="loadKeyStore with PKCS8 unencrypted keys()" classname="certkit.pem.PemTest" time="0.222">
+<testcase name="loadKeyStore with PKCS8 unencrypted keys()" classname="certkit.pem.PemTest" time="0.141">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PemTest]/[method:loadKeyStore with PKCS8 unencrypted keys()]
 display-name: JUnit Jupiter > PemTest > loadKeyStore with PKCS8 unencrypted keys()
 ]]></system-out>
 </testcase>
-<testcase name="create with mixed SANs()" classname="certkit.csr.CsrTest" time="0.097">
+<testcase name="create with mixed SANs()" classname="certkit.csr.CsrTest" time="0.089">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.csr.CsrTest]/[method:create with mixed SANs()]
 display-name: JUnit Jupiter > CsrTest > create with mixed SANs()
 ]]></system-out>
 </testcase>
-<testcase name="create with RSA key produces verifiable CSR()" classname="certkit.csr.CsrTest" time="0.25">
+<testcase name="create with RSA key produces verifiable CSR()" classname="certkit.csr.CsrTest" time="0.291">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.csr.CsrTest]/[method:create with RSA key produces verifiable CSR()]
 display-name: JUnit Jupiter > CsrTest > create with RSA key produces verifiable CSR()
 ]]></system-out>
 </testcase>
-<testcase name="parseKeyStore extracts key cert and chain matching original files()" classname="certkit.pem.KeyStoreTest" time="0.041">
+<testcase name="parseKeyStore extracts key cert and chain matching original files()" classname="certkit.pem.KeyStoreTest" time="0.025">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.KeyStoreTest]/[method:parseKeyStore extracts key cert and chain matching original files()]
 display-name: JUnit Jupiter > KeyStoreTest > parseKeyStore extracts key cert and chain matching original files()
@@ -279,7 +279,7 @@ unique-id: [engine:junit-jupiter]/[class:certkit.cert.CertTest]/[method:buildSel
 display-name: JUnit Jupiter > CertTest > buildSelfSigned includes extensions()
 ]]></system-out>
 </testcase>
-<testcase name="self-signed TBS structure()" classname="certkit.der.DslTest" time="0.101">
+<testcase name="self-signed TBS structure()" classname="certkit.der.DslTest" time="0.081">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.der.DslTest]/[method:self-signed TBS structure()]
 display-name: JUnit Jupiter > DslTest > self-signed TBS structure()
@@ -291,19 +291,19 @@ unique-id: [engine:junit-jupiter]/[class:certkit.der.DslTest]/[method:boolean an
 display-name: JUnit Jupiter > DslTest > boolean and octetString encode()
 ]]></system-out>
 </testcase>
-<testcase name="loadKeyStore with PKCS8 encrypted keys()" classname="certkit.pem.PemTest" time="0.05">
+<testcase name="loadKeyStore with PKCS8 encrypted keys()" classname="certkit.pem.PemTest" time="0.053">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PemTest]/[method:loadKeyStore with PKCS8 encrypted keys()]
 display-name: JUnit Jupiter > PemTest > loadKeyStore with PKCS8 encrypted keys()
 ]]></system-out>
 </testcase>
-<testcase name="parseKeyStore with keyPass produces decryptable key()" classname="certkit.pem.KeyStoreTest" time="0.012">
+<testcase name="parseKeyStore with keyPass produces decryptable key()" classname="certkit.pem.KeyStoreTest" time="0.009">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.KeyStoreTest]/[method:parseKeyStore with keyPass produces decryptable key()]
 display-name: JUnit Jupiter > KeyStoreTest > parseKeyStore with keyPass produces decryptable key()
 ]]></system-out>
 </testcase>
-<testcase name="toPkcs8Pem default algorithm is v1()" classname="certkit.pem.PkcsPemTest" time="0.007">
+<testcase name="toPkcs8Pem default algorithm is v1()" classname="certkit.pem.PkcsPemTest" time="0.008">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PkcsPemTest]/[method:toPkcs8Pem default algorithm is v1()]
 display-name: JUnit Jupiter > PkcsPemTest > toPkcs8Pem default algorithm is v1()
@@ -321,13 +321,13 @@ unique-id: [engine:junit-jupiter]/[class:certkit.pem.PemTest]/[method:loadPrivat
 display-name: JUnit Jupiter > PemTest > loadPrivateKey throws on encrypted key without password()
 ]]></system-out>
 </testcase>
-<testcase name="buildSelfSigned sets certificate fields correctly()" classname="certkit.cert.CertTest" time="0.01">
+<testcase name="buildSelfSigned sets certificate fields correctly()" classname="certkit.cert.CertTest" time="0.014">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.cert.CertTest]/[method:buildSelfSigned sets certificate fields correctly()]
 display-name: JUnit Jupiter > CertTest > buildSelfSigned sets certificate fields correctly()
 ]]></system-out>
 </testcase>
-<testcase name="isSignedBy verifies CA signature()" classname="certkit.crl.CrlTest" time="0.005">
+<testcase name="isSignedBy verifies CA signature()" classname="certkit.crl.CrlTest" time="0.014">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.crl.CrlTest]/[method:isSignedBy verifies CA signature()]
 display-name: JUnit Jupiter > CrlTest > isSignedBy verifies CA signature()
@@ -339,49 +339,49 @@ unique-id: [engine:junit-jupiter]/[class:certkit.pem.KeyStoreTest]/[method:parse
 display-name: JUnit Jupiter > KeyStoreTest > parseKeyStore fails for empty keystore()
 ]]></system-out>
 </testcase>
-<testcase name="create with EC key produces verifiable CSR()" classname="certkit.csr.CsrTest" time="0.003">
+<testcase name="create with EC key produces verifiable CSR()" classname="certkit.csr.CsrTest" time="0.004">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.csr.CsrTest]/[method:create with EC key produces verifiable CSR()]
 display-name: JUnit Jupiter > CsrTest > create with EC key produces verifiable CSR()
 ]]></system-out>
 </testcase>
-<testcase name="loadKeyStore with PKCS8 PEM encrypted()" classname="certkit.pem.PemTest" time="0.081">
+<testcase name="loadKeyStore with PKCS8 PEM encrypted()" classname="certkit.pem.PemTest" time="0.117">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PemTest]/[method:loadKeyStore with PKCS8 PEM encrypted()]
 display-name: JUnit Jupiter > PemTest > loadKeyStore with PKCS8 PEM encrypted()
 ]]></system-out>
 </testcase>
-<testcase name="toPkcs8Pem encrypted v2 round-trip for all key types()" classname="certkit.pem.PkcsPemTest" time="0.096">
+<testcase name="toPkcs8Pem encrypted v2 round-trip for all key types()" classname="certkit.pem.PkcsPemTest" time="0.075">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PkcsPemTest]/[method:toPkcs8Pem encrypted v2 round-trip for all key types()]
 display-name: JUnit Jupiter > PkcsPemTest > toPkcs8Pem encrypted v2 round-trip for all key types()
 ]]></system-out>
 </testcase>
-<testcase name="loadPublicKey matches certificate public key()" classname="certkit.pem.PemTest" time="0.045">
+<testcase name="loadPublicKey matches certificate public key()" classname="certkit.pem.PemTest" time="0.041">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PemTest]/[method:loadPublicKey matches certificate public key()]
 display-name: JUnit Jupiter > PemTest > loadPublicKey matches certificate public key()
 ]]></system-out>
 </testcase>
-<testcase name="seq encodes sequence()" classname="certkit.der.DslTest" time="0">
+<testcase name="seq encodes sequence()" classname="certkit.der.DslTest" time="0.001">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.der.DslTest]/[method:seq encodes sequence()]
 display-name: JUnit Jupiter > DslTest > seq encodes sequence()
 ]]></system-out>
 </testcase>
-<testcase name="loadKeyStore with PKCS1 PEM keys()" classname="certkit.pem.PemTest" time="0.161">
+<testcase name="loadKeyStore with PKCS1 PEM keys()" classname="certkit.pem.PemTest" time="0.122">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PemTest]/[method:loadKeyStore with PKCS1 PEM keys()]
 display-name: JUnit Jupiter > PemTest > loadKeyStore with PKCS1 PEM keys()
 ]]></system-out>
 </testcase>
-<testcase name="CsrInfo equality and hashCode()" classname="certkit.csr.CsrTest" time="0.289">
+<testcase name="CsrInfo equality and hashCode()" classname="certkit.csr.CsrTest" time="0.167">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.csr.CsrTest]/[method:CsrInfo equality and hashCode()]
 display-name: JUnit Jupiter > CsrTest > CsrInfo equality and hashCode()
 ]]></system-out>
 </testcase>
-<testcase name="toPkcs8Pem encrypted v1 round-trip for all key types()" classname="certkit.pem.PkcsPemTest" time="0.123">
+<testcase name="toPkcs8Pem encrypted v1 round-trip for all key types()" classname="certkit.pem.PkcsPemTest" time="0.11">
 <system-out><![CDATA[
 unique-id: [engine:junit-jupiter]/[class:certkit.pem.PkcsPemTest]/[method:toPkcs8Pem encrypted v1 round-trip for all key types()]
 display-name: JUnit Jupiter > PkcsPemTest > toPkcs8Pem encrypted v1 round-trip for all key types()
