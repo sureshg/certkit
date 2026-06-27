@@ -1,14 +1,16 @@
 [versions]
-kotlin              = "2.4.0"
-kotlinx-coroutines  = "1.11.0"
-kotlinx-datetime    = "0.8.0"
-kotlinx-io          = "0.9.1"
-junit               = "6.1.0"
+kotlin                = "2.4.0"
+kotlinx-coroutines    = "1.11.0"
+kotlinx-datetime      = "0.8.0"
+kotlinx-io            = "0.9.1"
+junit                 = "6.1.0"
+opentest4j-reporting  = "0.2.6"
 
 [libraries]
-kotlin-bom               = { module = "org.jetbrains.kotlin:kotlin-bom"                 , version.ref = "kotlin"}
-kotlinx-coroutines-core  = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core"   , version.ref = "kotlinx-coroutines"}
-kotlinx-datetime         = { module = "org.jetbrains.kotlinx:kotlinx-datetime"          , version.ref = "kotlinx-datetime" }
-kotlinx-io-core          = { module = "org.jetbrains.kotlinx:kotlinx-io-core"           , version.ref = "kotlinx-io" }
-junit-bom                = { module = "org.junit:junit-bom"                             , version.ref = "junit" }
-junit-jupiter            = { module = "org.junit.jupiter:junit-jupiter"                 , version.ref = "junit" }
+kotlin-bom               = { module = "org.jetbrains.kotlin:kotlin-bom"                   , version.ref = "kotlin"}
+kotlinx-coroutines-core  = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core"     , version.ref = "kotlinx-coroutines"}
+kotlinx-datetime         = { module = "org.jetbrains.kotlinx:kotlinx-datetime"            , version.ref = "kotlinx-datetime" }
+kotlinx-io-core          = { module = "org.jetbrains.kotlinx:kotlinx-io-core"             , version.ref = "kotlinx-io" }
+junit-bom                = { module = "org.junit:junit-bom"                               , version.ref = "junit" }
+junit-jupiter            = { module = "org.junit.jupiter:junit-jupiter"                   , version.ref = "junit" }
+opentest4j-reporting     = { module = "org.opentest4j.reporting:open-test-reporting-cli"  , version.ref = "opentest4j-reporting" }

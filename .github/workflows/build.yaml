@@ -46,8 +46,10 @@ jobs:
         env:
           REPORT_DIR: build/reports/certkit/jvm
         run: |
-          curl -sLO https://repo1.maven.org/maven2/org/opentest4j/reporting/open-test-reporting-cli/0.2.5/open-test-reporting-cli-0.2.5-standalone.jar
-          java -jar open-test-reporting-cli-0.2.5-standalone.jar html-report "$REPORT_DIR/open-test-report.xml"
+          version="$(sed -nE 's/^opentest4j-reporting[[:space:]]*=[[:space:]]*"([^"]+)".*/\1/p' libs.versions.toml)"
+          cli_jar="open-test-reporting-cli-${version}-standalone.jar"
+          curl -sLO "https://repo1.maven.org/maven2/org/opentest4j/reporting/open-test-reporting-cli/${version}/${cli_jar}"
+          java -jar "$cli_jar" html-report "$REPORT_DIR/open-test-report.xml"
           mv "$REPORT_DIR/open-test-report.html" build/reports/index.html
 
       - name: 🌐 Publish Test Report
