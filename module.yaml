@@ -19,7 +19,7 @@ settings:
       distributions: [ zulu, temurin ]
 
     test:
-      junitPlatformVersion: 6.1.0
+      junitPlatformVersion: 6.1.1
       freeJvmArgs:
         - --enable-native-access=ALL-UNNAMED
         - -Djunit.platform.reporting.open.xml.enabled=true
