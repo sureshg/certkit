@@ -55,12 +55,12 @@ settings:
   publishing:
     enabled: true
     group: dev.suresh.certkit
-    version: 0.2.0
+    version: 0.4.0
+    signArtifacts: true
+    publishSources: true
     mavenCentral:
       enabled: true
       publishingMode: auto
-    signArtifacts: true
-    publishSources: true
     pom:
       url: https://github.com/sureshg/certkit
       scm: https://github.com/sureshg/certkit.git
