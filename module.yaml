@@ -31,7 +31,6 @@ settings:
     progressiveMode: true
     allWarningsAsErrors: true
     suppressWarnings: false
-    powerAssert: enabled
     verbose: false
     freeCompilerArgs:
       - -Xexplicit-api=strict
