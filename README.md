@@ -23,14 +23,15 @@ encoding, all using JDK standard libraries. No BouncyCastle, no Guava.
 
 ## 🚀 Quick Start
 
-> **Requires JDK 21+**
+> Requires JDK 21+
 
 <details open>
 <summary><strong>Kotlin Toolchain</strong></summary>
 
 ```yaml
+# module.yaml
 dependencies:
-  - dev.suresh.certkit:certkit:LATEST_VERSION
+  - dev.suresh.certkit:certkit:<latest_version>
 ```
 
 </details>
@@ -40,7 +41,7 @@ dependencies:
 
 ```kotlin
 dependencies {
-    implementation("dev.suresh.certkit:certkit:LATEST_VERSION")
+    implementation("dev.suresh.certkit:certkit:<latest_version>")
 }
 ```
 
@@ -54,7 +55,7 @@ dependencies {
 <dependency>
     <groupId>dev.suresh.certkit</groupId>
     <artifactId>certkit</artifactId>
-    <version>LATEST_VERSION</version>
+    <version>latest-version</version>
 </dependency>
 ```
 
@@ -203,7 +204,7 @@ chain.forEach { println("${it.commonName} — expires ${it.expiryDateUtc}") }
 | Key algorithms | RSA, EC (secp256r1, secp384r1, …), DSA          |
 | Cert builder   | EC keys (SHA256withECDSA)                       |
 
-## 🔧 Build & Test
+## Build & Test
 
 ```bash
 $ ./kotlin build                # Build
@@ -211,7 +212,7 @@ $ ./kotlin test                 # Test
 $ ./kotlin publish mavenLocal   # Publish to local Maven repository
 ```
 
-## 📦 Release
+## Release
 
 Push a version tag to publish to Maven Central and create a GitHub release:
 
@@ -222,8 +223,8 @@ $ git push origin --tags
 
 ## Credits
 
-Thanks to the [Airlift](https://github.com/airlift/airlift) project. The crypto and DER/PEM logic is adapted from its
-security module, rewritten as idiomatic Kotlin without the Guava dependency.
+Adapted the DER/PEM parsing logic and test fixtures from the Airlift project and rewrote them in idiomatic Kotlin
+without Guava. Thanks to the Airlift team for the original work.
 
 ## License
 
