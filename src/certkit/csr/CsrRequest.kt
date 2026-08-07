@@ -40,15 +40,15 @@ public class SignatureAlgo(public val name: String, public val oid: String) {
 public data class CsrInfo(
     public val subject: X500Principal,
     public val publicKey: PublicKey,
-    public val sans: List<San> = emptyList(),
+    public val sans: List<San> = [],
 ) {
 
   private companion object {
     /** DER-encoded INTEGER 0 — CSR version v1. */
-    val VERSION_0: ByteArray = byteArrayOf(2, 1, 0)
+    val VERSION_0: ByteArray = [2, 1, 0]
 
     /** Empty context-specific constructed tag [0] with zero length. */
-    val EMPTY_ATTRIBUTES: ByteArray = byteArrayOf(0xA0.toByte(), 0x00)
+    val EMPTY_ATTRIBUTES: ByteArray = [0xA0.toByte(), 0x00]
 
     /** OID for PKCS#9 extensionRequest attribute. */
     const val EXTENSION_REQUEST_OID = "1.2.840.113549.1.9.14"

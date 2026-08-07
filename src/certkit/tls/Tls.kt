@@ -20,7 +20,7 @@ public fun scanCertificates(
     timeout: Duration = 5.seconds,
 ): List<X509Certificate> {
   val trustManager = CaptureTrustManager()
-  val sslContext = SSLContext.getInstance("TLS").apply { init(null, arrayOf(trustManager), null) }
+  val sslContext = SSLContext.getInstance("TLS").apply { init(null, [trustManager], null) }
   val socket = sslContext.socketFactory.createSocket() as SSLSocket
   return socket.use { sock ->
     if (!sni.isNullOrBlank()) {
@@ -69,7 +69,7 @@ public class ScanSSLFactory(private val delegate: SSLSocketFactory) : SSLSocketF
     val sslSock = this as SSLSocket
     sslSock.sslParameters =
         sslSock.sslParameters.apply {
-          serverNames = emptyList()
+          serverNames = []
           endpointIdentificationAlgorithm = null
         }
   }

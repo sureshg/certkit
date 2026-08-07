@@ -140,7 +140,7 @@ class PemTest {
   ) {
     val keyStore = Pem.loadKeyStore(resPath(certFile), resPath(keyFile), keyPassword)
     assertCertificateChain(keyStore, expectedName)
-    val key = keyStore.getKey("key", charArrayOf()) as PrivateKey
+    val key = keyStore.getKey("key", []) as PrivateKey
     assertEquals(key, Pem.loadPrivateKey(key.pem))
   }
 

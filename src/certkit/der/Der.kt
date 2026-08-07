@@ -1,5 +1,7 @@
 package certkit.der
 
+import java.math.BigInteger
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -7,8 +9,6 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.io.Buffer
 import kotlinx.io.readByteArray
-import java.math.BigInteger
-import kotlin.time.Instant
 
 /**
  * ASN.1 DER (Distinguished Encoding Rules) encoder/decoder — the binary format used inside X.509
@@ -68,7 +68,7 @@ public object Der {
 
   /** Encodes a DER BOOLEAN: `[01 01 FF]` for true, `[01 01 00]` for false. */
   public fun boolean(value: Boolean): ByteArray =
-      byteArrayOf(BOOLEAN_TAG.toByte(), 0x01, if (value) 0xFF.toByte() else 0x00)
+      [BOOLEAN_TAG.toByte(), 0x01, if (value) 0xFF.toByte() else 0x00]
 
   /** Encodes a DER INTEGER (tag `0x02`) from a Long. */
   public fun integer(value: Long): ByteArray = integer(BigInteger.valueOf(value))
@@ -77,7 +77,7 @@ public object Der {
   public fun integer(value: BigInteger): ByteArray = tag(INTEGER_TAG, value.toByteArray())
 
   /** DER NULL: `[05 00]`. */
-  public val nullValue: ByteArray = byteArrayOf(NULL_TAG.toByte(), 0x00)
+  public val nullValue: ByteArray = [NULL_TAG.toByte(), 0x00]
 
   /** Encodes a DER OCTET STRING (tag `0x04`). */
   public fun octetString(value: ByteArray): ByteArray = tag(OCTET_STRING_TAG, value)

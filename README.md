@@ -9,7 +9,7 @@
 [![Test Report][test_img]][test_url]
 
 Lightweight X.509 certificate toolkit for Kotlin/JVM. Build self-signed certs, CSRs, CRLs, and work with PEM/DER
-encoding, all using JDK standard libraries. **No BouncyCastle, no Guava.**
+encoding, all using JDK standard libraries. No BouncyCastle, no Guava.
 
 ## Features
 
@@ -25,11 +25,40 @@ encoding, all using JDK standard libraries. **No BouncyCastle, no Guava.**
 
 > **Requires JDK 21+**
 
+<details open>
+<summary><strong>Kotlin Toolchain</strong></summary>
+
+```yaml
+dependencies:
+  - dev.suresh.certkit:certkit:LATEST_VERSION
+```
+
+</details>
+
+<details>
+<summary><strong>Gradle</strong></summary>
+
 ```kotlin
 dependencies {
-    implementation("dev.suresh.certkit:certkit:0.4.0")
+    implementation("dev.suresh.certkit:certkit:LATEST_VERSION")
 }
 ```
+
+</details>
+
+<details>
+<summary><strong>Maven</strong></summary>
+
+```xml
+
+<dependency>
+    <groupId>dev.suresh.certkit</groupId>
+    <artifactId>certkit</artifactId>
+    <version>LATEST_VERSION</version>
+</dependency>
+```
+
+</details>
 
 ### Self-Signed Certificate
 
@@ -144,7 +173,7 @@ val encoded: ByteArray = seq {
     boolean(true)
     seq {
         oid("2.5.29.14")
-        octetString(byteArrayOf(0x01, 0x02))
+        octetString([0x01, 0x02])
     }
     utcTime(Clock.System.now())
     explicitTag(0) { integer(2L) }

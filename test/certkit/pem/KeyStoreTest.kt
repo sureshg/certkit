@@ -5,14 +5,14 @@ import certkit.pem.KeyFormat.Pkcs8
 import certkit.resBytes
 import certkit.resText
 import certkit.tls.newKeyStore
-import kotlinx.io.Buffer
-import kotlinx.io.asOutputStream
-import kotlinx.io.readByteArray
 import kotlin.io.encoding.Base64
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
+import kotlinx.io.Buffer
+import kotlinx.io.asOutputStream
+import kotlinx.io.readByteArray
 
 class KeyStoreTest {
 

@@ -55,9 +55,9 @@ public object Pem {
 
   // Test data must be exactly 20 bytes for DSA
   private val TEST_SIGNATURE_DATA = "01234567890123456789".encodeToByteArray()
-  private val SUPPORTED_KEY_TYPES = setOf("RSA", "EC", "DSA")
+  private val SUPPORTED_KEY_TYPES: Set<String> = ["RSA", "EC", "DSA"]
 
-  private val VERSION_0 = byteArrayOf(2, 1, 0)
+  private val VERSION_0: ByteArray = [2, 1, 0]
   private val RSA_KEY_OID = Der.oid("1.2.840.113549.1.1.1")
   private val DSA_KEY_OID = Der.oid("1.2.840.10040.4.1")
   private val EC_KEY_OID = Der.oid("1.2.840.10045.2.1")

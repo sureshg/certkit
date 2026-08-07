@@ -23,9 +23,9 @@ public sealed class TrustStoreType(public val name: String) {
 /** Trust manager that captures the certificate chain presented during TLS handshake. */
 public class CaptureTrustManager : X509TrustManager {
   public val certChain: List<X509Certificate>
-    field = mutableListOf<X509Certificate>()
+    field: MutableList<X509Certificate> = []
 
-  override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
+  override fun getAcceptedIssuers(): Array<X509Certificate> = []
 
   override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {
     certChain.addAll(chain)

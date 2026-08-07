@@ -42,7 +42,7 @@ public object Csr {
       x500Name: String,
       algorithmName: String,
       keyPair: KeyPair,
-      sans: List<San> = emptyList(),
+      sans: List<San> = [],
   ): CsrRequest {
     val info = CsrInfo(X500Principal(x500Name), keyPair.public, sans)
     val algorithm =

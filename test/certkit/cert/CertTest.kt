@@ -5,8 +5,6 @@ import certkit.pem.pem
 import certkit.tls.newEcKeyPair
 import certkit.tls.newKeyStore
 import certkit.tls.trustManagers
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import java.math.BigInteger
 import javax.security.auth.x500.X500Principal
 import kotlin.test.Test
@@ -15,6 +13,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 
 class CertTest {
 
@@ -110,7 +110,7 @@ class CertTest {
         )
 
     val keyStore = newKeyStore().apply { setCertificateEntry("test", cert) }
-    keyStore.trustManagers.forEach { it.checkServerTrusted(arrayOf(cert), "EC") }
+    keyStore.trustManagers.forEach { it.checkServerTrusted([cert], "EC") }
   }
 
   @Test

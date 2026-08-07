@@ -2,7 +2,6 @@ package certkit.cert
 
 import certkit.der.Der
 import certkit.der.seq
-import kotlinx.datetime.*
 import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.Signature
@@ -12,6 +11,7 @@ import java.security.interfaces.ECPrivateKey
 import java.security.interfaces.ECPublicKey
 import javax.security.auth.x500.X500Principal
 import kotlin.time.Instant
+import kotlinx.datetime.*
 
 /**
  * Self-signed X.509 certificate builder (EC keys, SHA256withECDSA).
@@ -62,7 +62,7 @@ public object Cert {
       subject: X500Principal,
       notBefore: Instant,
       notAfter: Instant,
-      sans: List<San> = emptyList(),
+      sans: List<San> = [],
   ): X509Certificate {
     val pub = keyPair.public
     val priv = keyPair.private
@@ -132,7 +132,7 @@ public object Cert {
       subject: X500Principal,
       notBefore: LocalDate,
       notAfter: LocalDate,
-      sans: List<San> = emptyList(),
+      sans: List<San> = [],
   ): X509Certificate =
       buildSelfSigned(
           keyPair = keyPair,

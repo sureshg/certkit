@@ -9,7 +9,7 @@ import kotlin.time.Instant
 
 @DerDsl
 public class DerBuilder {
-  internal val elements = mutableListOf<ByteArray>()
+  internal val elements: MutableList<ByteArray> = []
 
   public fun boolean(value: Boolean) {
     elements += Der.boolean(value)

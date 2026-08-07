@@ -55,8 +55,8 @@ class DslTest {
 
   @Test
   fun `implicitTag encodes context tag`() {
-    val expected = Der.sequence(Der.implicitTag(0, byteArrayOf(0x01, 0x02)))
-    val actual = seq { implicitTag(0, byteArrayOf(0x01, 0x02)) }
+    val expected = Der.sequence(Der.implicitTag(0, [0x01, 0x02]))
+    val actual = seq { implicitTag(0, [0x01, 0x02]) }
     assertContentEquals(expected, actual)
   }
 
@@ -73,17 +73,17 @@ class DslTest {
 
   @Test
   fun `boolean and octetString encode`() {
-    val expected = Der.sequence(Der.boolean(true), Der.octetString(byteArrayOf(0xCA.toByte())))
+    val expected = Der.sequence(Der.boolean(true), Der.octetString([0xCA.toByte()]))
     val actual = seq {
       boolean(true)
-      octetString(byteArrayOf(0xCA.toByte()))
+      octetString([0xCA.toByte()])
     }
     assertContentEquals(expected, actual)
   }
 
   @Test
   fun `bitString encodes with pad bits`() {
-    val data = byteArrayOf(0xFF.toByte(), 0x80.toByte())
+    val data: ByteArray = [0xFF.toByte(), 0x80.toByte()]
     val expected = Der.sequence(Der.bitString(1, data))
     val actual = seq { bitString(1, data) }
     assertContentEquals(expected, actual)

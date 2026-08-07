@@ -49,7 +49,7 @@ public object Crl {
       issuer: X500Principal,
       thisUpdate: Instant,
       nextUpdate: Instant? = null,
-      revokedSerials: List<Long> = emptyList(),
+      revokedSerials: List<Long> = [],
   ): X509CRL {
     val sigAlg = Der.sequence(SHA256_ECDSA_OID, Der.nullValue)
 
