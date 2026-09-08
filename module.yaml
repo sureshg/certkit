@@ -24,15 +24,15 @@ settings:
         - -Djunit.platform.reporting.open.xml.enabled=true
 
   kotlin:
-    version: 2.4.10
+    version: 2.4.20
     languageVersion: 2.4
     apiVersion: 2.4
+    explicitApi: strict
     progressiveMode: true
     allWarningsAsErrors: true
     suppressWarnings: false
     verbose: false
     freeCompilerArgs:
-      - -Xexplicit-api=strict
       - -Wextra
       - -Xcollection-literals
       - -Xreport-all-warnings
@@ -71,8 +71,6 @@ settings:
 
 test-settings:
   kotlin:
-    freeCompilerArgs:
-      - -Xexplicit-api=disable
     powerAssert:
       enabled: true
       functions:
