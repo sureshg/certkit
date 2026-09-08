@@ -6,7 +6,7 @@ Security fixes go into the latest release only.
 
 | Version | Supported          |
 |---------|--------------------|
-| 0.5.0   | :white_check_mark: |
+| 0.6.0   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
